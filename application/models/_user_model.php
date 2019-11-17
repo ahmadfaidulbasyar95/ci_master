@@ -53,12 +53,9 @@ class _user_model extends CI_Model {
 	{
 		$user = array();
 		if (is_array($user_id)) {
-			$user_ids = array();
-			foreach ($user_id as $value) {
-				if (intval($value)) $user_ids[] = intval($value);
-			}
-			if ($user_ids) {
-				$user = $this->_db_model->getAll('SELECT * FROM `_user` WHERE `id`IN('.implode(',', $user_ids).')');
+			ids($user_id);
+			if ($user_id) {
+				$user = $this->_db_model->getAll('SELECT * FROM `_user` WHERE `id`IN('.$user_id.')');
 				if ($show_detail) {
 					foreach ($user as $key => $value) {
 						$user[$key] = $this->getDetail($value);

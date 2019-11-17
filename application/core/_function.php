@@ -149,6 +149,23 @@ function money($price = 0, $is_shorten= false)
 	return $output;
 }
 
+function ids(&$ids, $out_array = false)
+{
+	$ids     = is_array($ids) ? $ids : array($ids);
+	$ids_fix = array();
+	foreach ($ids as $value) {
+		if (intval($value)) $ids_fix[] = intval($value);
+	}
+	$ids = $ids_fix;
+	if(empty($ids))
+	{
+		$ids = (!$out_array) ? '' : array();
+		return false;
+	}
+	if(!$out_array) $ids = implode(',', $ids);
+	return true;
+}
+
 function parseToArray($r_select, $r_all)
 {
 	$output = array();
@@ -250,4 +267,34 @@ function config_decode($string)
 function config_encode($array)
 {
 	return json_encode(urlencode_r($array));
+}
+
+function setCache($name = '', $value = '')
+{
+	if ($name) {
+		file_put_contents(APPPATH.'cache/'.$name, (is_array($value)) ? config_encode($value) : $value );
+		file_put_contents(APPPATH.'cache/'.$name.'_is_array', (is_array($value)) ? 1 : 0 );
+	}
+}
+
+function getCache($name = '')
+{
+	if (is_file(APPPATH.'cache/'.$name)) {
+		$is_array = 0;
+		if (is_file(APPPATH.'cache/'.$name.'_is_array')) {
+			$is_array = APPPATH.'cache/'.$name.'_is_array';
+		}
+		$data = file_get_contents(APPPATH.'cache/'.$name);
+		return (intval($is_array)) ? config_decode($data) : $data ;
+	}
+	return '';
+}
+function delCache($name = '')
+{
+	if (is_file(APPPATH.'cache/'.$name)) {
+		unlink(APPPATH.'cache/'.$name);
+	}
+	if (is_file(APPPATH.'cache/'.$name.'_is_array')) {
+		unlink(APPPATH.'cache/'.$name.'_is_array');
+	}
 }
