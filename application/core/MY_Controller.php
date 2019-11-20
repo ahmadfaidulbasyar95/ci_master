@@ -34,6 +34,15 @@ class MY_Controller extends CI_Controller {
 	function __destruct()
 	{
 		$this->_content = ob_get_clean();
+		if (@$this->_template['layout']) {
+			include $this->_template['path'].$this->_template['layout'].'.php';
+		}else{
+			show_error('Invalid Template Path');
+		}
+	}
+
+	public function contentShow()
+	{
 		echo $this->_content;
 	}
 
@@ -54,20 +63,21 @@ class MY_Controller extends CI_Controller {
 	{
 		if (isset($this->_template['path'])) {
 			if (is_file($this->_template['path'].$layout.'.php')) {
-				$this->_template['layout'] = $layout.'.php';
+				$this->_template['layout'] = $layout;
 			}
 		}
 	}
 
-	public function setController($file = '', &$method = '', &$params = array(), $is_sub = 0)
+	public function setController($file = '', &$method = '', &$params = array(), $is_sub = '')
 	{
 		if (is_file($file)) {
 			$path = str_replace('.php', '/', $file);
 			if ($is_sub) {
-				if (is_file($path.$method.'.php')) $is_sub = 0;
+				if (is_file($path.$method.'.php')) $is_sub = '';
 			}
 			if ($is_sub) {
-				$name = ucfirst($method);
+				$is_sub = basename($file,'.php');
+				$name   = ucfirst($method);
 				if (isset($params[0])) {
 					$method = $params[0];
 					unset($params[0]);
@@ -77,10 +87,11 @@ class MY_Controller extends CI_Controller {
 				$file  = str_replace('.php', '/'.$name.'.php', $file);
 			}
 			$this->_controller = array(
-				'name' => basename($file,'.php'),
-				'path' => $path,
-				'url'  => str_replace([APPPATH.'controllers/','.php'], [APPURL,'/'], $file),
-				'file' => (is_file($path.$method.'.php')) ? $path.$method.'.php' : '',
+				'name'   => basename($file,'.php'),
+				'path'   => $path,
+				'url'    => str_replace([APPPATH.'controllers/','.php'], [APPURL,'/'], $file),
+				'file'   => (is_file($path.$method.'.php')) ? $path.$method.'.php' : '',
+				'parent' => $is_sub,
 			);
 		}
 	}
