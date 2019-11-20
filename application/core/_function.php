@@ -276,7 +276,6 @@ function setCache($name = '', $value = '')
 		file_put_contents(APPPATH.'cache/'.$name.'_is_array', (is_array($value)) ? 1 : 0 );
 	}
 }
-
 function getCache($name = '')
 {
 	if (is_file(APPPATH.'cache/'.$name)) {
