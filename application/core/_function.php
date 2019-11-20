@@ -281,7 +281,7 @@ function getCache($name = '')
 	if (is_file(APPPATH.'cache/'.$name)) {
 		$is_array = 0;
 		if (is_file(APPPATH.'cache/'.$name.'_is_array')) {
-			$is_array = APPPATH.'cache/'.$name.'_is_array';
+			$is_array = file_get_contents(APPPATH.'cache/'.$name.'_is_array');
 		}
 		$data = file_get_contents(APPPATH.'cache/'.$name);
 		return (intval($is_array)) ? config_decode($data) : $data ;

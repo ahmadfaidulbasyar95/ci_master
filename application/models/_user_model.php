@@ -14,7 +14,7 @@ class _user_model extends CI_Model {
 
 	public function setLoginType($login_type = 'default')
 	{
-		if ($login_type) $this->login_type = $login_type;
+		if ($login_type != '') $this->login_type = $login_type;
 	}
 
 	public function login($username = '', $password = '', $login_type = '')
@@ -69,13 +69,27 @@ class _user_model extends CI_Model {
 		return $user;
 	}
 
-	function getDetail($user = array())
+	public function getDetail($user = array())
 	{
 		if (is_array($user)) {
 			$user['group_ids'] = repairExplode(@$user['group_ids']);
 			$user['params']    = config_decode(@$user['params']);
 		}
 		return $user;
+	}
+
+	public function getGroup($group_id = 0)
+	{
+		$data = @$this->group;
+		if (!$data) {
+			$data = getCache('user_group');
+			if (!$data) {
+				$data = $this->_db_model->getAssoc('SELECT * FROM `_user_group`');
+				setCache('user_group', $data);
+			}
+			$this->group = $data;
+		}
+		return ($group_id) ? @(array)$data[$group_id] : $data;
 	}
 
 }
