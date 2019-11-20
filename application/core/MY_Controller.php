@@ -41,6 +41,20 @@ class MY_Controller extends CI_Controller {
 		}
 	}
 
+	public function contentView($method = '')
+	{
+		if ($method) {
+			if (@$this->_template['layout']) {
+				$file = $this->_template['path'].'controllers'.$this->_controller['parent'].'/'.$this->_controller['name'].'/'.$method.'.php';
+				if (is_file($file)) include $file;
+				else{
+					$file = APPPATH.'views/controllers'.$this->_controller['parent'].'/'.$this->_controller['name'].'/'.$method.'.php';
+					if (is_file($file)) include $file;
+				}
+			}
+		}
+	}
+
 	public function contentShow()
 	{
 		echo $this->_content;
@@ -49,11 +63,11 @@ class MY_Controller extends CI_Controller {
 	public function setTemplate($_template = '')
 	{
 		if ($_template) {
-			if (file_exists(APPPATH.'views/'.$_template)) {
+			if (file_exists(APPPATH.'views/templates/'.$_template)) {
 				$this->_template = array(
 					'name'   => $_template,
-					'path'   => APPPATH.'views/'.$_template.'/',
-					'url'    => APPURL.'application/views/'.$_template.'/',
+					'path'   => APPPATH.'views/templates/'.$_template.'/',
+					'url'    => APPURL.'application/views/templates/'.$_template.'/',
 				);
 				$this->setLayout();
 			}
@@ -91,7 +105,7 @@ class MY_Controller extends CI_Controller {
 				'path'   => $path,
 				'url'    => str_replace([APPPATH.'controllers/','.php'], [APPURL,'/'], $file),
 				'file'   => (is_file($path.$method.'.php')) ? $path.$method.'.php' : '',
-				'parent' => $is_sub,
+				'parent' => ($is_sub) ? '/'.$is_sub : '',
 			);
 		}
 	}
