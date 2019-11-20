@@ -6,23 +6,14 @@ class Admin extends MY_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->setTemplate('admin');
 	}
 
 	public function _remap($method, $params = array())
 	{
-		if ($method != 'index') {
-			$controller = $method;
-			$method     = 'index';
-			if ((@$params[0])) {
-				$method = $params[0];
-				unset($params[0]);
-				$params = array_values($params);
-			}
-			$file = dirname(__FILE__).'/'.ucfirst($controller).'/admin/'.$method.'.php';
-			if (is_file($file)) include $file;
-			else show_404();
-		}
+		$this->setTemplate('admin');
+		$this->setController(__FILE__, $method, $params, 1);
+		if ($this->_controller['file']) include $this->_controller['file'];
+		else show_404();
 	}
 
 }

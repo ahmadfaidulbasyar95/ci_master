@@ -10,8 +10,8 @@ class User extends MY_Controller {
 
 	public function _remap($method, $params = array())
 	{
-		$file = str_replace('.php', '/'.$method.'.php', __FILE__);
-		if (is_file($file)) include $file;
+		$this->setController(__FILE__, $method, $params);
+		if ($this->_controller['file']) include $this->_controller['file'];
 		else show_404();
 	}
 

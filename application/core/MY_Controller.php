@@ -19,29 +19,16 @@ class MY_Controller extends CI_Controller {
 		}
 		define('APPURL', $APPURL.'/');
 		unset($APPURL);
+
+		$this->_uri = array_values($this->uri->rsegments); 
 		
 		$TEMPLATE = $this->_config_model->get('site','template');
 		if (!$TEMPLATE) {
-			$TEMPLATE = 'admin';
+			$TEMPLATE = 'default';
 			$this->_config_model->set('site','template', $TEMPLATE);
 		}
 		$this->setTemplate($TEMPLATE);
 		unset($TEMPLATE);
-
-		$CONTROLLER = array_values($this->uri->rsegments); 
-		if (@$CONTROLLER[0] == 'admin') {
-			$this->_controller = array(
-				'name' => ucfirst(@$CONTROLLER[1]),
-				'path' => APPPATH.'controllers/'.ucfirst(@$CONTROLLER[1]).'/admin/',
-				'url'  => APPURL.'admin/'.ucfirst(@$CONTROLLER[1]).'/',
-			);
-		}else{
-			$this->_controller = array(
-				'name' => ucfirst(@$CONTROLLER[0]),
-				'path' => APPPATH.'controllers/'.ucfirst(@$CONTROLLER[0]).'/',
-				'url'  => APPURL.ucfirst(@$CONTROLLER[0]).'/',
-			);
-		}
 	}
 
 	function __destruct()
@@ -55,11 +42,46 @@ class MY_Controller extends CI_Controller {
 		if ($_template) {
 			if (file_exists(APPPATH.'views/'.$_template)) {
 				$this->_template = array(
-					'name' => $_template,
-					'path' => APPPATH.'views/'.$_template.'/',
-					'url'  => APPURL.'application/views/'.$_template.'/',
+					'name'   => $_template,
+					'path'   => APPPATH.'views/'.$_template.'/',
+					'url'    => APPURL.'application/views/'.$_template.'/',
 				);
+				$this->setLayout();
 			}
+		}
+	}
+	public function setLayout($layout = 'index')
+	{
+		if (isset($this->_template['path'])) {
+			if (is_file($this->_template['path'].$layout.'.php')) {
+				$this->_template['layout'] = $layout.'.php';
+			}
+		}
+	}
+
+	public function setController($file = '', &$method = '', &$params = array(), $is_sub = 0)
+	{
+		if (is_file($file)) {
+			$path = str_replace('.php', '/', $file);
+			if ($is_sub) {
+				if (is_file($path.$method.'.php')) $is_sub = 0;
+			}
+			if ($is_sub) {
+				$name = ucfirst($method);
+				if (isset($params[0])) {
+					$method = $params[0];
+					unset($params[0]);
+					$params = array_values($params);
+				}else $method = 'index';
+				$path .= $name.'/';
+				$file  = str_replace('.php', '/'.$name.'.php', $file);
+			}
+			$this->_controller = array(
+				'name' => basename($file,'.php'),
+				'path' => $path,
+				'url'  => str_replace([APPPATH.'controllers/','.php'], [APPURL,'/'], $file),
+				'file' => (is_file($path.$method.'.php')) ? $path.$method.'.php' : '',
+			);
 		}
 	}
 
