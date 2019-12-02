@@ -11,9 +11,9 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		parent::__construct($opt, $name);
 	}
 
-	public function getSelectedValue()
+	public function getSelectedValue($index = '')
 	{
-		$value = $this->getValue();
+		$value = $this->getValue($index);
 		$selected = '';
 		foreach ($this->options as $key => $val) {
 			if ($value == $val) $selected = $key;
@@ -26,33 +26,36 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		if ($key) $this->options[$key] = $value;
 	}
 
-	public function getOption()
+	public function getOption($index = '')
 	{
 		$options = '';
-		$value = $this->getValue();
+		$value = $this->getValue($index);
 		foreach ($this->options as $key => $val) {
 			$options .= ($value == $val) ? '<option value="'.$val.'" selected>'.$key.'</option>' : '<option value="'.$val.'">'.$key.'</option>'; 
 		}
 		return $options;
 	}
 
-	public function getForm()
+	public function getForm($index = '')
 	{
 		$form = '';
+		if ($this->init == 'roll') $form .= '<td>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and $this->init != 'roll') $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
-			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getSelectedValue()) : $this->getSelectedValue();
+			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getSelectedValue($index)) : $this->getSelectedValue($index);
 			$form .= '<p>'.$value.'</p>';
 		}else{
-			$name = ($this->isMultiform) ? $this->name.'[]' : $this->name;
+			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
+			$name = ($this->isMultiform) ? $name.'[]' : $name;
 			$form .= '
 <select name="'.$name.'" class="form-control" title="'.$this->caption.'" '.$this->isRequire.'>
-	'.$this->getOption().'
+	'.$this->getOption($index).'
 </select>';
 		}
 		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
+		if ($this->init == 'roll') $form .= '</td>';
 		return $form;
 	}
 }

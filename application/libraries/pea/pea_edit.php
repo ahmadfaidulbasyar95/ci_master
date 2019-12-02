@@ -24,8 +24,25 @@ class lib_pea_edit
 	public $saveTool         = 1;
 	public $saveButtonText   = '';
 	public $saveButtonClass  = 'btn btn-primary';
-	public $successMsg       = '';
 	public $msg              = '';
+	public $successMsg       = '';
+	public $failMsg          = array(
+		'require' => '<b>{title}</b> Must not empty',
+	);
+	public $successMsgTpl    = '
+<div class="alert alert-success" role="alert">
+	<i class="fa fa-check"></i> {msg} !
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>';
+	public $failMsgTpl = '
+<div class="alert alert-danger" role="alert">
+	<i class="fa fa-times"></i> {msg} !
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>';
 
 	function __construct($opt)
 	{
@@ -35,21 +52,10 @@ class lib_pea_edit
 		$this->db       = $opt['db'];
 		$this->init     = $opt['init'];
 
-		$this->input          = new stdClass();
-		$this->saveButtonText = ($this->where) ? '<i class="fa fa-save"></i> Save' : '<i class="fa fa-plus"></i> Add'; 
-		$this->successMsg     = ($this->where) ? '
-		<div class="alert alert-success" role="alert">
-			<i class="fa fa-check"></i> Success Save Data !
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>' : '
-		<div class="alert alert-success" role="alert">
-			<i class="fa fa-check"></i> Success Insert New Data !
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>'; 
+		$this->input = new stdClass();
+		
+		$this->setSaveButton(($this->where) ? '<i class="fa fa-save"></i> Save' : '<i class="fa fa-plus"></i> Add'); 
+		$this->setSuccessMsg(($this->where) ? 'Success Save Data' : 'Success Insert New Data'); 
 	}
 
 	public function setSaveTool($saveTool = 1)
@@ -66,6 +72,21 @@ class lib_pea_edit
 	public function setSuccessMsg($successMsg = '')
 	{
 		if ($successMsg) $this->successMsg = $successMsg;
+	}
+
+	public function setSuccessMsgTpl($successMsgTpl = '')
+	{
+		if ($successMsgTpl) $this->successMsgTpl = $successMsgTpl;
+	}
+
+	public function setFailMsg($failMsg = '', $index = '')
+	{
+		if ($failMsg and $index) $this->failMsg[$index] = $failMsg;
+	}
+
+	public function setFailMsgTpl($failMsgTpl = '')
+	{
+		if ($failMsgTpl) $this->failMsgTpl = $failMsgTpl;
 	}
 
 	public function setHeader($header = '')
@@ -111,7 +132,11 @@ class lib_pea_edit
 				\'where\'    => $this->where,
 				\'db\'       => $this->db,
 				\'init\'     => $this->init,
-			), $name);'); 
+			), $name);');
+			$this->input->$name->setFailMsgTpl($this->failMsgTpl);
+			foreach ($this->failMsg as $key => $value) {
+				$this->input->$name->setFailMsg($value, $key);
+			} 
 		}else die('PEA::FORM "'.$type.'" tidak tersedia');
 	}
 
@@ -147,7 +172,7 @@ class lib_pea_edit
 							}else{
 								$this->insertID = $this->db->insert($this->table, $values);
 							}
-							$this->msg = $this->successMsg;
+							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl);
 						}
 					}
 					if ($this->where) {

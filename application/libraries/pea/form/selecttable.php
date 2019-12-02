@@ -30,11 +30,11 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		if ($referenceCondition) $this->referenceCondition = 'WHERE '.$referenceCondition;
 	}
 
-	public function getForm()
+	public function getForm($index = '')
 	{
 		foreach ($this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition) as $value) {
 			$this->addOption($value['key'], $value['value']);
 		}
-		return parent::getForm();
+		return parent::getForm($index);
 	}
 }

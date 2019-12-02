@@ -16,6 +16,7 @@ class lib_pea_frm_text
 	public $name            = '';
 	public $fieldName       = '';
 	public $value           = '';
+	public $value_roll      = array();
 	public $defaultValue    = '';
 	public $type            = 'text';
 	public $isRequire       = '';
@@ -23,13 +24,8 @@ class lib_pea_frm_text
 	public $isPlainText     = 0;
 	public $displayFunction = '';
 	public $msg             = '';
-	public $failMsg         = '
-<div class="alert alert-danger" role="alert">
-	<i class="fa fa-times"></i> <b>{title}</b> Must not empty !
-	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-		<span aria-hidden="true">&times;</span>
-	</button>
-</div>';
+	public $failMsg         = array();
+	public $failMsgTpl      = '';
 	
 	function __construct($opt, $name)
 	{
@@ -73,28 +69,30 @@ class lib_pea_frm_text
 		return $this->name;
 	}
 
-	public function setValue($value = '')
-	{
-		$this->value = $value;
-	}
-
-	public function getValue()
-	{
-		if (!$this->value and $this->init == 'add') return $this->defaultValue;
-		return $this->value;
-	}
-
 	public function setDefaultValue($defaultValue = '')
 	{
 		$this->defaultValue = $defaultValue;
 	}
 
-	public function getPostValue()
+	public function setValue($value = '', $index = '')
 	{
-		$value = @$_POST[$this->getName()];
+		if (is_numeric($index)) $this->value_roll[$index] = $value;
+		else $this->value = $value;
+	}
+
+	public function getValue($index = '')
+	{
+		$value = (is_numeric($index)) ? @$this->value_roll[$index] : $this->value;
+		if (!$value and $this->init == 'add') return $this->defaultValue;
+		return $value;
+	}
+
+	public function getPostValue($index = '')
+	{
+		$value = (is_numeric($index)) ? @$_POST[$this->getName()][$index] : @$_POST[$this->getName()];
 		if ($this->getRequire()) {
 			if (!$value) {
-				$this->msg = str_replace('{title}', $this->title, $this->failMsg);
+				$this->msg = str_replace('{msg}', str_replace('{title}', $this->title, @$this->failMsg['require']), $this->failMsgTpl);
 			}
 		}
 		return $value;
@@ -115,9 +113,14 @@ class lib_pea_frm_text
 		return ($this->isRequire) ? 1 : 0;
 	}
 
-	public function setFailMsg($failMsg = '')
+	public function setFailMsg($failMsg = '', $index = '')
 	{
-		if ($failMsg) $this->failMsg = $failMsg;
+		if ($failMsg and $index) $this->failMsg[$index] = $failMsg;
+	}
+
+	public function setFailMsgTpl($failMsgTpl = '')
+	{
+		if ($failMsgTpl) $this->failMsgTpl = $failMsgTpl;
 	}
 
 	public function getFailMsg()
@@ -149,20 +152,23 @@ class lib_pea_frm_text
 		$this->tips = $tips;
 	}
 
-	public function getForm()
+	public function getForm($index = '')
 	{
 		$form = '';
+		if ($this->init == 'roll') $form .= '<td>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and $this->init != 'roll') $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
-			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue()) : $this->getValue();
+			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
 			$form .= '<p>'.$value.'</p>';
 		}else{
-			$name = ($this->isMultiform) ? $this->name.'[]' : $this->name;
-			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getValue().'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->isRequire.'>';
+			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
+			$name = ($this->isMultiform) ? $name.'[]' : $name;
+			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->isRequire.'>';
 		}
 		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
+		if ($this->init == 'roll') $form .= '</td>';
 		return $form;
 	}
 }
