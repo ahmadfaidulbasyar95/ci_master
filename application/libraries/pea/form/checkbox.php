@@ -30,7 +30,7 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 			$form .= '
 <div class="checkbox">
 	<label>
-		<input type="checkbox" name="'.$name.'" value="1" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$value.'>
+		<input type="checkbox" name="'.$name.'" value="1" title="'.$this->caption.'" '.$value.'>
 		'.$this->caption.'
 	</label>
 </div>';

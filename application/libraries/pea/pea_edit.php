@@ -9,24 +9,28 @@ class lib_pea_edit
 	public $db       = '';
 	public $init     = '';
 
-	public $form             = '';
-	public $formBefore       = '';
-	public $formAfter        = '';
-	public $formHeader       = '';
-	public $formHeaderBefore = '';
-	public $formHeaderAfter  = '';
-	public $formBodyBefore   = '';
-	public $formBodyAfter    = '';
-	public $formFooterBefore = '';
-	public $formFooterAfter  = '';
-	public $do_action        = 0;
-	public $insertID         = 0;
-	public $saveTool         = 1;
-	public $saveButtonText   = '';
-	public $saveButtonClass  = 'btn btn-primary';
-	public $msg              = '';
-	public $successMsg       = '';
-	public $failMsg          = array(
+	public $form              = '';
+	public $formBefore        = '';
+	public $formAfter         = '';
+	public $formHeader        = '';
+	public $formHeaderBefore  = '';
+	public $formHeaderAfter   = '';
+	public $formBodyBefore    = '';
+	public $formBodyAfter     = '';
+	public $formFooterBefore  = '';
+	public $formFooterAfter   = '';
+	public $do_action         = 0;
+	public $insertID          = 0;
+	public $saveTool          = 1;
+	public $saveButtonText    = '';
+	public $saveButtonClass   = 'btn btn-primary';
+	public $deleteTool        = 0;
+	public $deleteButtonText  = '<i class="fa fa-trash"></i> Delete';
+	public $deleteButtonClass = 'btn btn-danger';
+	public $msg               = '';
+	public $successMsg        = '';
+	public $successDeleteMsg  = 'Success Delete Data';
+	public $failMsg           = array(
 		'require' => '<b>{title}</b> Must not empty',
 	);
 	public $successMsgTpl    = '
@@ -67,6 +71,22 @@ class lib_pea_edit
 	{
 		if ($text) $this->saveButtonText   = $text;
 		if ($class) $this->saveButtonClass = $class;
+	}
+
+	public function setDeleteTool($deleteTool = 1)
+	{
+		$this->deleteTool = ($deleteTool) ? 1 : 0;
+	}
+
+	public function setDeleteButton($text = '', $class = '')
+	{
+		if ($text) $this->deleteButtonText   = $text;
+		if ($class) $this->deleteButtonClass = $class;
+	}
+
+	public function setSuccessDeleteMsg($successDeleteMsg = '')
+	{
+		if ($successDeleteMsg) $this->successDeleteMsg = $successDeleteMsg;
 	}
 
 	public function setSuccessMsg($successMsg = '')
@@ -153,32 +173,37 @@ class lib_pea_edit
 					}
 				}
 				if ($select) {
-					if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
-						$isValid = 1;
-						$values  = array();
-						foreach ($select as $key => $value) {
-							if (!$this->input->$key->getPlainText()) {
-								$values[$key] = $this->input->$key->getPostValue();
-								$failMsg      = $this->input->$key->getFailMsg();
-								if ($failMsg) {
-									$isValid    = 0;
-									$this->msg .= $failMsg;
-								}
-							} 
-						}
-						if ($isValid) {
-							if ($this->where) {
-								$this->db->update($this->table, $values, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
-							}else{
-								$this->insertID = $this->db->insert($this->table, $values);
+					if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete']) and $this->where) {
+						$this->db->delete($this->table, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
+						$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl);
+					}else{
+						if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
+							$isValid = 1;
+							$values  = array();
+							foreach ($select as $key => $value) {
+								if (!$this->input->$key->getPlainText()) {
+									$values[$key] = $this->input->$key->getPostValue();
+									$failMsg      = $this->input->$key->getFailMsg();
+									if ($failMsg) {
+										$isValid    = 0;
+										$this->msg .= $failMsg;
+									}
+								} 
 							}
-							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl);
+							if ($isValid) {
+								if ($this->where) {
+									$this->db->update($this->table, $values, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
+								}else{
+									$this->insertID = $this->db->insert($this->table, $values);
+								}
+								$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl);
+							}
 						}
-					}
-					if ($this->where) {
-						$values = $this->db->getRow('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where);
-						foreach ($this->input as $key => $value) {
-							if (isset($values[$key])) $value->setValue($values[$key]);
+						if ($this->where) {
+							$values = $this->db->getRow('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where);
+							foreach ($this->input as $key => $value) {
+								if (isset($values[$key])) $value->setValue($values[$key]);
+							}
 						}
 					}
 				}
@@ -189,22 +214,23 @@ class lib_pea_edit
 	public function getForm()
 	{
 		$this->action();
-		$this->form = '<form autocomplete="off" method="POST" action="" enctype="multipart/form-data">';
+		$this->form = '<form class="form_pea_edit" autocomplete="off" method="POST" action="" enctype="multipart/form-data">';
 			$this->form .= $this->formBefore;
 				$this->form .= $this->formHeaderBefore;
 					$this->form .= $this->formHeader;
 				$this->form .= $this->formHeaderAfter;
 				$this->form .= $this->formBodyBefore;
 					$this->form .= $this->msg;
-					if (isset($this->input)) {
+					if (isset($this->input) and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) {
 						foreach ($this->input as $value) {
-							$this->form .= $value->getForm();
+							if ($value->getInputPosition() == 'main') $this->form .= $value->getForm();
 						}
 					}
 				$this->form .= $this->formBodyAfter;
-				if ($this->saveTool) $this->form .= $this->formFooterBefore;
-					if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit'.'" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>';
-				if ($this->saveTool) $this->form .= $this->formFooterAfter;
+				if ($this->saveTool or $this->deleteTool) $this->form .= $this->formFooterBefore;
+					if ($this->saveTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
+					if ($this->deleteTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button>&nbsp;';
+				if ($this->saveTool or $this->deleteTool) $this->form .= $this->formFooterAfter;
 			$this->form .= $this->formAfter;
 		$this->form .= '</form>';
 		return $this->form;

@@ -51,4 +51,13 @@ class _db_model extends CI_Model {
 		return $query;
 	}
 
+	public function delete($table = '', $where = array())
+	{
+		if (is_numeric($where)) {
+			$where = array('id' => $where);
+		}
+		$query = $this->db->delete($table, $where);
+		return $query;
+	}
+
 }

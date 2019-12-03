@@ -26,6 +26,7 @@ class lib_pea_frm_text
 	public $msg             = '';
 	public $failMsg         = array();
 	public $failMsgTpl      = '';
+	public $inputPosition   = 'main';
 	
 	function __construct($opt, $name)
 	{
@@ -111,6 +112,16 @@ class lib_pea_frm_text
 	public function getRequire()
 	{
 		return ($this->isRequire) ? 1 : 0;
+	}
+
+	public function setInputPosition($inputPosition = '')
+	{
+		$this->inputPosition = ($inputPosition) ? $inputPosition : 'main';
+	}
+
+	public function getInputPosition()
+	{
+		return $this->inputPosition;
 	}
 
 	public function setFailMsg($failMsg = '', $index = '')
