@@ -2,16 +2,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 include_once dirname(__FILE__).'/text.php';
-class lib_pea_frm_checkbox extends lib_pea_frm_text
+class lib_pea_frm_textarea extends lib_pea_frm_text
 {	
 	function __construct($opt, $name)
 	{
 		parent::__construct($opt, $name);
-	}
-
-	public function getPostValue($index = '')
-	{
-		return (is_numeric($index)) ? @intval($_POST[$this->getName()][$index]) : @intval($_POST[$this->getName()]);
 	}
 
 	public function getForm($index = '')
@@ -26,14 +21,7 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
-			$value = ($this->getValue($index)) ? 'checked="checked"' : '';
-			$form .= '
-<div class="checkbox">
-	<label>
-		<input type="checkbox" name="'.$name.'" value="1" title="'.$this->caption.'" '.$value.'>
-		'.$this->caption.'
-	</label>
-</div>';
+			$form .= '<textarea name="'.$name.'" class="form-control" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->isRequire.'>'.$this->getValue($index).'</textarea>';
 		}
 		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

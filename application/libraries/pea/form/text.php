@@ -3,11 +3,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class lib_pea_frm_text
 {
-	public $table    = '';
-	public $table_id = '';
-	public $where    = '';
-	public $db       = '';
-	public $init     = '';
+	public $table               = '';
+	public $table_id            = '';
+	public $table_id_value      = '';
+	public $table_id_value_roll = array();
+	public $where               = '';
+	public $db                  = '';
+	public $init                = '';
 
 	public $isMultiform = 0;
 
@@ -86,6 +88,17 @@ class lib_pea_frm_text
 		$value = (is_numeric($index)) ? @$this->value_roll[$index] : $this->value;
 		if (!$value and $this->init == 'add') return $this->defaultValue;
 		return $value;
+	}
+
+	public function setValueID($value = '', $index = '')
+	{
+		if (is_numeric($index)) $this->table_id_value_roll[$index] = $value;
+		else $this->table_id_value = $value;
+	}
+
+	public function getValueID($index = '')
+	{
+		return (is_numeric($index)) ? @$this->table_id_value_roll[$index] : $this->table_id_value;
 	}
 
 	public function getPostValue($index = '')
@@ -171,7 +184,7 @@ class lib_pea_frm_text
 		if (!$this->isMultiform and $this->init != 'roll') $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
 			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
-			$form .= '<p>'.$value.'</p>';
+			$form .= ($this->init == 'roll') ? $value : '<p>'.$value.'</p>';
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;

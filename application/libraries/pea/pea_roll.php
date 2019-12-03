@@ -146,11 +146,14 @@ class lib_pea_roll extends lib_pea_edit
 							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl);
 						}
 					}
-					$select['roll_id'] = $this->table_id.' AS `roll_id`';					
+					$select['roll_id'] = $this->table_id.' AS `roll_id`';
 					$this->rollValues = $this->db->getAll('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where);
 					foreach ($this->rollValues as $value) {
 						foreach ($this->input as $key1 => $value1) {
-							if (isset($value[$key1])) $value1->setValue($value[$key1], $value['roll_id']);
+							if (isset($value[$key1])) {
+								$value1->setValue($value[$key1], $value['roll_id']);
+								$value1->setValueID($value['roll_id'], $value['roll_id']);
+							}
 						}
 					}
 					if ($this->deleteTool) {
@@ -207,6 +210,7 @@ class lib_pea_roll extends lib_pea_edit
 						$this->form .= $this->formTableFooterBefore;
 							$this->form .= $this->formTableItemFooterBefore;
 								$this->form .= '<td colspan="'.$this->rollColumn.'">';
+									if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
 									if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>';
 								$this->form .= '</td>';
 								if ($this->deleteTool) $this->form .= '<td><button type="submit" name="'.$this->table.'_'.$this->init.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button></td>';

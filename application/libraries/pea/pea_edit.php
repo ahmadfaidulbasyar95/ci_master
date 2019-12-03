@@ -9,6 +9,8 @@ class lib_pea_edit
 	public $db       = '';
 	public $init     = '';
 
+	public $returnUrl         = '';
+	public $editValues        = array();
 	public $form              = '';
 	public $formBefore        = '';
 	public $formAfter         = '';
@@ -27,6 +29,9 @@ class lib_pea_edit
 	public $deleteTool        = 0;
 	public $deleteButtonText  = '<i class="fa fa-trash"></i> Delete';
 	public $deleteButtonClass = 'btn btn-danger';
+	public $returnTool        = 1;
+	public $returnButtonText  = '<i class="fa fa-chevron-left"></i>&nbsp;';
+	public $returnButtonClass = 'btn btn-default';
 	public $msg               = '';
 	public $successMsg        = '';
 	public $successDeleteMsg  = 'Success Delete Data';
@@ -60,6 +65,8 @@ class lib_pea_edit
 		
 		$this->setSaveButton(($this->where) ? '<i class="fa fa-save"></i> Save' : '<i class="fa fa-plus"></i> Add'); 
 		$this->setSuccessMsg(($this->where) ? 'Success Save Data' : 'Success Insert New Data'); 
+
+		if (isset($_GET['return'])) $this->returnUrl = $_GET['return'];
 	}
 
 	public function setSaveTool($saveTool = 1)
@@ -71,6 +78,17 @@ class lib_pea_edit
 	{
 		if ($text) $this->saveButtonText   = $text;
 		if ($class) $this->saveButtonClass = $class;
+	}
+
+	public function setReturnTool($returnTool = 1)
+	{
+		$this->returnTool = ($returnTool) ? 1 : 0;
+	}
+
+	public function setReturnButton($text = '', $class = '')
+	{
+		if ($text) $this->returnButtonText   = $text;
+		if ($class) $this->returnButtonClass = $class;
 	}
 
 	public function setDeleteTool($deleteTool = 1)
@@ -200,9 +218,13 @@ class lib_pea_edit
 							}
 						}
 						if ($this->where) {
-							$values = $this->db->getRow('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where);
+							$select['edit_id'] = $this->table_id.' AS `edit_id`';
+							$this->editValues  = $this->db->getRow('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where);
 							foreach ($this->input as $key => $value) {
-								if (isset($values[$key])) $value->setValue($values[$key]);
+								if (isset($this->editValues[$key])) {
+									$value->setValue($this->editValues[$key]);
+									$value->setValueID($this->editValues['edit_id']);
+								}
 							}
 						}
 					}
@@ -227,10 +249,11 @@ class lib_pea_edit
 						}
 					}
 				$this->form .= $this->formBodyAfter;
-				if ($this->saveTool or $this->deleteTool) $this->form .= $this->formFooterBefore;
+				if ($this->saveTool or $this->deleteTool or ($this->returnUrl and $this->returnTool)) $this->form .= $this->formFooterBefore;
+					if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
 					if ($this->saveTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
 					if ($this->deleteTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button>&nbsp;';
-				if ($this->saveTool or $this->deleteTool) $this->form .= $this->formFooterAfter;
+				if ($this->saveTool or $this->deleteTool or ($this->returnUrl and $this->returnTool)) $this->form .= $this->formFooterAfter;
 			$this->form .= $this->formAfter;
 		$this->form .= '</form>';
 		return $this->form;

@@ -44,7 +44,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		if (!$this->isMultiform and $this->init != 'roll') $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
 			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getSelectedValue($index)) : $this->getSelectedValue($index);
-			$form .= '<p>'.$value.'</p>';
+			$form .= ($this->init == 'roll') ? $value : '<p>'.$value.'</p>';
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
