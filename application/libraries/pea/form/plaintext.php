@@ -10,4 +10,11 @@ class lib_pea_frm_plaintext extends lib_pea_frm_text
 		$this->setPlainText();
 		$this->setFieldName();
 	}
+
+	public function getValue($index = '')
+	{
+		$value = (is_numeric($index)) ? @$this->value_roll[$index] : $this->value;
+		if (!$value) return $this->defaultValue;
+		return $value;
+	}
 }
