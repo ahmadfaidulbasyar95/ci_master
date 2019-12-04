@@ -233,6 +233,13 @@ class lib_pea_edit
 		}
 	}
 
+	public function getMsg($reset = 0)
+	{
+		$msg = $this->msg;
+		if ($reset) $this->msg = '';
+		return $msg;
+	}
+
 	public function getForm()
 	{
 		$this->action();
