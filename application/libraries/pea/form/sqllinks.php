@@ -18,7 +18,7 @@ class lib_pea_frm_sqllinks extends lib_pea_frm_text
 	public function setModal()
 	{
 		$this->toolModal .= 'modal_processing';
-		$this->setIncludes('modal', 'js');
+		$this->setIncludes('modal.min', 'js');
 	}
 
 	public function setModalReload()

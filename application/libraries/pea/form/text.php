@@ -10,6 +10,7 @@ class lib_pea_frm_text
 	public $where               = '';
 	public $db                  = '';
 	public $init                = '';
+	public $_url                = '';
 
 	public $isMultiform  = 0;
 	public $includes_js  = array();
@@ -19,6 +20,7 @@ class lib_pea_frm_text
 	public $caption         = '';
 	public $name            = '';
 	public $fieldName       = '';
+	public $fieldNameDb     = '';
 	public $value           = '';
 	public $value_roll      = array();
 	public $defaultValue    = '';
@@ -39,13 +41,15 @@ class lib_pea_frm_text
 		$this->where    = $opt['where'];
 		$this->db       = $opt['db'];
 		$this->init     = $opt['init'];
+		$this->_url     = $opt['_url'];
 
 		$this->isMultiform = isset($opt['isMultiform']) ? 1 : 0;
 		
-		$this->title     = ucwords($name);
-		$this->caption   = ucwords($name);
-		$this->name      = $this->table.'_'.$this->init.'_'.$name;
-		$this->fieldName = $name;
+		$this->title       = ucwords($name);
+		$this->caption     = ucwords($name);
+		$this->name        = $this->table.'_'.$this->init.'_'.$name;
+		$this->fieldName   = $name;
+		$this->fieldNameDb = $name;
 	}
 
 	public function setTitle($title = '')
@@ -198,6 +202,19 @@ class lib_pea_frm_text
 			'js'  => $this->includes_js,
 			'css' => $this->includes_css,
 		);
+	}
+
+	public function getRollTitle($sortConfig = array(), $active = '', $is_desc = '')
+	{
+		$link = $sortConfig['base_url'];
+		$link = preg_replace('~'.$sortConfig['get_name'].'=[a-zA-Z0-9]+&?~', '', $link);
+		$link = preg_replace('~'.$sortConfig['get_name'].'_desc=[a-zA-Z0-9]+&?~', '', $link);
+		$link .= (preg_match('/\?/', $link)) ? (preg_match('~[\?|&]$~', $link)) ? '' : '&' : '?';
+		$link .= $sortConfig['get_name'].'='.urlencode($this->fieldNameDb);
+		$link .= (($active == $this->fieldNameDb and $is_desc) or $active != $this->fieldNameDb) ? '' : '&'.$sortConfig['get_name'].'_desc=1';
+		$title = $this->title;
+		$title .= ($active == $this->fieldNameDb) ? ($is_desc) ? ' <i class="fa fa-sort-alpha-desc"></i>' : ' <i class="fa fa-sort-alpha-asc"></i>' : '' ;
+		return '<a href="'.$link.'">'.$title.'</a>';
 	}
 
 	public function getForm($index = '')

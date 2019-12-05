@@ -7,11 +7,22 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 	function __construct($opt, $name)
 	{
 		parent::__construct($opt, $name);
+		if ($this->init == 'roll') $this->setIncludes('checkall.min', 'js');
 	}
 
 	public function getPostValue($index = '')
 	{
 		return (is_numeric($index)) ? @intval($_POST[$this->getName()][$index]) : @intval($_POST[$this->getName()]);
+	}
+
+	public function getRollTitle($sortConfig = array(), $active = '', $is_desc = '')
+	{
+		return '
+<div class="checkbox checkall" style="float: left;margin: 0;">
+	<label>
+		<input type="checkbox" title="'.$this->title.'">
+	</label>
+</div>'.parent::getRollTitle($sortConfig, $active, $is_desc);
 	}
 
 	public function getForm($index = '')

@@ -24,11 +24,15 @@ class lib_pea_roll extends lib_pea_edit
 	public $rollDeleteCondition       = array();
 	public $rollColumn                = 0;
 	public $rollFoundRows             = 0;
-	public $paginationConfig          = array(
+	public $sortConfig                = array(
+		'get_name' => 'sort',
+		'base_url' => '',
+	);
+	public $paginationConfig = array(
 		'get_name'        => 'page',
 		'base_url'        => '',
 		'num_links'       => 10,
-		'per_page'        => 5,
+		'per_page'        => 15,
 		'prev_msg'        => '<h5 class="pull-left">Result {from} - {to} from total {total}</h5>',
 		'full_tag_open'   => '<ul class="pagination pagination-sm" style="margin:0;">',
 		'first_tag_open'  => '<li>',
@@ -69,6 +73,9 @@ class lib_pea_roll extends lib_pea_edit
 		$this->tableItemHeaderWrap('<tr>','</tr>');
 		$this->tableItemBodyWrap('<tr>','</tr>');
 		$this->tableItemFooterWrap('<tr>','</tr>');
+
+		$this->setSortConfig('base_url', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
+		$this->setPaginationConfig('base_url', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
 	}
 
 	public function setPaginationConfig($name = '', $value = '')
@@ -79,6 +86,22 @@ class lib_pea_roll extends lib_pea_edit
 	public function getPagination()
 	{
 		return lib_pagination($this->rollFoundRows, intval($this->paginationConfig['per_page']), @intval($_GET[$this->paginationConfig['get_name']]), $this->paginationConfig['get_name'], $this->paginationConfig['base_url'], $this->paginationConfig['num_links'], 0 , $this->paginationConfig);
+	}
+
+	public function setSortConfig($name = '', $value = '')
+	{
+		if ($name and $value and isset($this->sortConfig[$name])) $this->sortConfig[$name] = $value; 
+	}
+
+	public function getSort()
+	{
+		$ret = $this->where;
+		if (@$_GET[$this->sortConfig['get_name']]) {
+			$ret = preg_replace('~\s[O|o][R|r][D|d][E|e][R|r]\s[B|b][Y|y]\s.*?$~', '', $ret);
+			$ret .= ' ORDER BY '.addslashes(@$_GET[$this->sortConfig['get_name']]);
+			if (@$_GET[$this->sortConfig['get_name'].'_desc']) $ret .= ' DESC'; 
+		}
+		return $ret;
 	}
 
 	public function tableWrap($before = '', $after = '')
@@ -136,6 +159,16 @@ class lib_pea_roll extends lib_pea_edit
 		}else return '';
 	}
 
+	public function getRollDeleteTitle()
+	{
+		return '
+<div class="checkbox checkall" style="float: left;margin: 0;">
+	<label>
+		<input type="checkbox" title="'.strip_tags($this->deleteButtonText).'">
+	</label>
+</div>'.strip_tags($this->deleteButtonText);
+	}
+
 	public function setRollDeleteCondition($condition = '') // if ({$condition}) -> use {} to get value of field
 	{
 		if ($condition) $this->rollDeleteCondition[] = $condition;
@@ -189,7 +222,7 @@ class lib_pea_roll extends lib_pea_edit
 						}
 					}
 					$select['roll_id']   = $this->table_id.' AS `roll_id`';
-					$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where.' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
+					$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
 					$this->rollFoundRows = intval($this->db->getOne('SELECT FOUND_ROWS()'));
 					foreach ($this->rollValues as $key => $value) {
 						foreach ($this->input as $key1 => $value1) {
@@ -200,6 +233,7 @@ class lib_pea_roll extends lib_pea_edit
 						}
 					}
 					if ($this->deleteTool) {
+						$this->setIncludes(['js' => ['checkall.min']]);
 						foreach ($this->rollValues as $key => $value) {
 							$value_delete = 1;
 							foreach ($this->rollDeleteCondition as $value1) {
@@ -230,11 +264,11 @@ class lib_pea_roll extends lib_pea_edit
 						$this->form .= $this->formTableHeaderBefore;
 							$this->form .= $this->formTableItemHeaderBefore;
 								if (isset($this->input)) {
-									foreach ($this->input as $value1) {
-										if ($value1->getInputPosition() == 'main') $this->form .= '<th>'.$value1->title.'</th>';
+									foreach ($this->input as $key1 => $value1) {
+										if ($value1->getInputPosition() == 'main') $this->form .= '<th>'.$value1->getRollTitle($this->sortConfig, @$_GET[$this->sortConfig['get_name']] , @$_GET[$this->sortConfig['get_name'].'_desc']).'</th>';
 									}
 								}
-								if ($this->deleteTool) $this->form .= '<th>'.strip_tags($this->deleteButtonText).'</th>'; 
+								if ($this->deleteTool) $this->form .= '<th>'.$this->getRollDeleteTitle().'</th>'; 
 							$this->form .= $this->formTableItemHeaderBefore;
 						$this->form .= $this->formTableHeaderAfter;
 						$this->form .= $this->formTableBodyBefore;

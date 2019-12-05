@@ -8,8 +8,8 @@ class lib_pea_edit
 	public $where    = '';
 	public $db       = '';
 	public $init     = '';
+	public $_url     = '';
 
-	public $_url              = '';
 	public $returnUrl         = '';
 	public $editValues        = array();
 	public $form              = '';
@@ -200,6 +200,7 @@ class lib_pea_edit
 				\'where\'    => $this->where,
 				\'db\'       => $this->db,
 				\'init\'     => $this->init,
+				\'_url\'     => $this->_url,
 			), $name);');
 			$this->input->$name->setFailMsgTpl($this->failMsgTpl);
 			foreach ($this->failMsg as $key => $value) {

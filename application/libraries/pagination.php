@@ -37,8 +37,8 @@ function lib_pagination($found, $show, $curr=0, $var='', $link='', $maxpage=12, 
 		if(intval($interval)==0) $interval = intval($maxpage / 2);
 		$link = ($link) ? $link : $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 		if($var) {
-			$link = preg_replace('~[?|&]'.$var.'=[0-9]+~', '', $link);
-			$link .= (preg_match('/\?/', $link)) ? '&' : '?';
+			$link = preg_replace('~'.$var.'=[0-9]+&?~', '', $link);
+			$link .= (preg_match('/\?/', $link)) ? (preg_match('~[\?|&]$~', $link)) ? '' : '&' : '?';
 			$link .= $var.'=';
 		}
 
