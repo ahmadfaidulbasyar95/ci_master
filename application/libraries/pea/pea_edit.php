@@ -9,6 +9,7 @@ class lib_pea_edit
 	public $db       = '';
 	public $init     = '';
 
+	public $_url              = '';
 	public $returnUrl         = '';
 	public $editValues        = array();
 	public $form              = '';
@@ -60,6 +61,7 @@ class lib_pea_edit
 		$this->where    = $opt['where'];
 		$this->db       = $opt['db'];
 		$this->init     = $opt['init'];
+		$this->_url     = $opt['_url'];
 
 		$this->input = new stdClass();
 		
@@ -160,6 +162,34 @@ class lib_pea_edit
 		$this->formFooterAfter  = $after;
 	}
 
+	public function setIncludes($data = array())
+	{
+		foreach (@(array)$data['js'] as $value) {
+			if (!in_array($value, @(array)$GLOBALS['pea_includes']['js'])) $GLOBALS['pea_includes']['js'][] = $value;
+		}
+		foreach (@(array)$data['css'] as $value) {
+			if (!in_array($value, @(array)$GLOBALS['pea_includes']['css'])) $GLOBALS['pea_includes']['css'][] = $value;
+		}
+	}
+
+	public function getIncludes()
+	{
+		$out = '';
+		foreach (@(array)$GLOBALS['pea_includes']['js'] as $key => $value) {
+			if (!in_array($value, @(array)$GLOBALS['pea_includes_load']['js'])) {
+				$GLOBALS['pea_includes_load']['js'][] = $value;
+				$out .= '<script src="'.$this->_url.'application/libraries/pea/includes/'.$value.'.js"></script>';
+			}
+		}
+		foreach (@(array)$GLOBALS['pea_includes']['css'] as $key => $value) {
+			if (!in_array($value, @(array)$GLOBALS['pea_includes_load']['css'])) {
+				$GLOBALS['pea_includes_load']['css'][] = $value;
+				$out .= '<link rel="stylesheet" href="'.$this->_url.'application/libraries/pea/includes/'.$value.'.css">';
+			}
+		}
+		return $out;
+	}
+
 	public function addInput($name, $type)
 	{
 		if (is_file(dirname(__FILE__).'/form/'.$type.'.php')) {
@@ -185,6 +215,7 @@ class lib_pea_edit
 			if (isset($this->input)) {
 				$select = array();
 				foreach ($this->input as $key => $value) {
+					$this->setIncludes($value->getIncludes());
 					if ($value->getFieldName()) {
 						$select[$key] = $value->getFieldName();
 						if ($key != $select[$key]) $select[$key] .= ' AS `'.$key.'`';
@@ -263,6 +294,7 @@ class lib_pea_edit
 				if ($this->saveTool or $this->deleteTool or ($this->returnUrl and $this->returnTool)) $this->form .= $this->formFooterAfter;
 			$this->form .= $this->formAfter;
 		$this->form .= '</form>';
+		$this->form .= $this->getIncludes();
 		return $this->form;
 	}
 }

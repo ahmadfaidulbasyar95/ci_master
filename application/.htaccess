@@ -1,6 +1,18 @@
-<IfModule authz_core_module>
-    Require all denied
-</IfModule>
-<IfModule !authz_core_module>
-    Deny from all
-</IfModule>
+#<IfModule authz_core_module>
+#    Require all denied
+#</IfModule>
+#<IfModule !authz_core_module>
+#    Deny from all
+#</IfModule>
+
+# deny *everything*
+<FilesMatch ".*">
+	Order Allow,Deny
+	Deny from all
+</FilesMatch>
+
+# but now allow just *certain* necessary files:
+<FilesMatch ".*\.(js|JS|css|CSS|jpg|JPG|gif|GIF|png|PNG|swf|SWF|xsl|XSL)$">
+	Order Allow,Deny
+	Allow from all
+</FilesMatch>

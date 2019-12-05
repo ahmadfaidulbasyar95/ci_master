@@ -148,6 +148,7 @@ class lib_pea_roll extends lib_pea_edit
 			if (isset($this->input)) {
 				$select = array();
 				foreach ($this->input as $key => $value) {
+					$this->setIncludes($value->getIncludes());
 					if ($value->getInputPosition() == 'main') $this->rollColumn += 1;
 					if ($value->getFieldName()) {
 						$select[$key] = $value->getFieldName();
@@ -265,6 +266,7 @@ class lib_pea_roll extends lib_pea_edit
 				$this->form .= $this->formBodyAfter;
 			$this->form .= $this->formAfter;
 		$this->form .= '</form>';
+		$this->form .= $this->getIncludes();
 		return $this->form;
 	}
 }

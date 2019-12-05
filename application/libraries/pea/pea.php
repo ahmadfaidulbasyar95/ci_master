@@ -5,11 +5,13 @@ class lib_pea
 {
 	private $table = '';
 	private $db    = '';
+	private $_url  = '';
 
 	function __construct($table, $db)
 	{
 		$this->table = $table;
 		$this->db    = $db;
+		$this->_url  = base_url();
 	}
 
 	public function initEdit($where = '', $table_id = 'id')
@@ -21,6 +23,7 @@ class lib_pea
 			'where'    => $where,
 			'db'       => $this->db,
 			'init'     => ($where) ? 'edit' : 'add',
+			'_url'     => $this->_url,
 		));
 	}
 
@@ -33,6 +36,7 @@ class lib_pea
 			'where'    => $where,
 			'db'       => $this->db,
 			'init'     => 'roll',
+			'_url'     => $this->_url,
 		));
 	}
 }

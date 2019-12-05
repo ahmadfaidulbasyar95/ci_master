@@ -11,7 +11,9 @@ class lib_pea_frm_text
 	public $db                  = '';
 	public $init                = '';
 
-	public $isMultiform = 0;
+	public $isMultiform  = 0;
+	public $includes_js  = array();
+	public $includes_css = array();
 
 	public $title           = '';
 	public $caption         = '';
@@ -174,6 +176,28 @@ class lib_pea_frm_text
 	public function addTip($tips = '')
 	{
 		$this->tips = $tips;
+	}
+
+	public function setIncludes($file = '', $type = '')
+	{
+		if ($file) {
+			switch ($type) {
+				case 'js':
+					$this->includes_js[] = $file;
+					break;
+				case 'css':
+					$this->includes_css[] = $file;
+					break;
+			}
+		}
+	}
+
+	public function getIncludes()
+	{
+		return array(
+			'js'  => $this->includes_js,
+			'css' => $this->includes_css,
+		);
 	}
 
 	public function getForm($index = '')
