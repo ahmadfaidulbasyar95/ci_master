@@ -211,6 +211,14 @@ class lib_pea_edit
 		}else die('PEA::FORM "'.$type.'" tidak tersedia');
 	}
 
+	public function addExtraField($name, $value, $init = '')
+	{
+		if (!$init or ($init and $init == $this->init)) {
+			$this->addInput($name, 'extrafield');
+			$this->input->$name->setDefaultValue($value);
+		}
+	}
+
 	public function onSaveReloadParent()
 	{
 		$this->onSaveReloadParentScript = '

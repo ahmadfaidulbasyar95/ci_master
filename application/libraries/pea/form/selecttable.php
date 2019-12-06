@@ -32,7 +32,14 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 
 	public function getForm($index = '')
 	{
-		foreach ($this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition) as $value) {
+		$option = array();
+		if (isset($GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb])) {
+			$option = $GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb];
+		}else{
+			$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition);
+			$GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb] = $option;
+		}
+		foreach ($option as $value) {
 			$this->addOption($value['key'], $value['value']);
 		}
 		return parent::getForm($index);
