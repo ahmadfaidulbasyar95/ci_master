@@ -37,6 +37,10 @@ class _pea_model extends CI_Model
 
 	public function newForm($table)
 	{
-		return new lib_pea($table, $this->_db_model);
+		return new lib_pea(array(
+			'table' => $table,
+			'db'    => $this->_db_model,
+			'_url'  => base_url(),
+		));
 	}
 }

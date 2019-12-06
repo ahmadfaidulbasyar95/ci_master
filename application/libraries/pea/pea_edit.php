@@ -10,33 +10,35 @@ class lib_pea_edit
 	public $init     = '';
 	public $_url     = '';
 
-	public $returnUrl         = '';
-	public $editValues        = array();
-	public $form              = '';
-	public $formBefore        = '';
-	public $formAfter         = '';
-	public $formHeader        = '';
-	public $formHeaderBefore  = '';
-	public $formHeaderAfter   = '';
-	public $formBodyBefore    = '';
-	public $formBodyAfter     = '';
-	public $formFooterBefore  = '';
-	public $formFooterAfter   = '';
-	public $do_action         = 0;
-	public $insertID          = 0;
-	public $saveTool          = 1;
-	public $saveButtonText    = '';
-	public $saveButtonClass   = 'btn btn-primary';
-	public $deleteTool        = 0;
-	public $deleteButtonText  = '<i class="fa fa-trash"></i> Delete';
-	public $deleteButtonClass = 'btn btn-danger';
-	public $returnTool        = 1;
-	public $returnButtonText  = '<i class="fa fa-chevron-left"></i>&nbsp;';
-	public $returnButtonClass = 'btn btn-default';
-	public $msg               = '';
-	public $successMsg        = '';
-	public $successDeleteMsg  = 'Success Delete Data';
-	public $failMsg           = array(
+	public $returnUrl                  = '';
+	public $editValues                 = array();
+	public $form                       = '';
+	public $formBefore                 = '';
+	public $formAfter                  = '';
+	public $formHeader                 = '';
+	public $formHeaderBefore           = '';
+	public $formHeaderAfter            = '';
+	public $formBodyBefore             = '';
+	public $formBodyAfter              = '';
+	public $formFooterBefore           = '';
+	public $formFooterAfter            = '';
+	public $do_action                  = 0;
+	public $insertID                   = 0;
+	public $saveTool                   = 1;
+	public $saveButtonText             = '';
+	public $saveButtonClass            = 'btn btn-primary';
+	public $deleteTool                 = 0;
+	public $deleteButtonText           = '<i class="fa fa-trash"></i> Delete';
+	public $deleteButtonClass          = 'btn btn-danger';
+	public $returnTool                 = 1;
+	public $returnButtonText           = '<i class="fa fa-chevron-left"></i>&nbsp;';
+	public $returnButtonClass          = 'btn btn-default';
+	public $onSaveReloadParentScript   = '';
+	public $onDeleteReloadParentScript = '';
+	public $msg                        = '';
+	public $successMsg                 = '';
+	public $successDeleteMsg           = 'Success Delete Data';
+	public $failMsg                    = array(
 		'require' => '<b>{title}</b> Must not empty',
 	);
 	public $successMsgTpl    = '
@@ -209,6 +211,30 @@ class lib_pea_edit
 		}else die('PEA::FORM "'.$type.'" tidak tersedia');
 	}
 
+	public function onSaveReloadParent()
+	{
+		$this->onSaveReloadParentScript = '
+<script type="text/javascript">
+	(function() {
+		window.addEventListener(\'load\', function() { 
+			parent.location.href = parent.location.href;
+		}, false);
+	})();
+</script>';
+	}
+
+	public function onDeleteReloadParent()
+	{
+		$this->onDeleteReloadParentScript = '
+<script type="text/javascript">
+	(function() {
+		window.addEventListener(\'load\', function() { 
+			parent.location.href = parent.location.href;
+		}, false);
+	})();
+</script>';
+	}
+
 	public function action()
 	{
 		if (!$this->do_action) {
@@ -225,7 +251,7 @@ class lib_pea_edit
 				if ($select) {
 					if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete']) and $this->where) {
 						$this->db->delete($this->table, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
-						$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl);
+						$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
 					}else{
 						if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
 							$isValid = 1;
@@ -246,7 +272,7 @@ class lib_pea_edit
 								}else{
 									$this->insertID = $this->db->insert($this->table, $values);
 								}
-								$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl);
+								$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
 							}
 						}
 						if ($this->where) {

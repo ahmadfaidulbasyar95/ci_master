@@ -52,8 +52,9 @@ class lib_pea_frm_sqllinks extends lib_pea_frm_text
 	{
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
+		if ($this->init == 'search') $form .= '&nbsp;';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
-		if (!$this->isMultiform and $this->init != 'roll') $form .= '<label>'.$this->title.'</label>';
+		if (!$this->isMultiform and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
 		$value = '<a class="'.$this->toolModal.'" href="'.$this->getLinks($index).'">'.$value.'</a>';
 		$form .= ($this->init == 'roll') ? $value : '<p>'.$value.'</p>';

@@ -195,7 +195,7 @@ class lib_pea_roll extends lib_pea_edit
 								$this->db->delete($this->table, [$this->table_id => $value]);
 							}
 						}
-						$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl);
+						$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
 					}
 					if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
 						$isValid = 1;
@@ -218,7 +218,7 @@ class lib_pea_roll extends lib_pea_edit
 							foreach ($values as $key => $value) {
 								$this->db->update($this->table, $value, [$this->table_id => $key]);
 							}
-							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl);
+							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
 						}
 					}
 					$select['roll_id']   = $this->table_id.' AS `roll_id`';
@@ -253,12 +253,12 @@ class lib_pea_roll extends lib_pea_edit
 	public function getForm()
 	{
 		$this->action();
-		$this->form = '<form class="form_pea_roll" autocomplete="off" method="POST" action="" enctype="multipart/form-data">';
-			$this->form .= $this->formBefore;
-				$this->form .= $this->formHeaderBefore;
-					$this->form .= $this->formHeader;
-				$this->form .= $this->formHeaderAfter;
-				$this->form .= $this->formBodyBefore;
+		$this->form .= $this->formBefore;
+			$this->form .= $this->formHeaderBefore;
+				$this->form .= $this->formHeader;
+			$this->form .= $this->formHeaderAfter;
+			$this->form .= $this->formBodyBefore;
+				$this->form .= '<form class="form_pea_roll" autocomplete="off" method="POST" action="" enctype="multipart/form-data">';
 					$this->form .= $this->msg;
 					$this->form .= $this->formTableBefore;
 						$this->form .= $this->formTableHeaderBefore;
@@ -297,9 +297,9 @@ class lib_pea_roll extends lib_pea_edit
 							$this->form .= $this->formTableItemFooterBefore;
 						$this->form .= $this->formTableFooterAfter;
 					$this->form .= $this->formTableAfter;
-				$this->form .= $this->formBodyAfter;
-			$this->form .= $this->formAfter;
-		$this->form .= '</form>';
+				$this->form .= '</form>';
+			$this->form .= $this->formBodyAfter;
+		$this->form .= $this->formAfter;
 		$this->form .= $this->getIncludes();
 		return $this->form;
 	}

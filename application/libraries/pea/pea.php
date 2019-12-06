@@ -7,11 +7,11 @@ class lib_pea
 	private $db    = '';
 	private $_url  = '';
 
-	function __construct($table, $db)
+	function __construct($opt)
 	{
-		$this->table = $table;
-		$this->db    = $db;
-		$this->_url  = base_url();
+		$this->table = $opt['table'];
+		$this->db    = $opt['db'];
+		$this->_url  = $opt['_url'];
 	}
 
 	public function initEdit($where = '', $table_id = 'id')
@@ -36,6 +36,19 @@ class lib_pea
 			'where'    => $where,
 			'db'       => $this->db,
 			'init'     => 'roll',
+			'_url'     => $this->_url,
+		));
+	}
+
+	public function initSearch($where = '', $table_id = 'id')
+	{
+		include_once dirname(__FILE__).'/pea_search.php';
+		$this->search = new lib_pea_search(array(
+			'table'    => $this->table,
+			'table_id' => $table_id,
+			'where'    => $where,
+			'db'       => $this->db,
+			'init'     => 'search',
 			'_url'     => $this->_url,
 		));
 	}
