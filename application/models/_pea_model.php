@@ -41,6 +41,7 @@ class _pea_model extends CI_Model
 			'table' => $table,
 			'db'    => $this->_db_model,
 			'_url'  => base_url(),
+			'_root' => FCPATH,
 		));
 	}
 }

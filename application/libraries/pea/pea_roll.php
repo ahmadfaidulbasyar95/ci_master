@@ -210,6 +210,9 @@ class lib_pea_roll extends lib_pea_edit
 					foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
 						if (isset($_POST[$this->table.'_'.$this->init.'_delete_item'][$key])) {
 							$this->db->delete($this->table, [$this->table_id => $value]);
+							foreach ($select as $key1 => $value1) {
+								$this->input->$key1->onDeleteSuccess($key);
+							}
 						}
 					}
 					$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
@@ -236,6 +239,17 @@ class lib_pea_roll extends lib_pea_edit
 							$this->db->update($this->table, $value, [$this->table_id => $key]);
 						}
 						$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
+						foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
+							foreach ($select as $key1 => $value1) {
+								$this->input->$key1->onSaveSuccess($key);
+							}
+						}
+					}else{
+						foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
+							foreach ($select as $key1 => $value1) {
+								$this->input->$key1->onSaveFailed($key);
+							}
+						}
 					}
 				}
 				$select['roll_id']   = $this->table_id.' AS `roll_id`';

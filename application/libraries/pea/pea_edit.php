@@ -9,6 +9,7 @@ class lib_pea_edit
 	public $db       = '';
 	public $init     = '';
 	public $_url     = '';
+	public $_root    = '';
 
 	public $returnUrl                  = '';
 	public $editValues                 = array();
@@ -65,6 +66,7 @@ class lib_pea_edit
 		$this->db       = $opt['db'];
 		$this->init     = $opt['init'];
 		$this->_url     = $opt['_url'];
+		$this->_root    = $opt['_root'];
 
 		$this->input = new stdClass();
 		
@@ -209,6 +211,7 @@ class lib_pea_edit
 				\'db\'       => $this->db,
 				\'init\'     => $this->init,
 				\'_url\'     => $this->_url,
+				\'_root\'    => $this->_root,
 			), $name);');
 			$this->input->$name->setFailMsgTpl($this->failMsgTpl);
 			foreach ($this->failMsg as $key => $value) {
@@ -253,6 +256,7 @@ class lib_pea_edit
 	{
 		if (!$this->do_action) {
 			$this->do_action = 1;
+			if ($this->init == 'add') $this->setDeleteTool(0);
 			$select = array();
 			foreach ($this->input as $key => $value) {
 				$this->setIncludes($value->getIncludes());
@@ -276,6 +280,9 @@ class lib_pea_edit
 				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete']) and $this->where) {
 					$this->db->delete($this->table, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
 					$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
+					foreach ($select as $key => $value) {
+						$this->input->$key->onDeleteSuccess();
+					}
 				}else{
 					if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
 						$isValid = 1;
@@ -297,6 +304,13 @@ class lib_pea_edit
 								$this->insertID = $this->db->insert($this->table, $values);
 							}
 							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
+							foreach ($select as $key => $value) {
+								$this->input->$key->onSaveSuccess();
+							}
+						}else{
+							foreach ($select as $key => $value) {
+								$this->input->$key->onSaveFailed();
+							}
 						}
 					}
 					if ($this->where) {

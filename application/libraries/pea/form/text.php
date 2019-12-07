@@ -11,6 +11,7 @@ class lib_pea_frm_text
 	public $db                  = '';
 	public $init                = '';
 	public $_url                = '';
+	public $_root               = '';
 
 	public $isMultiform  = 0;
 	public $includes_js  = array();
@@ -44,6 +45,7 @@ class lib_pea_frm_text
 		$this->db       = $opt['db'];
 		$this->init     = $opt['init'];
 		$this->_url     = $opt['_url'];
+		$this->_root    = $opt['_root'];
 
 		$this->isMultiform = isset($opt['isMultiform']) ? 1 : 0;
 		
@@ -233,6 +235,21 @@ class lib_pea_frm_text
 			'js'  => $this->includes_js,
 			'css' => $this->includes_css,
 		);
+	}
+
+	public function onSaveSuccess($index = '')
+	{
+		
+	}
+
+	public function onSaveFailed($index = '')
+	{
+		
+	}
+
+	public function onDeleteSuccess($index = '')
+	{
+		
 	}
 
 	public function getRollTitle($sortConfig = array(), $active = '', $is_desc = '')

@@ -6,12 +6,14 @@ class lib_pea
 	private $table = '';
 	private $db    = '';
 	private $_url  = '';
+	private $_root = '';
 
 	function __construct($opt)
 	{
 		$this->table = $opt['table'];
 		$this->db    = $opt['db'];
 		$this->_url  = $opt['_url'];
+		$this->_root = $opt['_root'];
 	}
 
 	public function initEdit($where = '', $table_id = 'id')
@@ -24,6 +26,7 @@ class lib_pea
 			'db'       => $this->db,
 			'init'     => ($where) ? 'edit' : 'add',
 			'_url'     => $this->_url,
+			'_root'    => $this->_root,
 		));
 	}
 
@@ -37,6 +40,7 @@ class lib_pea
 			'db'       => $this->db,
 			'init'     => 'roll',
 			'_url'     => $this->_url,
+			'_root'    => $this->_root,
 		));
 	}
 
@@ -50,6 +54,7 @@ class lib_pea
 			'db'       => $this->db,
 			'init'     => 'search',
 			'_url'     => $this->_url,
+			'_root'    => $this->_root,
 		));
 	}
 }
