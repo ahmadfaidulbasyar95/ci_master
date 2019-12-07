@@ -26,7 +26,6 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 	{
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
-		if ($this->init == 'search') $form .= '&nbsp;';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
@@ -35,7 +34,7 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
-			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getDateValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->isRequire.'>';
+			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getDateValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
 		}
 		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

@@ -23,23 +23,21 @@ class lib_pea_search extends lib_pea_edit
 	{
 		if (!$this->do_action) {
 			$this->do_action = 1;
-			if (isset($this->input)) {
-				if (isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
-					$this->values = array();
-					foreach ($this->input as $key => $value) {
-						if (!$value->getPlainText()) {
-							$this->values[$key] = $value->getPostValue();
-						}
-					}
-					$_SESSION['pea_search'][$this->table] = $this->values;
-				}
-				$this->values = @(array)$_SESSION['pea_search'][$this->table];
+			if (isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
+				$this->values = array();
 				foreach ($this->input as $key => $value) {
 					if (!$value->getPlainText()) {
-						$value->setValue(@$this->values[$key]);
-						$value_sql = $value->getSearchSql();
-						if ($value_sql) $this->sql[] = $value_sql;
+						$this->values[$key] = $value->getPostValue();
 					}
+				}
+				$_SESSION['pea_search'][$this->table] = $this->values;
+			}
+			$this->values = @(array)$_SESSION['pea_search'][$this->table];
+			foreach ($this->input as $key => $value) {
+				if (!$value->getPlainText()) {
+					$value->setValue(@$this->values[$key]);
+					$value_sql = $value->getSearchSql();
+					if ($value_sql) $this->sql[] = $value_sql;
 				}
 			}
 		}
@@ -55,10 +53,8 @@ class lib_pea_search extends lib_pea_edit
 					$this->form .= $this->formHeader;
 				$this->form .= $this->formHeaderAfter;
 				$this->form .= $this->formBodyBefore;
-					if (isset($this->input)) {
-						foreach ($this->input as $value) {
-							if ($value->getInputPosition() == 'main') $this->form .= $value->getForm();
-						}
+					foreach ($this->input as $value) {
+						if ($value->getInputPosition() == 'main') $this->form .= $value->getForm();
 					}
 				$this->form .= $this->formBodyAfter;
 				if ($this->saveTool) $this->form .= $this->formFooterBefore;

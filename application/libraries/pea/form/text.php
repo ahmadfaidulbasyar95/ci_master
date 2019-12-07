@@ -33,6 +33,8 @@ class lib_pea_frm_text
 	public $failMsg         = array();
 	public $failMsgTpl      = '';
 	public $inputPosition   = 'main';
+	public $isUniq          = 0;
+	public $attr            = '';
 	
 	function __construct($opt, $name)
 	{
@@ -115,12 +117,31 @@ class lib_pea_frm_text
 				$this->msg = str_replace('{msg}', str_replace('{title}', $this->title, @$this->failMsg['require']), $this->failMsgTpl);
 			}
 		}
+		$isUniq = $this->getUniq();
+		if ($isUniq and !$this->msg) {
+			$vId = $this->getValueID($index);
+			$q   = 'SELECT 1 FROM '.$this->table.' WHERE `'.$this->fieldNameDb.'` = "'.addslashes($value).'"';
+			if ($vId) {
+				$q .= ' AND `'.$this->table_id.'` != "'.addslashes($vId).'"';
+			}
+			if (!is_numeric($isUniq)) {
+				$q .= ' AND '.$isUniq;
+			}
+			if ($this->db->getOne($q)) {
+				$this->msg = str_replace('{msg}', str_replace('{title}', $this->title, @$this->failMsg['uniq']), $this->failMsgTpl);
+			}
+		}
 		return $value;
 	}
 
 	public function setType($type = '')
 	{
 		$this->type = $type;
+	}
+
+	public function setAttr($attr = '')
+	{
+		$this->attr = $attr;
 	}
 
 	public function setRequire($isRequire = 1)
@@ -131,6 +152,16 @@ class lib_pea_frm_text
 	public function getRequire()
 	{
 		return ($this->isRequire) ? 1 : 0;
+	}
+
+	public function setUniq($isUniq = 1)
+	{
+		$this->isUniq = ($isUniq) ? $isUniq : 0;
+	}
+
+	public function getUniq()
+	{
+		return $this->isUniq;
 	}
 
 	public function setInputPosition($inputPosition = '')
@@ -207,7 +238,7 @@ class lib_pea_frm_text
 	public function getRollTitle($sortConfig = array(), $active = '', $is_desc = '')
 	{
 		$link = $sortConfig['base_url'];
-		$link = preg_replace('~'.$sortConfig['get_name'].'=[a-zA-Z0-9]+&?~', '', $link);
+		$link = preg_replace('~'.$sortConfig['get_name'].'=[a-zA-Z0-9_]+&?~', '', $link);
 		$link = preg_replace('~'.$sortConfig['get_name'].'_desc=[a-zA-Z0-9]+&?~', '', $link);
 		$link .= (preg_match('/\?/', $link)) ? (preg_match('~[\?|&]$~', $link)) ? '' : '&' : '?';
 		$link .= $sortConfig['get_name'].'='.urlencode($this->fieldNameDb);
@@ -220,14 +251,13 @@ class lib_pea_frm_text
 	public function getSearchSql()
 	{
 		$value = $this->getValue();
-		return ($value === '') ? '' : '`'.$this->fieldNameDb.'` = "'.addslashes($value).'"';
+		return (!$value and $value != '0') ? '' : '`'.$this->fieldNameDb.'` = "'.addslashes($value).'"';
 	}
 
 	public function getForm($index = '')
 	{
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
-		if ($this->init == 'search') $form .= '&nbsp;';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
@@ -236,7 +266,7 @@ class lib_pea_frm_text
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
-			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->isRequire.'>';
+			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
 		}
 		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

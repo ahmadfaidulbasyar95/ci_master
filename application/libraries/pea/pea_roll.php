@@ -97,9 +97,15 @@ class lib_pea_roll extends lib_pea_edit
 	{
 		$ret = $this->where;
 		if (@$_GET[$this->sortConfig['get_name']]) {
-			$ret = preg_replace('~\s[O|o][R|r][D|d][E|e][R|r]\s[B|b][Y|y]\s.*?$~', '', $ret);
-			$ret .= ' ORDER BY '.addslashes(@$_GET[$this->sortConfig['get_name']]);
-			if (@$_GET[$this->sortConfig['get_name'].'_desc']) $ret .= ' DESC'; 
+			foreach ($this->input as $key => $value) {
+				if ($value->getFieldName()) {
+					if ($_GET[$this->sortConfig['get_name']] == $key) {
+						$ret = preg_replace('~\s[O|o][R|r][D|d][E|e][R|r]\s[B|b][Y|y]\s.*?$~', '', $ret);
+						$ret .= ' ORDER BY '.addslashes(@$_GET[$this->sortConfig['get_name']]);
+						if (@$_GET[$this->sortConfig['get_name'].'_desc']) $ret .= ' DESC'; 
+					}
+				}
+			}
 		}
 		return $ret;
 	}
@@ -178,72 +184,82 @@ class lib_pea_roll extends lib_pea_edit
 	{
 		if (!$this->do_action) {
 			$this->do_action = 1;
-			if (isset($this->input)) {
-				$select = array();
-				foreach ($this->input as $key => $value) {
-					$this->setIncludes($value->getIncludes());
-					if ($value->getInputPosition() == 'main') $this->rollColumn += 1;
-					if ($value->getFieldName()) {
-						$select[$key] = $value->getFieldName();
-						if ($key != $select[$key]) $select[$key] .= ' AS `'.$key.'`';
+			$select = array();
+			foreach ($this->input as $key => $value) {
+				$this->setIncludes($value->getIncludes());
+				if ($value->getInputPosition() == 'main') $this->rollColumn += 1;
+				if ($value->getFieldName()) {
+					$select[$key] = $value->getFieldName();
+					if ($key != $select[$key]) $select[$key] .= ' AS `'.$key.'`';
+				}
+			}
+			if ($select) {
+				$select['roll_id']   = $this->table_id.' AS `roll_id`';
+				$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
+				$this->rollFoundRows = intval($this->db->getOne('SELECT FOUND_ROWS()'));
+				foreach ($this->rollValues as $key => $value) {
+					foreach ($this->input as $key1 => $value1) {
+						if (isset($value[$key1])) {
+							$value1->setValue($value[$key1], $key);
+							$value1->setValueID($value['roll_id'], $key);
+						}
 					}
 				}
-				if ($select) {
-					if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete'])) {
-						foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
-							if (isset($_POST[$this->table.'_'.$this->init.'_delete_item'][$key])) {
-								$this->db->delete($this->table, [$this->table_id => $value]);
-							}
-						}
-						$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
-					}
-					if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
-						$isValid = 1;
-						$values  = array();
-						foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
-							foreach ($select as $key1 => $value1) {
-								if ($isValid) {
-									if (!$this->input->$key1->getPlainText()) {
-										$values[$value][$key1] = $this->input->$key1->getPostValue($key);
-										$failMsg              = $this->input->$key1->getFailMsg();
-										if ($failMsg) {
-											$isValid    = 0;
-											$this->msg .= $failMsg;
-										}
-									} 
-								}
-							}
-						}
-						if ($isValid) {
-							foreach ($values as $key => $value) {
-								$this->db->update($this->table, $value, [$this->table_id => $key]);
-							}
-							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
+				unset($select['roll_id']);
+				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete'])) {
+					foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
+						if (isset($_POST[$this->table.'_'.$this->init.'_delete_item'][$key])) {
+							$this->db->delete($this->table, [$this->table_id => $value]);
 						}
 					}
-					$select['roll_id']   = $this->table_id.' AS `roll_id`';
-					$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
-					$this->rollFoundRows = intval($this->db->getOne('SELECT FOUND_ROWS()'));
+					$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
+				}
+				if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
+					$isValid = 1;
+					$values  = array();
+					foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
+						foreach ($select as $key1 => $value1) {
+							if ($isValid) {
+								if (!$this->input->$key1->getPlainText()) {
+									$values[$value][$key1] = $this->input->$key1->getPostValue($key);
+									$failMsg              = $this->input->$key1->getFailMsg();
+									if ($failMsg) {
+										$isValid    = 0;
+										$this->msg .= $failMsg;
+									}
+								} 
+							}
+						}
+					}
+					if ($isValid) {
+						foreach ($values as $key => $value) {
+							$this->db->update($this->table, $value, [$this->table_id => $key]);
+						}
+						$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
+					}
+				}
+				$select['roll_id']   = $this->table_id.' AS `roll_id`';
+				$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
+				$this->rollFoundRows = intval($this->db->getOne('SELECT FOUND_ROWS()'));
+				foreach ($this->rollValues as $key => $value) {
+					foreach ($this->input as $key1 => $value1) {
+						if (isset($value[$key1])) {
+							$value1->setValue($value[$key1], $key);
+							$value1->setValueID($value['roll_id'], $key);
+						}
+					}
+				}
+				if ($this->deleteTool) {
+					$this->setIncludes(['js' => ['checkall.min']]);
 					foreach ($this->rollValues as $key => $value) {
-						foreach ($this->input as $key1 => $value1) {
-							if (isset($value[$key1])) {
-								$value1->setValue($value[$key1], $key);
-								$value1->setValueID($value['roll_id'], $key);
+						$value_delete = 1;
+						foreach ($this->rollDeleteCondition as $value1) {
+							foreach ($value as $key2 => $value2) {
+								$value1 = str_replace('{'.$key2.'}', $value2, $value1);
 							}
+							eval('if ('.$value1.') $value_delete = 0;');
 						}
-					}
-					if ($this->deleteTool) {
-						$this->setIncludes(['js' => ['checkall.min']]);
-						foreach ($this->rollValues as $key => $value) {
-							$value_delete = 1;
-							foreach ($this->rollDeleteCondition as $value1) {
-								foreach ($value as $key2 => $value2) {
-									$value1 = str_replace('{'.$key2.'}', $value2, $value1);
-								}
-								eval('if ('.$value1.') $value_delete = 0;');
-							}
-							if ($value_delete) $this->rollDeleteInput[] = $key;
-						}
+						if ($value_delete) $this->rollDeleteInput[] = $key;
 					}
 				}
 			}
@@ -263,10 +279,8 @@ class lib_pea_roll extends lib_pea_edit
 					$this->form .= $this->formTableBefore;
 						$this->form .= $this->formTableHeaderBefore;
 							$this->form .= $this->formTableItemHeaderBefore;
-								if (isset($this->input)) {
-									foreach ($this->input as $key1 => $value1) {
-										if ($value1->getInputPosition() == 'main') $this->form .= '<th>'.$value1->getRollTitle($this->sortConfig, @$_GET[$this->sortConfig['get_name']] , @$_GET[$this->sortConfig['get_name'].'_desc']).'</th>';
-									}
+								foreach ($this->input as $key1 => $value1) {
+									if ($value1->getInputPosition() == 'main') $this->form .= '<th>'.$value1->getRollTitle($this->sortConfig, @$_GET[$this->sortConfig['get_name']] , @$_GET[$this->sortConfig['get_name'].'_desc']).'</th>';
 								}
 								if ($this->deleteTool) $this->form .= '<th>'.$this->getRollDeleteTitle().'</th>'; 
 							$this->form .= $this->formTableItemHeaderBefore;
@@ -274,13 +288,11 @@ class lib_pea_roll extends lib_pea_edit
 						$this->form .= $this->formTableBodyBefore;
 							foreach ($this->rollValues as $key => $value) {
 								$this->form .= $this->formTableItemBodyBefore;
-								if (isset($this->input)) {
-									$this->form .= '<input type="hidden" name="'.$this->table.'_'.$this->init.'_ids['.$key.']" value="'.$value['roll_id'].'">';
-									foreach ($this->input as $value1) {
-										if ($value1->getInputPosition() == 'main') $this->form .= $value1->getForm($key);
-									}
-									if ($this->deleteTool) $this->form .= '<td>'.$this->getRollDeleteInput($key).'</td>'; 
+								$this->form .= '<input type="hidden" name="'.$this->table.'_'.$this->init.'_ids['.$key.']" value="'.$value['roll_id'].'">';
+								foreach ($this->input as $value1) {
+									if ($value1->getInputPosition() == 'main') $this->form .= $value1->getForm($key);
 								}
+								if ($this->deleteTool) $this->form .= '<td>'.$this->getRollDeleteInput($key).'</td>'; 
 								$this->form .= $this->formTableItemBodyAfter;
 							}
 						$this->form .= $this->formTableBodyAfter;

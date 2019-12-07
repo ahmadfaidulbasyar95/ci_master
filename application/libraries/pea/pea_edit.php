@@ -40,6 +40,7 @@ class lib_pea_edit
 	public $successDeleteMsg           = 'Success Delete Data';
 	public $failMsg                    = array(
 		'require' => '<b>{title}</b> Must not empty',
+		'uniq'    => '<b>{title}</b> Already used',
 	);
 	public $successMsgTpl    = '
 <div class="alert alert-success" role="alert">
@@ -123,7 +124,12 @@ class lib_pea_edit
 
 	public function setFailMsg($failMsg = '', $index = '')
 	{
-		if ($failMsg and $index) $this->failMsg[$index] = $failMsg;
+		if ($failMsg and $index) {
+			$this->failMsg[$index] = $failMsg;
+			foreach ($this->input as $value) {
+				$value->setFailMsg($failMsg, $index);
+			}
+		}
 	}
 
 	public function setFailMsgTpl($failMsgTpl = '')
@@ -247,50 +253,59 @@ class lib_pea_edit
 	{
 		if (!$this->do_action) {
 			$this->do_action = 1;
-			if (isset($this->input)) {
-				$select = array();
-				foreach ($this->input as $key => $value) {
-					$this->setIncludes($value->getIncludes());
-					if ($value->getFieldName()) {
-						$select[$key] = $value->getFieldName();
-						if ($key != $select[$key]) $select[$key] .= ' AS `'.$key.'`';
-					}
+			$select = array();
+			foreach ($this->input as $key => $value) {
+				$this->setIncludes($value->getIncludes());
+				if ($value->getFieldName()) {
+					$select[$key] = $value->getFieldName();
+					if ($key != $select[$key]) $select[$key] .= ' AS `'.$key.'`';
 				}
-				if ($select) {
-					if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete']) and $this->where) {
-						$this->db->delete($this->table, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
-						$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
-					}else{
-						if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
-							$isValid = 1;
-							$values  = array();
-							foreach ($select as $key => $value) {
-								if (!$this->input->$key->getPlainText()) {
-									$values[$key] = $this->input->$key->getPostValue();
-									$failMsg      = $this->input->$key->getFailMsg();
-									if ($failMsg) {
-										$isValid    = 0;
-										$this->msg .= $failMsg;
-									}
-								} 
-							}
-							if ($isValid) {
-								if ($this->where) {
-									$this->db->update($this->table, $values, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
-								}else{
-									$this->insertID = $this->db->insert($this->table, $values);
-								}
-								$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
-							}
+			}
+			if ($select) {
+				if ($this->where) {
+					$select['edit_id'] = $this->table_id.' AS `edit_id`';
+					$this->editValues  = $this->db->getRow('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where);
+					foreach ($this->input as $key => $value) {
+						if (isset($this->editValues[$key])) {
+							$value->setValue($this->editValues[$key]);
+							$value->setValueID($this->editValues['edit_id']);
 						}
-						if ($this->where) {
-							$select['edit_id'] = $this->table_id.' AS `edit_id`';
-							$this->editValues  = $this->db->getRow('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where);
-							foreach ($this->input as $key => $value) {
-								if (isset($this->editValues[$key])) {
-									$value->setValue($this->editValues[$key]);
-									$value->setValueID($this->editValues['edit_id']);
+					}
+					unset($select['edit_id']);
+				}
+				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete']) and $this->where) {
+					$this->db->delete($this->table, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
+					$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
+				}else{
+					if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
+						$isValid = 1;
+						$values  = array();
+						foreach ($select as $key => $value) {
+							if (!$this->input->$key->getPlainText()) {
+								$values[$key] = $this->input->$key->getPostValue();
+								$failMsg      = $this->input->$key->getFailMsg();
+								if ($failMsg) {
+									$isValid    = 0;
+									$this->msg .= $failMsg;
 								}
+							} 
+						}
+						if ($isValid) {
+							if ($this->where) {
+								$this->db->update($this->table, $values, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
+							}else{
+								$this->insertID = $this->db->insert($this->table, $values);
+							}
+							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
+						}
+					}
+					if ($this->where) {
+						$select['edit_id'] = $this->table_id.' AS `edit_id`';
+						$this->editValues  = $this->db->getRow('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->where);
+						foreach ($this->input as $key => $value) {
+							if (isset($this->editValues[$key])) {
+								$value->setValue($this->editValues[$key]);
+								$value->setValueID($this->editValues['edit_id']);
 							}
 						}
 					}
@@ -316,7 +331,7 @@ class lib_pea_edit
 				$this->form .= $this->formHeaderAfter;
 				$this->form .= $this->formBodyBefore;
 					$this->form .= $this->msg;
-					if (isset($this->input) and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) {
+					if (!isset($_POST[$this->table.'_'.$this->init.'_delete'])) {
 						foreach ($this->input as $value) {
 							if ($value->getInputPosition() == 'main') $this->form .= $value->getForm();
 						}

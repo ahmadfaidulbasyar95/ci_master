@@ -21,7 +21,7 @@ class lib_pea_frm_keyword extends lib_pea_frm_text
 	public function getSearchSql()
 	{
 		$value = $this->getValue();
-		if ($value === '') return '';
+		if (!$value and $value != '0') return '';
 		else {
 			$sql = array();
 			foreach ($this->searchField as $field) {

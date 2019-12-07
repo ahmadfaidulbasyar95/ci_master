@@ -29,7 +29,6 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 	{
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
-		if ($this->init == 'search') $form .= '&nbsp;';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
@@ -42,7 +41,7 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 			$form .= '
 <div class="checkbox">
 	<label>
-		<input type="checkbox" name="'.$name.'" value="1" title="'.$this->caption.'" '.$value.'>
+		<input type="checkbox" name="'.$name.'" value="1" title="'.$this->caption.'" '.$this->attr.' '.$value.'>
 		'.$this->caption.'
 	</label>
 </div>';

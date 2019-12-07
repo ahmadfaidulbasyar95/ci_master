@@ -40,7 +40,6 @@ class lib_pea_frm_select extends lib_pea_frm_text
 	{
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
-		if ($this->init == 'search') $form .= '&nbsp;';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
@@ -50,7 +49,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
 			$form .= '
-<select name="'.$name.'" class="form-control" title="'.$this->caption.'" '.$this->isRequire.'>
+<select name="'.$name.'" class="form-control" title="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>
 	'.$this->getOption($index).'
 </select>';
 		}
