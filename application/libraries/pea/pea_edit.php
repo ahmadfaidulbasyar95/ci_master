@@ -36,6 +36,8 @@ class lib_pea_edit
 	public $returnButtonClass          = 'btn btn-default';
 	public $onSaveReloadParentScript   = '';
 	public $onDeleteReloadParentScript = '';
+	public $onSaveFunction             = '';
+	public $onDeleteFunction           = '';
 	public $msg                        = '';
 	public $successMsg                 = '';
 	public $successDeleteMsg           = 'Success Delete Data';
@@ -252,6 +254,24 @@ class lib_pea_edit
 </script>';
 	}
 
+	public function onSave($onSaveFunction = '')
+	{
+		if ($onSaveFunction) {
+			if (function_exists($onSaveFunction)) {
+				$this->onSaveFunction = $onSaveFunction;
+			}
+		}
+	}
+
+	public function onDelete($onDeleteFunction = '')
+	{
+		if ($onDeleteFunction) {
+			if (function_exists($onDeleteFunction)) {
+				$this->onDeleteFunction = $onDeleteFunction;
+			}
+		}
+	}
+
 	public function action()
 	{
 		if (!$this->do_action) {
@@ -278,6 +298,7 @@ class lib_pea_edit
 					unset($select['edit_id']);
 				}
 				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete']) and $this->where) {
+					if ($this->onDeleteFunction and @$this->editValues['edit_id']) call_user_func($this->onDeleteFunction, @$this->editValues['edit_id'], $this);
 					$this->db->delete($this->table, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
 					$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
 					foreach ($select as $key => $value) {
@@ -301,12 +322,13 @@ class lib_pea_edit
 							if ($this->where) {
 								$this->db->update($this->table, $values, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
 							}else{
-								$this->insertID = $this->db->insert($this->table, $values);
+								$this->editValues['edit_id'] = $this->db->insert($this->table, $values);
 							}
 							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
 							foreach ($select as $key => $value) {
 								$this->input->$key->onSaveSuccess();
 							}
+							if ($this->onSaveFunction and @$this->editValues['edit_id']) call_user_func($this->onSaveFunction, @$this->editValues['edit_id'], $this);
 						}else{
 							foreach ($select as $key => $value) {
 								$this->input->$key->onSaveFailed();

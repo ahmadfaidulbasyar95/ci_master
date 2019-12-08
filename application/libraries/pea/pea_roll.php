@@ -101,7 +101,7 @@ class lib_pea_roll extends lib_pea_edit
 				if ($value->getFieldName()) {
 					if ($_GET[$this->sortConfig['get_name']] == $key) {
 						$ret = preg_replace('~\s[O|o][R|r][D|d][E|e][R|r]\s[B|b][Y|y]\s.*?$~', '', $ret);
-						$ret .= ' ORDER BY '.addslashes(@$_GET[$this->sortConfig['get_name']]);
+						$ret .= ' ORDER BY '.addslashes($value->getFieldName());
 						if (@$_GET[$this->sortConfig['get_name'].'_desc']) $ret .= ' DESC'; 
 					}
 				}
@@ -209,6 +209,7 @@ class lib_pea_roll extends lib_pea_edit
 				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete'])) {
 					foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
 						if (isset($_POST[$this->table.'_'.$this->init.'_delete_item'][$key])) {
+							if ($this->onDeleteFunction) call_user_func($this->onDeleteFunction, $value, $this);
 							$this->db->delete($this->table, [$this->table_id => $value]);
 							foreach ($select as $key1 => $value1) {
 								$this->input->$key1->onDeleteSuccess($key);
@@ -243,6 +244,9 @@ class lib_pea_roll extends lib_pea_edit
 							foreach ($select as $key1 => $value1) {
 								$this->input->$key1->onSaveSuccess($key);
 							}
+						}
+						foreach ($values as $key => $value) {
+							if ($this->onSaveFunction) call_user_func($this->onSaveFunction, $key, $this);
 						}
 					}else{
 						foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {

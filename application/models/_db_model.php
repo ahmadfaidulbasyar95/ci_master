@@ -39,7 +39,7 @@ class _db_model extends CI_Model {
 	public function insert($table = '', $data = array())
 	{
 		$query = (isset($data[0])) ? $this->db->insert_batch($table, $data): $this->db->insert($table, $data);
-		return $query;
+		return ($query) ? $this->db->insert_id() : $query;
 	}
 
 	public function update($table = '', $data = array(), $where = array())
