@@ -101,7 +101,7 @@ class lib_pea_roll extends lib_pea_edit
 				if ($value->getFieldName()) {
 					if ($_GET[$this->sortConfig['get_name']] == $key) {
 						$ret = preg_replace('~\s[O|o][R|r][D|d][E|e][R|r]\s[B|b][Y|y]\s.*?$~', '', $ret);
-						$ret .= ' ORDER BY '.addslashes($value->getFieldName());
+						$ret .= ' ORDER BY '.$value->getFieldName();
 						if (@$_GET[$this->sortConfig['get_name'].'_desc']) $ret .= ' DESC'; 
 					}
 				}
