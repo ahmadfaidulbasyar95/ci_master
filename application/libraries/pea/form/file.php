@@ -2,21 +2,27 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 include_once dirname(__FILE__).'/../../../../system/libraries/Upload.php';
+include_once dirname(__FILE__).'/../../../../system/libraries/Image_lib.php';
 include_once dirname(__FILE__).'/../../path.php';
 include_once dirname(__FILE__).'/text.php';
 class lib_pea_frm_file extends lib_pea_frm_text
 {	
-	public $fileFolder     = '';
-	public $fileExtAllowed = array('jpg', 'jpeg', 'gif', 'png', 'bmp');
-	public $newValue       = '';
-	public $newValue_roll  = array();
-	public $oldValue       = '';
-	public $oldValue_roll  = array();
-	public $toolModal      = '';
+	public $fileFolder          = '';
+	public $fileExtAllowed      = array('jpg', 'jpeg', 'gif', 'png', 'bmp');
+	public $fileImgSize         = 0;
+	public $fileImgSizeThumb    = 0;
+	public $fileImgSizeThumbPre = 0;
+	public $newValue            = '';
+	public $newValue_roll       = array();
+	public $oldValue            = '';
+	public $oldValue_roll       = array();
+	public $toolModal           = '';
 
 	function __construct($opt, $name)
 	{
 		parent::__construct($opt, $name);
+		$this->upload    = new CI_Upload();
+		$this->image_lib = new CI_Image_lib();
 	}
 
 	public function setNewValue($newValue = '', $index = '')
@@ -62,6 +68,17 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if ($fileExtAllowed and is_array($fileExtAllowed)) $this->fileExtAllowed = $fileExtAllowed;
 	}
 
+	public function setResize($fileImgSize = 0)
+	{
+		$this->fileImgSize = intval($fileImgSize);
+	}
+
+	public function setThumbnail($fileImgSizeThumb = 0, $fileImgSizeThumbPre = 'thumb')
+	{
+		$this->fileImgSizeThumb    = intval($fileImgSizeThumb);
+		$this->fileImgSizeThumbPre = $fileImgSizeThumbPre;
+	}
+
 	public function setImageClick()
 	{
 		$this->toolModal .= 'modal_processing modal_large';
@@ -75,7 +92,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if (@$_FILES[$upload_name]['name']) {
 			if ($this->fileFolder) $config['upload_path']       = $this->fileFolder;
 			if ($this->fileExtAllowed) $config['allowed_types'] = implode('|', $this->fileExtAllowed);
-			$this->upload = new CI_Upload($config);
+			$this->upload->initialize($config);
 			if ($this->upload->do_upload($upload_name)) {
 				$this->setNewValue($this->upload->data()['file_name'], $index);
 				$this->setOldValue($this->getValue($index), $index);
@@ -97,8 +114,31 @@ class lib_pea_frm_file extends lib_pea_frm_text
 	{
 		$newValue = $this->getNewValue($index);
 		if ($newValue) {
+			if ($this->fileImgSize) {
+				$config                   = array();
+				$config['source_image']   = $this->fileFolder.$newValue;
+				$config['width']          = $this->fileImgSize;
+				$config['height']         = $this->fileImgSize;
+				$config['maintain_ratio'] = TRUE;
+				$this->image_lib->initialize($config);
+				$this->image_lib->resize();
+				if ($this->fileImgSizeThumb) {
+					if (preg_match('~\/$~', $this->fileImgSizeThumbPre)) {
+						lib_path_create($this->fileFolder.$this->fileImgSizeThumbPre);
+					}
+					copy($this->fileFolder.$newValue, $this->fileFolder.$this->fileImgSizeThumbPre.$newValue);
+					$config['source_image']   = $this->fileFolder.$this->fileImgSizeThumbPre.$newValue;
+					$config['width']          = $this->fileImgSizeThumb;
+					$config['height']         = $this->fileImgSizeThumb;
+					$this->image_lib->initialize($config);
+					$this->image_lib->resize();
+				}
+			}
 			$oldValue = $this->getOldValue($index);
 			if (is_file($this->fileFolder.$oldValue)) unlink($this->fileFolder.$oldValue);
+			if ($this->fileImgSizeThumb) {
+				if (is_file($this->fileFolder.$this->fileImgSizeThumbPre.$oldValue)) unlink($this->fileFolder.$this->fileImgSizeThumbPre.$oldValue);
+			}
 		}
 	}
 
@@ -112,6 +152,9 @@ class lib_pea_frm_file extends lib_pea_frm_text
 	{
 		$value = $this->getValue($index);
 		if (is_file($this->fileFolder.$value)) unlink($this->fileFolder.$value);
+		if ($this->fileImgSizeThumb) {
+			if (is_file($this->fileFolder.$this->fileImgSizeThumbPre.$value)) unlink($this->fileFolder.$this->fileImgSizeThumbPre.$value);
+		}
 	}
 
 	public function getForm($index = '')
@@ -120,7 +163,8 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if ($this->init == 'roll') $form .= '<td>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
-		$value      = $this->getValue($index);
+		$value = $this->getValue($index);
+		if ($value) $this->isRequire = '';
 		$value_text = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
 		if ($value and is_file($this->fileFolder.$value)) {
 			$form .= '<a class="'.$this->toolModal.'" href="'.str_replace($this->_root, $this->_url, $this->fileFolder).$value.'" target="_BLANK"><p>'.$value_text.'</p></a>';
@@ -128,7 +172,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if (!$this->isPlainText) {
 			$name = (is_numeric($index)) ? $this->name.'__'.$index : $this->name;
 			// $name = ($this->isMultiform) ? $name.'[]' : $name;
-			$form .= '<input type="file" name="'.$name.'" class="form-control" value="" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.'>';
+			$form .= '<input type="file" name="'.$name.'" class="form-control" value="" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
 		}
 		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
