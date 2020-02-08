@@ -29,7 +29,7 @@ class lib_pea_frm_textarea extends lib_pea_frm_text
 			$form .= ($this->init == 'roll') ? $value : '<p>'.$value.'</p>';
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
-			$name = ($this->isMultiform) ? $name.'[]' : $name;
+			// $name = ($this->isMultiform) ? $name.'[]' : $name;
 			$form .= '<textarea name="'.$name.'" class="form-control'.str_replace('{name}', $this->name.'_'.$index, $this->toolHtmlEditor).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>'.$this->getValue($index).'</textarea>';
 		}
 		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';

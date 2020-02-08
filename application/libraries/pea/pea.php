@@ -57,4 +57,18 @@ class lib_pea
 			'_root'    => $this->_root,
 		));
 	}
+
+	public function initImport($where = '', $table_id = 'id')
+	{
+		include_once dirname(__FILE__).'/pea_import.php';
+		$this->import = new lib_pea_import(array(
+			'table'    => $this->table,
+			'table_id' => $table_id,
+			'where'    => $where,
+			'db'       => $this->db,
+			'init'     => 'import',
+			'_url'     => $this->_url,
+			'_root'    => $this->_root,
+		));
+	}
 }

@@ -58,7 +58,7 @@ class lib_pea_search extends lib_pea_edit
 					}
 				$this->form .= $this->formBodyAfter;
 				if ($this->saveTool) $this->form .= $this->formFooterBefore;
-					if ($this->saveTool) $this->form .= '&nbsp;<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>';
+					if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>';
 				if ($this->saveTool) $this->form .= $this->formFooterAfter;
 			$this->form .= $this->formAfter;
 		$this->form .= '</form>';
