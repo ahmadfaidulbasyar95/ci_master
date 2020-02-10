@@ -17,25 +17,27 @@ class lib_pea_frm_text
 	public $includes_js  = array();
 	public $includes_css = array();
 
-	public $title           = '';
-	public $caption         = '';
-	public $name            = '';
-	public $fieldName       = '';
-	public $fieldNameDb     = '';
-	public $value           = '';
-	public $value_roll      = array();
-	public $defaultValue    = '';
-	public $type            = 'text';
-	public $isRequire       = '';
-	public $tips            = '';
-	public $isPlainText     = 0;
-	public $displayFunction = '';
-	public $msg             = '';
-	public $failMsg         = array();
-	public $failMsgTpl      = '';
-	public $inputPosition   = 'main';
-	public $isUniq          = 0;
-	public $attr            = '';
+	public $title             = '';
+	public $caption           = '';
+	public $name              = '';
+	public $fieldName         = '';
+	public $fieldNameDb       = '';
+	public $value             = '';
+	public $value_roll        = array();
+	public $defaultValue      = '';
+	public $type              = 'text';
+	public $isRequire         = '';
+	public $tips              = '';
+	public $isPlainText       = 0;
+	public $displayFunction   = '';
+	public $displayColumn     = 1;
+	public $displayColumnTool = 0;
+	public $msg               = '';
+	public $failMsg           = array();
+	public $failMsgTpl        = '';
+	public $inputPosition     = 'main';
+	public $isUniq            = 0;
+	public $attr              = '';
 	
 	function __construct($opt, $name)
 	{
@@ -198,6 +200,12 @@ class lib_pea_frm_text
 				$this->displayFunction = $displayFunction;
 			}
 		}
+	}
+
+	public function setDisplayColumn($displayColumn = 1)
+	{
+		$this->displayColumn     = ($displayColumn) ? 1 : 0;
+		$this->displayColumnTool = 1;
 	}
 
 	public function setPlainText($isPlainText = 1)

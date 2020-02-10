@@ -19,6 +19,9 @@ class lib_pea_roll extends lib_pea_edit
 	public $formTableItemBodyAfter    = '';
 	public $formTableItemFooterBefore = '';
 	public $formTableItemFooterAfter  = '';
+	public $displayColumnTool         = 0;
+	public $displayColumnButtonText   = 'Show/Hide Column <span class="caret"></span>';
+	public $displayColumnButtonClass  = 'btn btn-default btn-xs';
 	public $rollValues                = array();
 	public $rollDeleteInput           = array();
 	public $rollDeleteCondition       = array();
@@ -152,6 +155,12 @@ class lib_pea_roll extends lib_pea_edit
 		$this->formTableItemFooterAfter  = $after;
 	}
 
+	public function setDisplayColumnButton($text = '', $class = '')
+	{
+		if ($text) $this->displayColumnButtonText   = $text;
+		if ($class) $this->displayColumnButtonClass = $class;
+	}
+
 	public function getRollDeleteInput($index = 0)
 	{
 		if (in_array($index, $this->rollDeleteInput)) {
@@ -185,8 +194,25 @@ class lib_pea_roll extends lib_pea_edit
 		if (!$this->do_action) {
 			$this->do_action = 1;
 			$select = array();
+			if (isset($_POST[$this->table.'_display_submit'])) {
+				$_SESSION['pea_roll_display'][$this->table] = @(array)$_POST[$this->table.'_display'];
+			}
+			if (isset($_POST[$this->table.'_display_reset'])) {
+				if (isset($_SESSION['pea_roll_display'][$this->table])) unset($_SESSION['pea_roll_display'][$this->table]);
+			}
+			if (isset($_SESSION['pea_roll_display'][$this->table])) {
+				foreach ($this->input as $key => $value) {
+					if ($value->displayColumnTool) {
+						$value->setDisplayColumn(@intval($_SESSION['pea_roll_display'][$this->table][$key]));
+					}
+				}
+			}
 			foreach ($this->input as $key => $value) {
 				$this->setIncludes($value->getIncludes());
+				if ($value->displayColumnTool) {
+					$this->displayColumnTool = 1;
+					if (!$value->displayColumn) $value->setInputPosition('hidden');
+				}
 				if ($value->getInputPosition() == 'main') $this->rollColumn += 1;
 				if ($value->getFieldName()) {
 					$select[$key] = $value->getFieldName();
@@ -321,6 +347,30 @@ class lib_pea_roll extends lib_pea_edit
 										if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
 										if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
 									$this->form .= '</td>';
+										if ($this->displayColumnTool) {
+											$this->form .= '<td>';
+												$this->form .= '<div class="dropup">';
+													$this->form .= '<button class="'.$this->displayColumnButtonClass.' dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$this->displayColumnButtonText.'</button>';
+													$this->form .= '<ul class="dropdown-menu">';
+														foreach ($this->input as $key => $value) {
+															if ($value->displayColumnTool) {
+																$this->form .= '
+																<li style="padding: 0 15px;">
+																	<div class="checkbox">
+																		<label><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'" onchange="$(this).parents(\'.dropup\').addClass(\'open\');"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
+																	</div>
+																</li>';
+															}
+														}
+														$this->form .= '
+														<li style="padding: 0 15px;">
+															<button type="submit" name="'.$this->table.'_display_submit" title="SUBMIT" value="'.$this->init.'" class="btn btn-default btn-sm" style="width: 50%;"><i class="fa fa-send"></i></button>
+															<button type="submit" name="'.$this->table.'_display_reset" title="RESET" value="'.$this->init.'" class="btn btn-default btn-sm pull-right" style="width: calc(50% - 15px);"><i class="fa fa-times"></i></button>
+														</li>';
+													$this->form .= '</ul>';
+												$this->form .= '</div>';
+											$this->form .= '</td>';
+										}
 									$this->form .= '<td style="text-align: center;">'.$this->getPagination().'</td>';
 								$this->form .= '</tr></tbody></table></td>';
 								if ($this->deleteTool) $this->form .= '<td><button type="submit" name="'.$this->table.'_'.$this->init.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button></td>';

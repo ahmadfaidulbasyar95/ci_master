@@ -35,10 +35,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<table class="table table-hover">
 		<thead>
 			<tr>
-				<th colspan="<?php echo count($fields); ?>">
+				<th colspan="<?php echo ceil(count($fields) / 2); ?>">
 					<div id="upload_excell_row_count_wrap" style="display: none;">Total Row : <b id="upload_excell_row_count"></b> <span id="upload_excell_speed"></span></div>
 				</th>
-				<th class="text-right">
+				<th class="text-right" colspan="<?php echo floor(count($fields) / 2) + 1; ?>">
 					<select id="upload_excell_filter_status" style="display: none;">
 						<option value="all">-- Select Status --</option>
 						<option value="0">Pending</option>
