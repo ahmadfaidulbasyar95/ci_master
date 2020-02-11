@@ -22,6 +22,11 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 		$this->dateFormat = $dateFormat;
 	}
 
+	public function getReportOutput($value = '')
+	{
+		return date($this->dateFormat, strtotime($value));
+	}
+
 	public function getForm($index = '')
 	{
 		$form = '';

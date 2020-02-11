@@ -36,6 +36,13 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		return $options;
 	}
 
+	public function getReportOutput($value = '')
+	{
+		foreach ($this->options as $key => $val) {
+			if ($value == $val) return $key;
+		}
+	}
+
 	public function getForm($index = '')
 	{
 		$form = '';

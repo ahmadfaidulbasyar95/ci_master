@@ -157,6 +157,14 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		}
 	}
 
+	public function getReportOutput($value = '')
+	{
+		if ($value and is_file($this->fileFolder.$value)) {
+			return str_replace($this->_root, $this->_url, $this->fileFolder).$value;
+		}
+		return '';
+	}
+
 	public function getForm($index = '')
 	{
 		$form = '';

@@ -260,6 +260,11 @@ class lib_pea_frm_text
 		
 	}
 
+	public function getReportOutput($value = '')
+	{
+		return $value;
+	}
+
 	public function getRollTitle($sortConfig = array(), $active = '', $is_desc = '')
 	{
 		$link = $sortConfig['base_url'];

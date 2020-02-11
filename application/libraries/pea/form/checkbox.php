@@ -25,6 +25,14 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 </div>'.parent::getRollTitle($sortConfig, $active, $is_desc);
 	}
 
+	public function getReportOutput($value = '')
+	{
+		if ($value) {
+			return $this->caption;
+		}
+		return '';
+	}
+
 	public function getForm($index = '')
 	{
 		$form = '';

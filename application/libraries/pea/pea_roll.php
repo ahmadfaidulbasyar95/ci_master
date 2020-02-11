@@ -19,6 +19,11 @@ class lib_pea_roll extends lib_pea_edit
 	public $formTableItemBodyAfter    = '';
 	public $formTableItemFooterBefore = '';
 	public $formTableItemFooterAfter  = '';
+	public $reportType                = array();
+	public $reportTypeText            = array(
+		'excel' => '<i class="fa fa-file-excel-o"></i>',
+		'json'  => '<i class="fa fa-file-code-o"></i>',
+	);
 	public $displayColumnTool         = 0;
 	public $displayColumnButtonText   = 'Show/Hide Column <span class="caret"></span>';
 	public $displayColumnButtonClass  = 'btn btn-default btn-xs';
@@ -34,7 +39,7 @@ class lib_pea_roll extends lib_pea_edit
 	public $paginationConfig = array(
 		'get_name'        => 'page',
 		'base_url'        => '',
-		'num_links'       => 10,
+		'num_links'       => 7,
 		'per_page'        => 15,
 		'prev_msg'        => '<h5 class="pull-left">Result {from} - {to} from total {total}</h5>',
 		'full_tag_open'   => '<ul class="pagination pagination-sm" style="margin:0;">',
@@ -153,6 +158,24 @@ class lib_pea_roll extends lib_pea_edit
 	{
 		$this->formTableItemFooterBefore = $before;
 		$this->formTableItemFooterAfter  = $after;
+	}
+
+	public function addReport($reportType = array('excel'))
+	{
+		if (is_array($reportType)) {
+			foreach ($reportType as $value) {
+				$this->addReport($value);
+			}
+		}else{
+			if (in_array($reportType, array_keys($this->reportTypeText)) and !in_array($reportType, $this->reportType)) {
+				$this->reportType[] = $reportType;
+			}
+		}
+	}
+
+	public function addReportAll()
+	{
+		$this->addReport(array_keys($this->reportTypeText));
 	}
 
 	public function setDisplayColumnButton($text = '', $class = '')
@@ -282,6 +305,27 @@ class lib_pea_roll extends lib_pea_edit
 						}
 					}
 				}
+				if ($this->reportType and isset($_POST[$this->table.'_report'])) {
+					if (in_array($_POST[$this->table.'_report'], $this->reportType)) {
+						$reportData = $this->db->getAll('SELECT '.implode(' , ', $select).' FROM '.$this->table);
+						if ($reportData) {
+							$reportOutput = array();
+							foreach ($reportData as $key => $value) {
+								foreach ($this->input as $key1 => $value1) {
+									if (isset($value[$key1]) and $value1->getInputPosition() == 'main') {
+										$reportOutput[$key][$value1->title] = $value1->getReportOutput($value[$key1]);
+									}
+								}			
+							}
+							include_once dirname(__FILE__).'/../path.php';
+							$reportPath = $this->_root.'application/cache/report/';
+							$reportFile = time().'_'.mt_rand(10000000,999999999);
+							lib_path_create($reportPath);
+							file_put_contents($reportPath.$reportFile.'.json', json_encode($reportOutput));
+							redirect($this->url.'_Pea/report/'.$_POST[$this->table.'_report'].'/'.$reportFile);
+						}
+					}
+				}
 				$select['roll_id']   = $this->table_id.' AS `roll_id`';
 				$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
 				$this->rollFoundRows = intval($this->db->getOne('SELECT FOUND_ROWS()'));
@@ -347,30 +391,39 @@ class lib_pea_roll extends lib_pea_edit
 										if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
 										if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
 									$this->form .= '</td>';
-										if ($this->displayColumnTool) {
-											$this->form .= '<td>';
-												$this->form .= '<div class="dropup">';
-													$this->form .= '<button class="'.$this->displayColumnButtonClass.' dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$this->displayColumnButtonText.'</button>';
-													$this->form .= '<ul class="dropdown-menu">';
-														foreach ($this->input as $key => $value) {
-															if ($value->displayColumnTool) {
-																$this->form .= '
-																<li style="padding: 0 15px;">
-																	<div class="checkbox">
-																		<label><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'" onchange="$(this).parents(\'.dropup\').addClass(\'open\');"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
-																	</div>
-																</li>';
-															}
+									if ($this->displayColumnTool) {
+										$this->form .= '<td>';
+											$this->form .= '<div class="dropup">';
+												$this->form .= '<button class="'.$this->displayColumnButtonClass.' dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$this->displayColumnButtonText.'</button>';
+												$this->form .= '<ul class="dropdown-menu">';
+													foreach ($this->input as $key => $value) {
+														if ($value->displayColumnTool) {
+															$this->form .= '
+															<li style="padding: 0 15px;">
+																<div class="checkbox">
+																	<label><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'" onchange="$(this).parents(\'.dropup\').addClass(\'open\');"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
+																</div>
+															</li>';
 														}
-														$this->form .= '
-														<li style="padding: 0 15px;">
-															<button type="submit" name="'.$this->table.'_display_submit" title="SUBMIT" value="'.$this->init.'" class="btn btn-default btn-sm" style="width: 50%;"><i class="fa fa-send"></i></button>
-															<button type="submit" name="'.$this->table.'_display_reset" title="RESET" value="'.$this->init.'" class="btn btn-default btn-sm pull-right" style="width: calc(50% - 15px);"><i class="fa fa-times"></i></button>
-														</li>';
-													$this->form .= '</ul>';
-												$this->form .= '</div>';
-											$this->form .= '</td>';
-										}
+													}
+													$this->form .= '
+													<li style="padding: 0 15px;">
+														<button type="submit" name="'.$this->table.'_display_submit" title="SUBMIT" value="'.$this->init.'" class="btn btn-default btn-sm" style="width: 50%;"><i class="fa fa-send"></i></button>
+														<button type="submit" name="'.$this->table.'_display_reset" title="RESET" value="'.$this->init.'" class="btn btn-default btn-sm pull-right" style="width: calc(50% - 15px);"><i class="fa fa-times"></i></button>
+													</li>';
+												$this->form .= '</ul>';
+											$this->form .= '</div>';
+										$this->form .= '</td>';
+									}
+									if ($this->reportType) {
+										$this->form .= '<td><small>Export : </small>';
+											$this->form .= '<div class="btn-group">';
+												foreach ($this->reportType as $value) {
+													$this->form .= '<button type="submit" name="'.$this->table.'_report" title="Export '.strtoupper($value).'" value="'.$value.'" class="btn btn-default btn-sm">'.$this->reportTypeText[$value].'</button> ';
+												}
+											$this->form .= '</div>';
+										$this->form .= '</td>';
+									}
 									$this->form .= '<td style="text-align: center;">'.$this->getPagination().'</td>';
 								$this->form .= '</tr></tbody></table></td>';
 								if ($this->deleteTool) $this->form .= '<td><button type="submit" name="'.$this->table.'_'.$this->init.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button></td>';
