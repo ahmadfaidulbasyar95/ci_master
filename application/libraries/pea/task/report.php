@@ -28,6 +28,18 @@ if (@$params[0] and @$params[1])
 				$excel = new lib_excel();
 				$excel->create($reportData)->download();
 				break;
+
+			case 'pdf':
+				include_once dirname(__FILE__).'/../../pdf/pdf.php';
+				$pdf = new lib_pdf();
+				$pdf->createTable($reportData, array_keys(array_values($reportData)[0]))->Output();
+				break;
+
+			case 'table':
+				include_once dirname(__FILE__).'/../../table.php';
+				echo '<style>'.file_get_contents(dirname(__FILE__).'/../../pdf/table.css').'</style>';
+				echo lib_table($reportData, array_keys(array_values($reportData)[0]));
+				break;
 		}
 	}
 }

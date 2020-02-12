@@ -22,6 +22,8 @@ class lib_pea_roll extends lib_pea_edit
 	public $reportType                = array();
 	public $reportTypeText            = array(
 		'excel' => '<i class="fa fa-file-excel-o"></i>',
+		'pdf'   => '<i class="fa fa-file-pdf-o"></i>',
+		'table' => '<i class="fa fa-table"></i>',
 		'json'  => '<i class="fa fa-file-code-o"></i>',
 	);
 	public $displayColumnTool         = 0;
@@ -160,7 +162,7 @@ class lib_pea_roll extends lib_pea_edit
 		$this->formTableItemFooterAfter  = $after;
 	}
 
-	public function addReport($reportType = array('excel'))
+	public function addReport($reportType = array('excel', 'pdf'))
 	{
 		if (is_array($reportType)) {
 			foreach ($reportType as $value) {
