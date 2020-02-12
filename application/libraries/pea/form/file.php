@@ -81,8 +81,10 @@ class lib_pea_frm_file extends lib_pea_frm_text
 
 	public function setImageClick()
 	{
-		$this->toolModal .= 'modal_processing modal_large';
-		$this->setIncludes('modal.min', 'js');
+		$this->toolModal .= 'image_viewer" data-magnify="gallery" data-group="'.$this->table.'_'.$this->init;
+		$this->setIncludes('image_viewer/css/jquery.magnify.min', 'css');
+		$this->setIncludes('image_viewer/js/jquery.magnify.min', 'js');
+		$this->setIncludes('image_viewer.min', 'js');
 	}
 
 	public function getPostValue($index = '')
