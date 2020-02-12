@@ -5,7 +5,7 @@ if (!defined('EXCEL_ROOT'))
 	define('EXCEL_ROOT', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
 require_once EXCEL_ROOT.'lib'.DIRECTORY_SEPARATOR.'PHPExcel.php';
-class excel_worksheet extends PHPExcel
+class lib_excel_worksheet extends PHPExcel
 {
 	private $Obj;
 	private $SheetNumber;
@@ -29,7 +29,7 @@ class excel_worksheet extends PHPExcel
 		}
 	}
 }
-class excel_workbook extends excel_worksheet
+class lib_excel_workbook extends lib_excel_worksheet
 {
 	private $Obj;
 	function __construct($FilePath)
@@ -42,7 +42,7 @@ class excel_workbook extends excel_worksheet
 	}
 	public function sheet($NumberOfSheet = 0)
 	{
-		return new excel_worksheet($this->Obj, --$NumberOfSheet);
+		return new lib_excel_worksheet($this->Obj, --$NumberOfSheet);
 	}
 	public function fetch()
 	{
@@ -55,13 +55,13 @@ class excel_workbook extends excel_worksheet
 		return $output;
 	}
 }
-class excel extends excel_workbook
+class lib_excel extends lib_excel_workbook
 {
 	private $doc = null;
 	function __construct() {}
 	function read($FilePath)
 	{
-		return new excel_workbook($FilePath);
+		return new lib_excel_workbook($FilePath);
 	}
 	function create($data)
 	{
@@ -136,7 +136,7 @@ class excel extends excel_workbook
 	function save($filename='')
 	{
 		if (empty($filename)) {
-			$filename = _ROOT.'images/cache/Excel-'.date('Y-m-d-H-i-s').'.xlsx';
+			$filename = FCPATH.'application/cache/report_save/Excel-'.date('Y-m-d-H-i-s').'.xlsx';
 		}
 		$is_2007 = preg_match('~\.xlsx$~is', $filename);
 		if ($is_2007) {
@@ -146,7 +146,8 @@ class excel extends excel_workbook
 		}
 		$path = dirname($filename);
 		if (!file_exists($path)) {
-			_func('path','create',$path);
+			include_once dirname(__FILE__).'/../path.php';
+			lib_path_create($path);
 		}
 		$objWriter->save($filename);
 	}
@@ -170,18 +171,20 @@ $data = array(
 		)
 	);
 
-_lib('excel')->create($data)->download('family.xlsx');									// .xls || .xlsx
-_lib('excel')->create($data)->save(_ROOT.'images/cache/family.xlsx');		// .xls || .xlsx
+$excel = new lib_excel();
+$excel->create($data)->download('family.xlsx');									// .xls || .xlsx
+$excel->create($data)->save(FCPATH.'application/cache/family.xlsx');		// .xls || .xlsx
 			## OR ##
-$obj = _lib('excel');
+$obj = new lib_excel();
 $obj->create($data);
 $obj->download('family.xlsx');														// .xls || .xlsx
-$obj->save(_ROOT.'images/cache/family.xlsx');							// .xls || .xlsx
+$obj->save(FCPATH.'application/cache/family.xlsx');							// .xls || .xlsx
 
 ///////////////////////
 // READING FILE
 ///////////////////////
-$output = _lib('excel')->read(_ROOT.'images/cache/family.xlsx')->sheet(2)->fetch();
+$excel = new lib_excel();
+$output = $excel->read(FCPATH.'application/cache/family.xlsx')->sheet(2)->fetch();
 $output =
 Array
 (

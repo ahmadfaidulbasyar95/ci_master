@@ -19,7 +19,14 @@ if (@$params[0] and @$params[1])
 
 			case 'excel':
 				include_once dirname(__FILE__).'/../../excel/excel.php';
-				
+				if (isset($reportData[0])) {
+					$reportData = array('Data' => $reportData);
+				}
+				foreach ($reportData as $key => $value) {
+					$reportData[$key] = array_merge(array(array_keys(array_values($value)[0])), $value);
+				}
+				$excel = new lib_excel();
+				$excel->create($reportData)->download();
 				break;
 		}
 	}
