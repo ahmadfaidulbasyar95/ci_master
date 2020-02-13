@@ -31,8 +31,9 @@ if (@$params[0] and @$params[1])
 
 			case 'pdf':
 				include_once dirname(__FILE__).'/../../pdf/pdf.php';
-				$pdf = new lib_pdf();
-				$pdf->createTable($reportData, array_keys(array_values($reportData)[0]))->Output();
+				$header = array_keys(array_values($reportData)[0]);
+				$pdf    = new lib_pdf((count($header) > 4) ? 'L' : 'P');
+				$pdf->createTable($reportData, $header)->Output();
 				break;
 
 			case 'table':

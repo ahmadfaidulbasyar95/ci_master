@@ -1,84 +1,216 @@
-# TCPDF
-*PHP PDF Library*
+Dompdf
+======
 
-[![Donate via PayPal](https://img.shields.io/badge/donate-paypal-87ceeb.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&currency_code=GBP&business=paypal@tecnick.com&item_name=donation%20for%20TCPDF%20project)
-*Please consider supporting this project by making a donation via [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&currency_code=GBP&business=paypal@tecnick.com&item_name=donation%20for%20TCPDF%20project)*
+[![Build Status](https://travis-ci.org/dompdf/dompdf.png?branch=master)](https://travis-ci.org/dompdf/dompdf)
+[![Latest Stable Version](https://poser.pugx.org/dompdf/dompdf/v/stable.png)](https://packagist.org/packages/dompdf/dompdf)
+[![Total Downloads](https://poser.pugx.org/dompdf/dompdf/downloads.png)](https://packagist.org/packages/dompdf/dompdf)
+[![Latest Unstable Version](https://poser.pugx.org/dompdf/dompdf/v/unstable.png)](https://packagist.org/packages/dompdf/dompdf)
+[![License](https://poser.pugx.org/dompdf/dompdf/license.png)](https://packagist.org/packages/dompdf/dompdf)
+ 
+**Dompdf is an HTML to PDF converter**
 
-* **category**    Library
-* **author**      Nicola Asuni <info@tecnick.com>
-* **copyright**   2002-2019 Nicola Asuni - Tecnick.com LTD
-* **license**     http://www.gnu.org/copyleft/lesser.html GNU-LGPL v3 (see LICENSE.TXT)
-* **link**        http://www.tcpdf.org
-* **source**      https://github.com/tecnickcom/TCPDF
+At its heart, dompdf is (mostly) a [CSS 2.1](http://www.w3.org/TR/CSS2/) compliant
+HTML layout and rendering engine written in PHP. It is a style-driven renderer:
+it will download and read external stylesheets, inline style tags, and the style
+attributes of individual HTML elements. It also supports most presentational
+HTML attributes.
 
+*This document applies to the latest stable code which may not reflect the current 
+release. For released code please
+[navigate to the appropriate tag](https://github.com/dompdf/dompdf/tags).*
 
-## IMPORTANT
-A new version of this library is under development at https://github.com/tecnickcom/tc-lib-pdf and as a consequence this version will not receive any additional development or support.
-This version should be considered obsolete, new projects should use the new version as soon it will become stable.
+----
 
+**Check out the [demo](https://dompdf.net/examples.php) and ask any
+question on [StackOverflow](http://stackoverflow.com/questions/tagged/dompdf) or
+on the [Google Groups](http://groups.google.com/group/dompdf).**
 
+Follow us on [![Twitter](http://twitter-badges.s3.amazonaws.com/twitter-a.png)](http://www.twitter.com/dompdf).
 
-## Description
-
-PHP library for generating PDF documents on-the-fly.
-
-### Main Features:
-* no external libraries are required for the basic functions;
-* all standard page formats, custom page formats, custom margins and units of measure;
-* UTF-8 Unicode and Right-To-Left languages;
-* TrueTypeUnicode, OpenTypeUnicode v1, TrueType, OpenType v1, Type1 and CID-0 fonts;
-* font subsetting;
-* methods to publish some XHTML + CSS code, Javascript and Forms;
-* images, graphic (geometric figures) and transformation methods;
-* supports JPEG, PNG and SVG images natively, all images supported by GD (GD, GD2, GD2PART, GIF, JPEG, PNG, BMP, XBM, XPM) and all images supported via ImagMagick (http://www.imagemagick.org/script/formats.php)
-* 1D and 2D barcodes: CODE 39, ANSI MH10.8M-1983, USD-3, 3 of 9, CODE 93, USS-93, Standard 2 of 5, Interleaved 2 of 5, CODE 128 A/B/C, 2 and 5 Digits UPC-Based Extension, EAN 8, EAN 13, UPC-A, UPC-E, MSI, POSTNET, PLANET, RMS4CC (Royal Mail 4-state Customer Code), CBC (Customer Bar Code), KIX (Klant index - Customer index), Intelligent Mail Barcode, Onecode, USPS-B-3200, CODABAR, CODE 11, PHARMACODE, PHARMACODE TWO-TRACKS, Datamatrix, QR-Code, PDF417;
-* JPEG and PNG ICC profiles, Grayscale, RGB, CMYK, Spot Colors and Transparencies;
-* automatic page header and footer management;
-* document encryption up to 256 bit and digital signature certifications;
-* transactions to UNDO commands;
-* PDF annotations, including links, text and file attachments;
-* text rendering modes (fill, stroke and clipping);
-* multiple columns mode;
-* no-write page regions;
-* bookmarks, named destinations and table of content;
-* text hyphenation;
-* text stretching and spacing (tracking);
-* automatic page break, line break and text alignments including justification;
-* automatic page numbering and page groups;
-* move and delete pages;
-* page compression (requires php-zlib extension);
-* XOBject Templates;
-* Layers and object visibility.
-* PDF/A-1b support.
-
-### Third party fonts:
-
-This library may include third party font files released with different licenses.
-
-All the PHP files on the fonts directory are subject to the general TCPDF license (GNU-LGPLv3),
-they do not contain any binary data but just a description of the general properties of a particular font.
-These files can be also generated on the fly using the font utilities and TCPDF methods.
-
-All the original binary TTF font files have been renamed for compatibility with TCPDF and compressed using the gzcompress PHP function that uses the ZLIB data format (.z files).
-
-The binary files (.z) that begins with the prefix "free" have been extracted from the GNU FreeFont collection (GNU-GPLv3).
-The binary files (.z) that begins with the prefix "pdfa" have been derived from the GNU FreeFont, so they are subject to the same license.
-For the details of Copyright, License and other information, please check the files inside the directory fonts/freefont-20120503
-Link : http://www.gnu.org/software/freefont/
-
-The binary files (.z) that begins with the prefix "dejavu" have been extracted from the DejaVu fonts 2.33 (Bitstream) collection.
-For the details of Copyright, License and other information, please check the files inside the directory fonts/dejavu-fonts-ttf-2.33
-Link : http://dejavu-fonts.org
-
-The binary files (.z) that begins with the prefix "ae" have been extracted from the Arabeyes.org collection (GNU-GPLv2).
-Link : http://projects.arabeyes.org/
-
-### ICC profile:
-
-TCPDF includes the sRGB.icc profile from the icc-profiles-free Debian package:
-https://packages.debian.org/source/stable/icc-profiles-free
+---
 
 
-## Developer(s) Contact
 
-* Nicola Asuni <info@tecnick.com>
+## Features
+
+ * Handles most CSS 2.1 and a few CSS3 properties, including @import, @media &
+   @page rules
+ * Supports most presentational HTML 4.0 attributes
+ * Supports external stylesheets, either local or through http/ftp (via
+   fopen-wrappers)
+ * Supports complex tables, including row & column spans, separate & collapsed
+   border models, individual cell styling
+ * Image support (gif, png (8, 24 and 32 bit with alpha channel), bmp & jpeg)
+ * No dependencies on external PDF libraries, thanks to the R&OS PDF class
+ * Inline PHP support
+ * Basic SVG support
+ 
+## Requirements
+
+ * PHP version 5.4.0 or higher
+ * DOM extension
+ * MBString extension
+ * php-font-lib
+ * php-svg-lib
+ 
+Note that some required dependencies may have further dependencies (notably php-svg-lib requires sabberworm/php-css-parser).
+
+### Recommendations
+
+ * OPcache (OPcache, XCache, APC, etc.): improves performance
+ * GD (for image processing)
+ * IMagick or GMagick extension: improves image processing performance
+
+Visit the wiki for more information:
+https://github.com/dompdf/dompdf/wiki/Requirements
+
+## About Fonts & Character Encoding
+
+PDF documents internally support the following fonts: Helvetica, Times-Roman,
+Courier, Zapf-Dingbats, & Symbol. These fonts only support Windows ANSI
+encoding. In order for a PDF to display characters that are not available in
+Windows ANSI, you must supply an external font. Dompdf will embed any referenced
+font in the PDF so long as it has been pre-loaded or is accessible to dompdf and
+reference in CSS @font-face rules. See the
+[font overview](https://github.com/dompdf/dompdf/wiki/About-Fonts-and-Character-Encoding)
+for more information on how to use fonts.
+
+The [DejaVu TrueType fonts](https://dejavu-fonts.github.io/) have been pre-installed
+to give dompdf decent Unicode character coverage by default. To use the DejaVu
+fonts reference the font in your stylesheet, e.g. `body { font-family: DejaVu
+Sans; }` (for DejaVu Sans). The following DejaVu 2.34 fonts are available:
+DejaVu Sans, DejaVu Serif, and DejaVu Sans Mono.
+
+## Easy Installation
+
+### Install with composer
+
+To install with [Composer](https://getcomposer.org/), simply require the
+latest version of this package.
+
+```bash
+composer require dompdf/dompdf
+```
+
+Make sure that the autoload file from Composer is loaded.
+
+```php
+// somewhere early in your project's loading, require the Composer autoloader
+// see: http://getcomposer.org/doc/00-intro.md
+require 'vendor/autoload.php';
+
+```
+
+### Download and install
+
+Download a packaged archive of dompdf and extract it into the 
+directory where dompdf will reside
+
+ * You can download stable copies of dompdf from
+   https://github.com/dompdf/dompdf/releases
+ * Or download a nightly (the latest, unreleased code) from
+   http://eclecticgeek.com/dompdf
+
+Use the packaged release autoloader to load dompdf, libraries,
+and helper functions in your PHP:
+
+```php
+// include autoloader
+require_once 'dompdf/autoload.inc.php';
+```
+
+Note: packaged releases are named according using semantic
+versioning (_dompdf_MAJOR-MINOR-PATCH.zip_). So the 1.0.0 
+release would be dompdf_1-0-0.zip. This is the only download
+that includes the autoloader for Dompdf and all its dependencies.
+
+### Install with git
+
+From the command line, switch to the directory where dompdf will
+reside and run the following commands:
+
+```sh
+git clone https://github.com/dompdf/dompdf.git
+cd dompdf/lib
+
+git clone https://github.com/PhenX/php-font-lib.git php-font-lib
+cd php-font-lib
+git checkout 0.5.1
+cd ..
+
+git clone https://github.com/PhenX/php-svg-lib.git php-svg-lib
+cd php-svg-lib
+git checkout v0.3.2
+cd ..
+
+git clone https://github.com/sabberworm/PHP-CSS-Parser.git php-css-parser
+cd php-css-parser
+git checkout 8.1.0
+```
+
+Require dompdf and it's dependencies in your PHP.
+For details see the [autoloader in the utils project](https://github.com/dompdf/utils/blob/master/autoload.inc.php).
+
+## Quick Start
+
+Just pass your HTML in to dompdf and stream the output:
+
+```php
+// reference the Dompdf namespace
+use Dompdf\Dompdf;
+
+// instantiate and use the dompdf class
+$dompdf = new Dompdf();
+$dompdf->loadHtml('hello world');
+
+// (Optional) Setup the paper size and orientation
+$dompdf->setPaper('A4', 'landscape');
+
+// Render the HTML as PDF
+$dompdf->render();
+
+// Output the generated PDF to Browser
+$dompdf->stream();
+```
+
+### Setting Options
+
+Set options during dompdf instantiation:
+
+```php
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+$options = new Options();
+$options->set('defaultFont', 'Courier');
+$dompdf = new Dompdf($options);
+```
+
+or at run time
+
+```php
+use Dompdf\Dompdf;
+
+$dompdf = new Dompdf();
+$dompdf->set_option('defaultFont', 'Courier');
+```
+
+See [Dompdf\Options](src/Options.php) for a list of available options.
+
+
+## Limitations (Known Issues)
+
+ * Dompdf is not particularly tolerant to poorly-formed HTML input. To avoid
+   any unexpected rendering issues you should either enable the built-in HTML5
+   parser at runtime (`$dompdf->set_option('isHtml5ParserEnabled', true);`) 
+   or run your HTML through a HTML validator/cleaner (such as
+   [Tidy](http://tidy.sourceforge.net) or the
+   [W3C Markup Validation Service](http://validator.w3.org)).
+ * Table cells are not pageable, meaning a table row must fit on a single page.
+ * Elements are rendered on the active page when they are parsed.
+
+---
+
+[![Donate button](https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif)](http://goo.gl/DSvWf)
+
+*If you find this project useful, please consider making a donation. Any funds donated will be used to help further development on this project.)*

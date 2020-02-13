@@ -418,8 +418,9 @@ class lib_pea_roll extends lib_pea_edit
 										$this->form .= '</td>';
 									}
 									if ($this->reportType) {
+										$this->setIncludes(['js' => ['report.min']]);
 										$this->form .= '<td><small>Export : </small>';
-											$this->form .= '<div class="btn-group">';
+											$this->form .= '<div class="btn-group form_pea_roll_report">';
 												foreach ($this->reportType as $value) {
 													$this->form .= '<button type="submit" name="'.$this->table.'_report" title="Export '.strtoupper($value).'" value="'.$value.'" class="btn btn-default btn-sm">'.$this->reportTypeText[$value].'</button> ';
 												}
