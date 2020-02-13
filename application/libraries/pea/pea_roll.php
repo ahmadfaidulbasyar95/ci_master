@@ -23,7 +23,7 @@ class lib_pea_roll extends lib_pea_edit
 	public $reportTypeText            = array(
 		'excel' => '<i class="fa fa-file-excel-o"></i>',
 		'pdf'   => '<i class="fa fa-file-pdf-o"></i>',
-		'table' => '<i class="fa fa-table"></i>',
+		'html'  => '<i class="fa fa-file-text-o"></i>',
 		'json'  => '<i class="fa fa-file-code-o"></i>',
 	);
 	public $displayColumnTool         = 0;

@@ -12,11 +12,6 @@ if (@$params[0] and @$params[1])
 	if ($reportData) 
 	{
 		switch ($params[0]) {
-			case 'json':
-				include_once dirname(__FILE__).'/../../output.php';
-				lib_output_json($reportData);
-				break;
-
 			case 'excel':
 				include_once dirname(__FILE__).'/../../excel/excel.php';
 				if (isset($reportData[0])) {
@@ -36,10 +31,15 @@ if (@$params[0] and @$params[1])
 				$pdf->createTable($reportData, $header)->Output();
 				break;
 
-			case 'table':
+			case 'html':
 				include_once dirname(__FILE__).'/../../table.php';
 				echo '<style>'.file_get_contents(dirname(__FILE__).'/../../pdf/table.css').'</style>';
 				echo lib_table($reportData, array_keys(array_values($reportData)[0]));
+				break;
+
+			case 'json':
+				include_once dirname(__FILE__).'/../../output.php';
+				lib_output_json($reportData);
 				break;
 		}
 	}
