@@ -88,7 +88,10 @@ class lib_excel extends lib_excel_workbook
 					$x = 0;
 					foreach ((array)$row as $column_value)
 					{
-						$PHPExcel->getActiveSheet()->setCellValueByColumnAndRow($x, $y, $column_value);
+						if (is_numeric($column_value) && strlen($column_value) >= 15) 
+							$PHPExcel->getActiveSheet()->setCellValueExplicitByColumnAndRow($x, $y, $column_value);
+						else
+							$PHPExcel->getActiveSheet()->setCellValueByColumnAndRow($x, $y, $column_value);
 						$x+=1;
 					}
 				}
