@@ -14,10 +14,11 @@ if ($PNAME) {
 
 		install_exec("ln -s ../".$BASENAME."/.gitignore ./");
 		install_exec("ln -s ../".$BASENAME."/.htaccess ./");
-		install_exec("ln -s ../".$BASENAME."/index.php ./");
+		install_exec("cp ../".$BASENAME."/index.php ./");
 		install_exec("ln -s ../".$BASENAME."/system ./");
 
 		install_exec("mkdir application");
+		install_exec("mkdir files");
 
 		install_exec("mkdir application/cache");
 		install_exec("ln -s ../../../".$BASENAME."/application/cache/index.html ./application/cache/");
