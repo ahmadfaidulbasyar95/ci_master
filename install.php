@@ -20,7 +20,7 @@ if ($PNAME) {
 		install_exec("mkdir application");
 
 		install_exec("mkdir application/cache");
-		install_exec("ln -s ../../".$BASENAME."/application/cache/index.html ./application/cache/");
+		install_exec("ln -s ../../../".$BASENAME."/application/cache/index.html ./application/cache/");
 
 		install_exec("mkdir application/config");
 		
