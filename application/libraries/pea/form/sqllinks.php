@@ -33,7 +33,12 @@ class lib_pea_frm_sqllinks extends lib_pea_frm_text
 
 	public function setLinks($link = '')
 	{
-		if ($link) $this->link = $link;
+		if ($link) {
+			if (strpos($link, '://') === false) {
+				$link = $this->_url.$link;
+			}
+			$this->link = $link;
+		}
 	}
 
 	public function getLinks($index = '')

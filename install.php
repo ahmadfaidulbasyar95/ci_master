@@ -5,8 +5,21 @@ $handle = fopen ("php://stdin","r");
 $PNAME  = trim(fgets($handle));
 if ($PNAME) {
 	$PATH = __DIR__.'/../'.$PNAME;
+	$ok   = 0;
 	if (!is_dir($PATH)) {
 		install_exec("mkdir \"$PATH\"");
+		$ok = 1;
+	}else{
+		echo "Directory Exists\nContinue (y/n) ? ";
+		$handle   = fopen ("php://stdin","r");
+		$continue = trim(fgets($handle));
+		if ($continue == 'y') {
+			$ok = 1;
+		}else{
+			echo "Project Installation Canceled\n";
+		}
+	}
+	if ($ok) {
 		install_exec("cd \"$PATH\"");
 
 		chdir($PATH);
@@ -19,6 +32,8 @@ if ($PNAME) {
 
 		install_exec("mkdir application");
 		install_exec("mkdir files");
+		install_exec("ln -s ../../".$BASENAME."/files/index.html ./files/");
+		chmod('files', 0777);
 
 		install_exec("mkdir application/cache");
 		install_exec("ln -s ../../../".$BASENAME."/application/cache/index.html ./application/cache/");
@@ -73,8 +88,6 @@ if ($PNAME) {
 		
 		install_exec("ln -s ../../".$BASENAME."/application/.htaccess ./application/");
 		install_exec("ln -s ../../".$BASENAME."/application/index.html ./application/");
-	}else{
-		echo "Directory Exists\n";
 	}
 }else{
 	echo "Project Installation Canceled\n";
