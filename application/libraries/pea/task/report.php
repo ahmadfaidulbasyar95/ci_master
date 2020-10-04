@@ -13,7 +13,7 @@ if (@$params[0] and @$params[1])
 	{
 		switch ($params[0]) {
 			case 'excel':
-				include_once dirname(__FILE__).'/../../excel/excel.php';
+				include_once __DIR__.'/../../excel/excel.php';
 				if (isset($reportData[0])) {
 					$reportData = array('Data' => $reportData);
 				}
@@ -25,20 +25,20 @@ if (@$params[0] and @$params[1])
 				break;
 
 			case 'pdf':
-				include_once dirname(__FILE__).'/../../pdf/pdf.php';
+				include_once __DIR__.'/../../pdf/pdf.php';
 				$header = array_keys(array_values($reportData)[0]);
 				$pdf    = new lib_pdf((count($header) > 4) ? 'L' : 'P');
 				$pdf->createTable($reportData, $header)->Output();
 				break;
 
 			case 'html':
-				include_once dirname(__FILE__).'/../../table.php';
-				echo '<style>'.file_get_contents(dirname(__FILE__).'/../../pdf/table.css').'</style>';
+				include_once __DIR__.'/../../table.php';
+				echo '<style>'.file_get_contents(__DIR__.'/../../pdf/table.css').'</style>';
 				echo lib_table($reportData, array_keys(array_values($reportData)[0]));
 				break;
 
 			case 'json':
-				include_once dirname(__FILE__).'/../../output.php';
+				include_once __DIR__.'/../../output.php';
 				lib_output_json($reportData);
 				break;
 		}

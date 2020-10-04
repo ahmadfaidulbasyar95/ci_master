@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 if (!defined('PDF_ROOT'))
-	define('PDF_ROOT', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+	define('PDF_ROOT', __DIR__ . DIRECTORY_SEPARATOR);
 
 require_once PDF_ROOT.'lib'.DIRECTORY_SEPARATOR.'autoload.inc.php';
 use Dompdf\Dompdf;
@@ -16,9 +16,9 @@ class lib_pdf extends Dompdf
 
 	function createTable($data = array(), $header = array(), $title='')
 	{
-		include_once dirname(__FILE__).'/../table.php';
+		include_once __DIR__.'/../table.php';
 
-		$html  = '<style>'.file_get_contents(dirname(__FILE__).DIRECTORY_SEPARATOR.'table.css').'</style>';
+		$html  = '<style>'.file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'table.css').'</style>';
 		$html .= lib_table($data, $header, $title);
 		
 		$this->loadHtml($html);

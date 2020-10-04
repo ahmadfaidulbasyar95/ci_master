@@ -18,7 +18,7 @@ class lib_pea
 
 	public function initEdit($where = '', $table_id = 'id')
 	{
-		include_once dirname(__FILE__).'/pea_edit.php';
+		include_once __DIR__.'/pea_edit.php';
 		$this->edit = new lib_pea_edit(array(
 			'table'    => $this->table,
 			'table_id' => $table_id,
@@ -32,7 +32,7 @@ class lib_pea
 
 	public function initRoll($where = '', $table_id = 'id')
 	{
-		include_once dirname(__FILE__).'/pea_roll.php';
+		include_once __DIR__.'/pea_roll.php';
 		$this->roll = new lib_pea_roll(array(
 			'table'    => $this->table,
 			'table_id' => $table_id,
@@ -46,7 +46,7 @@ class lib_pea
 
 	public function initSearch($where = '', $table_id = 'id')
 	{
-		include_once dirname(__FILE__).'/pea_search.php';
+		include_once __DIR__.'/pea_search.php';
 		$this->search = new lib_pea_search(array(
 			'table'    => $this->table,
 			'table_id' => $table_id,
@@ -60,7 +60,7 @@ class lib_pea
 
 	public function initImport($where = '', $table_id = 'id')
 	{
-		include_once dirname(__FILE__).'/pea_import.php';
+		include_once __DIR__.'/pea_import.php';
 		$this->import = new lib_pea_import(array(
 			'table'    => $this->table,
 			'table_id' => $table_id,

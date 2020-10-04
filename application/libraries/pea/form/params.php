@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-include_once dirname(__FILE__).'/text.php';
+include_once __DIR__.'/text.php';
 class lib_pea_frm_params extends lib_pea_frm_text
 {	
 
@@ -115,8 +115,8 @@ class lib_pea_frm_params extends lib_pea_frm_text
 
 	public function addInput($name, $type)
 	{
-		if (is_file(dirname(__FILE__).'/'.$type.'.php')) {
-			include_once dirname(__FILE__).'/'.$type.'.php';
+		if (is_file(__DIR__.'/'.$type.'.php')) {
+			include_once __DIR__.'/'.$type.'.php';
 			eval('$this->element->$name = new lib_pea_frm_'.$type.'(array(
 				\'table\'    => $this->table,
 				\'table_id\' => $this->table_id,

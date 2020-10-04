@@ -1,10 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-include_once dirname(__FILE__).'/../../../../system/libraries/Upload.php';
-include_once dirname(__FILE__).'/../../../../system/libraries/Image_lib.php';
-include_once dirname(__FILE__).'/../../path.php';
-include_once dirname(__FILE__).'/text.php';
+include_once __DIR__.'/../../../../system/libraries/Upload.php';
+include_once __DIR__.'/../../../../system/libraries/Image_lib.php';
+include_once __DIR__.'/../../path.php';
+include_once __DIR__.'/text.php';
 class lib_pea_frm_file extends lib_pea_frm_text
 {	
 	public $fileFolder          = '';

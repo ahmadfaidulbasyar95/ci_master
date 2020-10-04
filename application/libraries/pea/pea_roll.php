@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-include_once dirname(__FILE__).'/../pagination.php';
-include_once dirname(__FILE__).'/pea_edit.php';
+include_once __DIR__.'/../pagination.php';
+include_once __DIR__.'/pea_edit.php';
 class lib_pea_roll extends lib_pea_edit
 {
 	public $formTableBefore           = '';
@@ -319,7 +319,7 @@ class lib_pea_roll extends lib_pea_edit
 									}
 								}			
 							}
-							include_once dirname(__FILE__).'/../path.php';
+							include_once __DIR__.'/../path.php';
 							$reportPath = $this->_root.'application/cache/report/';
 							$reportFile = time().'_'.mt_rand(10000000,999999999);
 							lib_path_create($reportPath);

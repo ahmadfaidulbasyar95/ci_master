@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-include_once dirname(__FILE__).'/datetimeinterval.php';
+include_once __DIR__.'/datetimeinterval.php';
 class lib_pea_frm_dateinterval extends lib_pea_frm_datetimeinterval
 {	
 

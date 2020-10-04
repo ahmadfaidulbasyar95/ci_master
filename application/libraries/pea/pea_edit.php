@@ -204,8 +204,8 @@ class lib_pea_edit
 
 	public function addInput($name, $type)
 	{
-		if (is_file(dirname(__FILE__).'/form/'.$type.'.php')) {
-			include_once dirname(__FILE__).'/form/'.$type.'.php';
+		if (is_file(__DIR__.'/form/'.$type.'.php')) {
+			include_once __DIR__.'/form/'.$type.'.php';
 			eval('$this->input->$name = new lib_pea_frm_'.$type.'(array(
 				\'table\'    => $this->table,
 				\'table_id\' => $this->table_id,

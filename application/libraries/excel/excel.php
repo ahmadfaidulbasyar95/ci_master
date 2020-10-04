@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 if (!defined('EXCEL_ROOT'))
-	define('EXCEL_ROOT', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+	define('EXCEL_ROOT', __DIR__ . DIRECTORY_SEPARATOR);
 
 require_once EXCEL_ROOT.'lib'.DIRECTORY_SEPARATOR.'PHPExcel.php';
 class lib_excel_worksheet extends PHPExcel
@@ -149,7 +149,7 @@ class lib_excel extends lib_excel_workbook
 		}
 		$path = dirname($filename);
 		if (!file_exists($path)) {
-			include_once dirname(__FILE__).'/../path.php';
+			include_once __DIR__.'/../path.php';
 			lib_path_create($path);
 		}
 		$objWriter->save($filename);

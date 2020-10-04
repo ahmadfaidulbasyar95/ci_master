@@ -1,9 +1,9 @@
 <?php
 
-require_once dirname(__FILE__) . '/Data.php';
-require_once dirname(__FILE__) . '/InputStream.php';
-require_once dirname(__FILE__) . '/TreeBuilder.php';
-require_once dirname(__FILE__) . '/Tokenizer.php';
+require_once __DIR__ . '/Data.php';
+require_once __DIR__ . '/InputStream.php';
+require_once __DIR__ . '/TreeBuilder.php';
+require_once __DIR__ . '/Tokenizer.php';
 
 /**
  * Outwards facing interface for HTML5.

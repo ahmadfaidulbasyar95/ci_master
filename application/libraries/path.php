@@ -73,6 +73,7 @@ function lib_path_delete($path)
 		}
 	}
 }
+
 function lib_path_create($path, $chmod = 0777)
 {
 	if(!empty($path))

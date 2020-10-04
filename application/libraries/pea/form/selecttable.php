@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-include_once dirname(__FILE__).'/select.php';
+include_once __DIR__.'/select.php';
 class lib_pea_frm_selecttable extends lib_pea_frm_select
 {	
 	public $referenceTable      = '';

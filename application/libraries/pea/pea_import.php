@@ -1,8 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-include_once dirname(__FILE__).'/../output.php';
-include_once dirname(__FILE__).'/pea_edit.php';
+include_once __DIR__.'/../output.php';
+include_once __DIR__.'/pea_edit.php';
 class lib_pea_import extends lib_pea_edit
 {
 	public $values = array();
