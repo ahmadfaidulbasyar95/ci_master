@@ -11,7 +11,7 @@ class Location extends CI_Controller
 		$this->load->model('_tpl_model');
 		$this->load->library('session');
 
-		$this->_tpl_model->setTemplate('admin');
+		$this->_tpl_model->setTemplate('admin', 4);
 	}
 
 	function index()

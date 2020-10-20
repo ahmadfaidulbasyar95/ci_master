@@ -144,10 +144,10 @@ class lib_pea_edit
 	public function setHeader($header = '')
 	{
 		$this->formHeader = $header;
-		$this->formWrap('<div class="panel panel-default">','</div>');
-		$this->headerWrap('<div class="panel-heading">','</div>');
-		$this->bodyWrap('<div class="panel-body">','</div>');
-		$this->footerWrap('<div class="panel-footer">','</div>');
+		$this->formWrap(lib_bsv('<div class="panel panel-default">', '<div class="card">'),'</div>');
+		$this->headerWrap(lib_bsv('<div class="panel-heading">', '<div class="card-header">'),'</div>');
+		$this->bodyWrap(lib_bsv('<div class="panel-body">', '<div class="card-body">'),'</div>');
+		$this->footerWrap(lib_bsv('<div class="panel-footer">', '<div class="card-footer">'),'</div>');
 	}
 
 	public function formWrap($before = '', $after = '')

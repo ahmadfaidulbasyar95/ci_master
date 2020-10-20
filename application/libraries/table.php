@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+include_once __DIR__.'/bsv.php';
 function lib_table($data, $header = array(), $title='')
 {
 	$output = '';
@@ -39,11 +40,11 @@ function lib_table($data, $header = array(), $title='')
 		if (!empty($title))
 		{
 			$output = '
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">'.$title.'</h3>
+				<div class="'.lib_bsv('panel panel-default', 'card').'">
+					<div class="'.lib_bsv('panel-heading', 'card-header').'">
+						<h3 class="'.lib_bsv('panel-title', 'card-title').'">'.$title.'</h3>
 					</div>
-					<div class="panel-body">
+					<div class="'.lib_bsv('panel-body', 'card-body').'">
 						'.$output.'
 					</div>
 				</div>';

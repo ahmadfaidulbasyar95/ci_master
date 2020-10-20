@@ -11,7 +11,6 @@ class lib_pea
 
 	function __construct($opt)
 	{
-		pr(lib_bsv());
 		$this->table = $opt['table'];
 		$this->db    = $opt['db'];
 		$this->_url  = $opt['_url'];

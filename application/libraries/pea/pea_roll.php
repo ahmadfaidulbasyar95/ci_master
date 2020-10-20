@@ -38,35 +38,6 @@ class lib_pea_roll extends lib_pea_edit
 		'get_name' => 'sort',
 		'base_url' => '',
 	);
-	public $paginationConfig = array(
-		'get_name'        => 'page',
-		'base_url'        => '',
-		'num_links'       => 7,
-		'per_page'        => 15,
-		'prev_msg'        => '<h5 class="pull-left">Result {from} - {to} from total {total}</h5>',
-		'full_tag_open'   => '<ul class="pagination pagination-sm" style="margin:0;">',
-		'first_tag_open'  => '<li>',
-		'first_link'      => '&laquo;&laquo;',
-		'first_tag_close' => '</li>',
-		'prev_tag_open'   => '<li>',
-		'prev_link'       => '&laquo;',
-		'prev_tag_close'  => '</li>',
-		'num_tag_open'    => '<li>',
-		'num_tag_close'   => '</li>',
-		'cur_tag_open'    => '<li class="active">',
-		'cur_tag_close'   => '</li>',
-		'next_tag_open'   => '<li>',
-		'next_link'       => '&raquo;',
-		'next_tag_close'  => '<li>',
-		'last_tag_open'   => '<li>',
-		'last_link'       => '&raquo;&raquo;',
-		'last_tag_close'  => '</li>',
-		'full_tag_close'  => '</ul>',
-		'go_tag_open'     => '<ul class="pagination pagination-sm" style="margin:0;"><li>',
-		'go_question'     => 'Go to page ? of {totalpage}',
-		'go_link'         => 'Go to',
-		'go_tag_close'    => '</li></ul>',
-	);
 
 	function __construct($opt)
 	{
@@ -85,7 +56,37 @@ class lib_pea_roll extends lib_pea_edit
 		$this->tableItemFooterWrap('<tr>','</tr>');
 
 		$this->setSortConfig('base_url', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
-		$this->setPaginationConfig('base_url', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
+
+		$this->paginationConfig = array(
+			'get_name'        => 'page',
+			'base_url'        => $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'],
+			'num_links'       => 7,
+			'per_page'        => 15,
+			'prev_msg'        => lib_bsv('<h5 class="pull-left text-muted">Result {from} - {to} from total {total}</h5>', '<h6 class="float-left text-muted" style="margin: 5px;">Result {from} - {to} from total {total}</h6>'),
+			'full_tag_open'   => lib_bsv('<ul class="pagination pagination-sm" style="margin:0;">', '<nav class="float-left" aria-label="..."><ul class="pagination pagination-sm" style="margin:0;">'),
+			'first_tag_open'  => lib_bsv('<li>', '<li class="page-item">'),
+			'first_link'      => '&laquo;&laquo;',
+			'first_tag_close' => '</li>',
+			'prev_tag_open'   => lib_bsv('<li>', '<li class="page-item">'),
+			'prev_link'       => '&laquo;',
+			'prev_tag_close'  => '</li>',
+			'num_tag_open'    => lib_bsv('<li>', '<li class="page-item">'),
+			'num_tag_close'   => '</li>',
+			'num_link'        => lib_bsv('<a href="{link}">{title}</a>', '<a class="page-link" href="{link}">{title}</a>'),
+			'cur_tag_open'    => lib_bsv('<li class="active">', '<li class="page-item active" aria-current="page">'),
+			'cur_tag_close'   => '</li>',
+			'next_tag_open'   => lib_bsv('<li>', '<li class="page-item">'),
+			'next_link'       => '&raquo;',
+			'next_tag_close'  => '</li>',
+			'last_tag_open'   => lib_bsv('<li>', '<li class="page-item">'),
+			'last_link'       => '&raquo;&raquo;',
+			'last_tag_close'  => '</li>',
+			'full_tag_close'  => lib_bsv('</ul>', '</ul></nav>'),
+			'go_tag_open'     => lib_bsv('<ul class="pagination pagination-sm" style="margin:0;"><li>', '<nav class="float-left" aria-label="..."><ul class="pagination pagination-sm" style="margin:5px;"><li>'),
+			'go_question'     => 'Go to page ? of {totalpage}',
+			'go_link'         => 'Go to',
+			'go_tag_close'    => '</li></ul>',
+		);
 	}
 
 	public function setPaginationConfig($name = '', $value = '')
@@ -388,7 +389,7 @@ class lib_pea_roll extends lib_pea_edit
 						$this->form .= $this->formTableBodyAfter;
 						$this->form .= $this->formTableFooterBefore;
 							$this->form .= $this->formTableItemFooterBefore;
-								$this->form .= '<td colspan="'.$this->rollColumn.'"><table style="width: 100%;"><tbody><tr>';
+								$this->form .= '<td colspan="'.$this->rollColumn.'" style="padding: 0;"><table style="width: 100%;"><tbody><tr style="background-color: inherit;">';
 									$this->form .= '<td>';
 										if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
 										if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
