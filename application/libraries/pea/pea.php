@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+include_once __DIR__.'/../bsv.php';
 class lib_pea
 {
 	private $table = '';
@@ -10,6 +11,7 @@ class lib_pea
 
 	function __construct($opt)
 	{
+		pr(lib_bsv());
 		$this->table = $opt['table'];
 		$this->db    = $opt['db'];
 		$this->_url  = $opt['_url'];

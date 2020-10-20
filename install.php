@@ -45,6 +45,7 @@ if ($PNAME) {
 		install_exec("ln -s ../../../".$BASENAME."/application/controllers/index.html ./application/controllers/");
 		install_exec("ln -s ../../../".$BASENAME."/application/controllers/_Pea.php ./application/controllers/");
 		install_exec("ln -s ../../../".$BASENAME."/application/controllers/Welcome.php ./application/controllers/");
+		install_exec("ln -s ../../../".$BASENAME."/application/controllers/admin ./application/controllers/");
 		
 		install_exec("mkdir application/core");
 		install_exec("ln -s ../../../".$BASENAME."/application/core/index.html ./application/core/");
@@ -68,6 +69,8 @@ if ($PNAME) {
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/pagination.php ./application/libraries/");
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/path.php ./application/libraries/");
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/table.php ./application/libraries/");
+		install_exec("ln -s ../../../".$BASENAME."/application/libraries/file.php ./application/libraries/");
+		install_exec("ln -s ../../../".$BASENAME."/application/libraries/bsv.php ./application/libraries/");
 		
 		install_exec("mkdir application/logs");
 		install_exec("ln -s ../../../".$BASENAME."/application/logs/index.html ./application/logs/");
@@ -77,6 +80,7 @@ if ($PNAME) {
 		install_exec("ln -s ../../../".$BASENAME."/application/models/_db_model.php ./application/models/");
 		install_exec("ln -s ../../../".$BASENAME."/application/models/_encrypt_model.php ./application/models/");
 		install_exec("ln -s ../../../".$BASENAME."/application/models/_pea_model.php ./application/models/");
+		install_exec("ln -s ../../../".$BASENAME."/application/models/_tpl_model.php ./application/models/");
 		
 		install_exec("mkdir application/third_party");
 		install_exec("ln -s ../../../".$BASENAME."/application/third_party/index.html ./application/third_party/");
@@ -85,6 +89,7 @@ if ($PNAME) {
 		install_exec("ln -s ../../../".$BASENAME."/application/views/index.html ./application/views/");
 		install_exec("ln -s ../../../".$BASENAME."/application/views/welcome_message.php ./application/views/");
 		install_exec("ln -s ../../../".$BASENAME."/application/views/errors ./application/views/");
+		install_exec("ln -s ../../../".$BASENAME."/application/views/admin ./application/views/");
 		
 		install_exec("ln -s ../../".$BASENAME."/application/.htaccess ./application/");
 		install_exec("ln -s ../../".$BASENAME."/application/index.html ./application/");
