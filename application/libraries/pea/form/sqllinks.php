@@ -62,7 +62,7 @@ class lib_pea_frm_sqllinks extends lib_pea_frm_text
 		$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
 		$value = '<a class="'.$this->toolModal.'" href="'.$this->getLinks($index).'" '.$this->attr.'>'.$value.'</a>';
 		$form .= ($this->init == 'roll') ? $value : '<p>'.$value.'</p>';
-		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
+		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
 		if ($this->init == 'roll') $form .= '</td>';
 		return $form;

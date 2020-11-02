@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+$btn_default = lib_bsv('btn btn-default', 'btn btn-secondary');
 ?>
 <form action="" method="POST" role="form">
 	<div class="form-group" id="upload_excell_wrap">
@@ -7,7 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<input type="file" class="form-control" id="upload_excell" placeholder="Upload Excell File">
 	</div>
 	<div class="form-group" id="upload_excell_submit_wrap" style="display: none;">
-		<button type="button" class="btn btn-default" id="upload_excell_back">Back</button>
+		<button type="button" class="<?php echo $btn_default; ?>" id="upload_excell_back">Back</button>
 		<button type="button" class="btn btn-primary" id="upload_excell_verify">Verify Only</button>
 		<button type="button" class="btn btn-primary" id="upload_excell_submit">Verify & Submit</button>
 		<div class="table-responsive">
@@ -28,7 +29,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		</div>
 	</div>
 	<div class="form-group" id="upload_excell_submit_next_wrap" style="display: none;">
-		<button type="button" class="btn btn-default" id="upload_excell_next">Next</button>
+		<button type="button" class="<?php echo $btn_default; ?>" id="upload_excell_next">Next</button>
 	</div>
 </form>
 <div class="table-responsive">

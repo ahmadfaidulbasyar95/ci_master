@@ -298,7 +298,7 @@ class lib_pea_frm_text
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
 			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
 		}
-		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
+		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
 		if ($this->init == 'roll') $form .= '</td>';
 		return $form;

@@ -18,7 +18,7 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 	public function getRollTitle($sortConfig = array(), $active = '', $is_desc = '')
 	{
 		return '
-<div class="checkbox checkall" style="float: left;margin: 0;">
+<div class="'.lib_bsv('checkbox', 'form-check').' checkall" style="float: left;margin: 0;">
 	<label>
 		<input type="checkbox" title="'.$this->title.'">
 	</label>
@@ -47,14 +47,14 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
 			$value = ($this->getValue($index)) ? 'checked="checked"' : '';
 			$form .= '
-<div class="checkbox">
+<div class="'.lib_bsv('checkbox', 'form-check').'">
 	<label>
 		<input type="checkbox" name="'.$name.'" value="1" title="'.$this->caption.'" '.$this->attr.' '.$value.'>
 		'.$this->caption.'
 	</label>
 </div>';
 		}
-		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
+		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
 		if ($this->init == 'roll') $form .= '</td>';
 		return $form;

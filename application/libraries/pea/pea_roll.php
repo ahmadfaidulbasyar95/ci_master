@@ -26,9 +26,6 @@ class lib_pea_roll extends lib_pea_edit
 		'html'  => '<i class="fa fa-file-text-o"></i>',
 		'json'  => '<i class="fa fa-file-code-o"></i>',
 	);
-	public $displayColumnTool         = 0;
-	public $displayColumnButtonText   = 'Show/Hide Column <span class="caret"></span>';
-	public $displayColumnButtonClass  = 'btn btn-default btn-xs';
 	public $rollValues                = array();
 	public $rollDeleteInput           = array();
 	public $rollDeleteCondition       = array();
@@ -56,14 +53,18 @@ class lib_pea_roll extends lib_pea_edit
 		$this->tableItemFooterWrap('<tr>','</tr>');
 
 		$this->setSortConfig('base_url', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
+		
+		$this->displayColumnTool        = 0;
+		$this->displayColumnButtonText  = 'Show/Hide Column <span class="caret"></span>';
+		$this->displayColumnButtonClass = lib_bsv('btn btn-default btn-xs', 'btn btn-secondary btn-sm');
 
 		$this->paginationConfig = array(
 			'get_name'        => 'page',
 			'base_url'        => $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'],
 			'num_links'       => 7,
 			'per_page'        => 15,
-			'prev_msg'        => lib_bsv('<h5 class="pull-left text-muted">Result {from} - {to} from total {total}</h5>', '<h6 class="float-left text-muted" style="margin: 5px;">Result {from} - {to} from total {total}</h6>'),
-			'full_tag_open'   => lib_bsv('<ul class="pagination pagination-sm" style="margin:0;">', '<nav class="float-left" aria-label="..."><ul class="pagination pagination-sm" style="margin:0;">'),
+			'prev_msg'        => lib_bsv('<h5 class="pull-right text-muted">Result {from} - {to} from total {total}</h5>', '<h6 class="float-left text-muted" style="margin: 5px;">Result {from} - {to} from total {total}</h6>'),
+			'full_tag_open'   => lib_bsv('<ul class="pagination pagination-sm" style="margin:0; padding-top:3px;">', '<nav class="float-left" aria-label="..."><ul class="pagination pagination-sm" style="margin:0; padding-top:3px;">'),
 			'first_tag_open'  => lib_bsv('<li>', '<li class="page-item">'),
 			'first_link'      => '&laquo;&laquo;',
 			'first_tag_close' => '</li>',
@@ -82,7 +83,7 @@ class lib_pea_roll extends lib_pea_edit
 			'last_link'       => '&raquo;&raquo;',
 			'last_tag_close'  => '</li>',
 			'full_tag_close'  => lib_bsv('</ul>', '</ul></nav>'),
-			'go_tag_open'     => lib_bsv('<ul class="pagination pagination-sm" style="margin:0;"><li>', '<nav class="float-left" aria-label="..."><ul class="pagination pagination-sm" style="margin:5px;"><li>'),
+			'go_tag_open'     => lib_bsv('<ul class="pagination pagination-sm" style="margin:0; padding-top:3px;"><li>', '<nav class="float-left" aria-label="..."><ul class="pagination pagination-sm" style="margin:5px;"><li>'),
 			'go_question'     => 'Go to page ? of {totalpage}',
 			'go_link'         => 'Go to',
 			'go_tag_close'    => '</li></ul>',
@@ -191,7 +192,7 @@ class lib_pea_roll extends lib_pea_edit
 	{
 		if (in_array($index, $this->rollDeleteInput)) {
 			return '
-<div class="checkbox">
+<div class="'.lib_bsv('checkbox', 'form-check').'">
 	<label>
 		<input type="checkbox" name="'.$this->table.'_'.$this->init.'_delete_item['.$index.']" value="1" title="'.strip_tags($this->deleteButtonText).'">
 		'.strip_tags($this->deleteButtonText).'
@@ -203,11 +204,11 @@ class lib_pea_roll extends lib_pea_edit
 	public function getRollDeleteTitle()
 	{
 		return '
-<div class="checkbox checkall" style="float: left;margin: 0;">
+<div class="'.lib_bsv('checkbox', 'form-check').' checkall" style="float: left;margin: 0;">
 	<label>
-		<input type="checkbox" title="'.strip_tags($this->deleteButtonText).'">
+		<input type="checkbox" title="'.strip_tags($this->deleteButtonText).'">'.strip_tags($this->deleteButtonText).'
 	</label>
-</div>'.strip_tags($this->deleteButtonText);
+</div>';
 	}
 
 	public function setRollDeleteCondition($condition = '') // if ({$condition}) -> use {} to get value of field
@@ -310,7 +311,7 @@ class lib_pea_roll extends lib_pea_edit
 				}
 				if ($this->reportType and isset($_POST[$this->table.'_report'])) {
 					if (in_array($_POST[$this->table.'_report'], $this->reportType)) {
-						$reportData = $this->db->getAll('SELECT '.implode(' , ', $select).' FROM '.$this->table);
+						$reportData = $this->db->getAll('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort());
 						if ($reportData) {
 							$reportOutput = array();
 							foreach ($reportData as $key => $value) {
@@ -320,11 +321,10 @@ class lib_pea_roll extends lib_pea_edit
 									}
 								}			
 							}
-							include_once __DIR__.'/../path.php';
+							include_once __DIR__.'/../file.php';
 							$reportPath = $this->_root.'application/cache/report/';
 							$reportFile = time().'_'.mt_rand(10000000,999999999);
-							lib_path_create($reportPath);
-							file_put_contents($reportPath.$reportFile.'.json', json_encode($reportOutput));
+							lib_file_write($reportPath.$reportFile.'.json', json_encode($reportOutput));
 							redirect($this->url.'_Pea/report/'.$_POST[$this->table.'_report'].'/'.$reportFile);
 						}
 					}
@@ -359,6 +359,7 @@ class lib_pea_roll extends lib_pea_edit
 
 	public function getForm()
 	{
+		$btn_default = lib_bsv('btn btn-default', 'btn btn-secondary');
 		$this->action();
 		$this->form .= $this->formBefore;
 			$this->form .= $this->formHeaderBefore;
@@ -389,13 +390,13 @@ class lib_pea_roll extends lib_pea_edit
 						$this->form .= $this->formTableBodyAfter;
 						$this->form .= $this->formTableFooterBefore;
 							$this->form .= $this->formTableItemFooterBefore;
-								$this->form .= '<td colspan="'.$this->rollColumn.'" style="padding: 0;"><table style="width: 100%;"><tbody><tr style="background-color: inherit;">';
+								$this->form .= '<td colspan="'.$this->rollColumn.'" '.lib_bsv('', 'style="padding: 0;"').'><table style="width: 100%;"><tbody><tr style="background-color: inherit;">';
 									$this->form .= '<td>';
 										if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
 										if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
 									$this->form .= '</td>';
 									if ($this->displayColumnTool) {
-										$this->form .= '<td>';
+										$this->form .= '<td style="padding-left: 15px;">';
 											$this->form .= '<div class="dropup">';
 												$this->form .= '<button class="'.$this->displayColumnButtonClass.' dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$this->displayColumnButtonText.'</button>';
 												$this->form .= '<ul class="dropdown-menu">';
@@ -403,7 +404,7 @@ class lib_pea_roll extends lib_pea_edit
 														if ($value->displayColumnTool) {
 															$this->form .= '
 															<li style="padding: 0 15px;">
-																<div class="checkbox">
+																<div class="'.lib_bsv('checkbox', 'form-check').'">
 																	<label><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'" onchange="$(this).parents(\'.dropup\').addClass(\'open\');"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
 																</div>
 															</li>';
@@ -411,8 +412,8 @@ class lib_pea_roll extends lib_pea_edit
 													}
 													$this->form .= '
 													<li style="padding: 0 15px;">
-														<button type="submit" name="'.$this->table.'_display_submit" title="SUBMIT" value="'.$this->init.'" class="btn btn-default btn-sm" style="width: 50%;"><i class="fa fa-send"></i></button>
-														<button type="submit" name="'.$this->table.'_display_reset" title="RESET" value="'.$this->init.'" class="btn btn-default btn-sm pull-right" style="width: calc(50% - 15px);"><i class="fa fa-times"></i></button>
+														<button type="submit" name="'.$this->table.'_display_submit" title="SUBMIT" value="'.$this->init.'" class="'.$btn_default.' btn-sm" style="width: 50%;"><i class="fa fa-send"></i></button>
+														<button type="submit" name="'.$this->table.'_display_reset" title="RESET" value="'.$this->init.'" class="'.$btn_default.' btn-sm pull-right" style="width: calc(50% - 15px);"><i class="fa fa-times"></i></button>
 													</li>';
 												$this->form .= '</ul>';
 											$this->form .= '</div>';
@@ -420,10 +421,10 @@ class lib_pea_roll extends lib_pea_edit
 									}
 									if ($this->reportType) {
 										$this->setIncludes(['js' => ['report.min']]);
-										$this->form .= '<td><small>Export : </small>';
+										$this->form .= '<td style="padding-left: 15px;"><small>Export : </small>';
 											$this->form .= '<div class="btn-group form_pea_roll_report">';
 												foreach ($this->reportType as $value) {
-													$this->form .= '<button type="submit" name="'.$this->table.'_report" title="Export '.strtoupper($value).'" value="'.$value.'" class="btn btn-default btn-sm">'.$this->reportTypeText[$value].'</button> ';
+													$this->form .= '<button type="submit" name="'.$this->table.'_report" title="Export '.strtoupper($value).'" value="'.$value.'" class="'.$btn_default.' btn-sm">'.$this->reportTypeText[$value].'</button> ';
 												}
 											$this->form .= '</div>';
 										$this->form .= '</td>';

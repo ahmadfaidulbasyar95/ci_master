@@ -60,7 +60,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 	'.$this->getOption($index).'
 </select>';
 		}
-		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
+		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
 		if ($this->init == 'roll') $form .= '</td>';
 		return $form;

@@ -31,9 +31,6 @@ class lib_pea_edit
 	public $deleteTool                 = 0;
 	public $deleteButtonText           = '<i class="fa fa-trash"></i> Delete';
 	public $deleteButtonClass          = 'btn btn-danger';
-	public $returnTool                 = 1;
-	public $returnButtonText           = '<i class="fa fa-chevron-left"></i>&nbsp;';
-	public $returnButtonClass          = 'btn btn-default';
 	public $onSaveReloadParentScript   = '';
 	public $onDeleteReloadParentScript = '';
 	public $onSaveFunction             = '';
@@ -76,6 +73,10 @@ class lib_pea_edit
 		$this->setSuccessMsg(($this->where) ? 'Success Save Data' : 'Success Insert New Data'); 
 
 		if (isset($_GET['return'])) $this->returnUrl = $_GET['return'];
+		
+		$this->returnTool        = 1;
+		$this->returnButtonText  = '<i class="fa fa-chevron-left"></i>&nbsp;';
+		$this->returnButtonClass = lib_bsv('btn btn-default', 'btn btn-secondary');
 	}
 
 	public function setSaveTool($saveTool = 1)

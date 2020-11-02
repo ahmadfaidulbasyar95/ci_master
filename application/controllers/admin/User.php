@@ -11,7 +11,7 @@ class User extends CI_Controller
 		$this->load->model('_tpl_model');
 		$this->load->library('session');
 
-		$this->_tpl_model->setTemplate('admin', 4);
+		$this->_tpl_model->setTemplate('admin');
 	}
 
 	function index()
@@ -34,6 +34,7 @@ class User extends CI_Controller
 		$form->roll->input->image->setThumbnail(120, 'thumb/');
 		$form->roll->input->image->setPlainText(true);
 		
+		$form->roll->addReportAll();
 		$form->roll->action();
 		echo $form->roll->getForm();
 		$this->_tpl_model->show();

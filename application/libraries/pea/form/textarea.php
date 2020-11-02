@@ -32,7 +32,7 @@ class lib_pea_frm_textarea extends lib_pea_frm_text
 			// $name = ($this->isMultiform) ? $name.'[]' : $name;
 			$form .= '<textarea name="'.$name.'" class="form-control'.str_replace('{name}', $this->name.'_'.$index, $this->toolHtmlEditor).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>'.$this->getValue($index).'</textarea>';
 		}
-		if ($this->tips) $form .= '<div class="help-block">'.$this->tips.'</div>';
+		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
 		if ($this->init == 'roll') $form .= '</td>';
 		return $form;

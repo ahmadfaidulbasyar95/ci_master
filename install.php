@@ -37,6 +37,7 @@ if ($PNAME) {
 
 		install_exec("mkdir application/cache");
 		install_exec("ln -s ../../../".$BASENAME."/application/cache/index.html ./application/cache/");
+		chmod('application/cache/', 0777);
 
 		install_exec("mkdir application/config");
 		install_exec("cp ../".$BASENAME."/application/config/* ./application/config/");

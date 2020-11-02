@@ -11,7 +11,7 @@ class Location extends CI_Controller
 		$this->load->model('_tpl_model');
 		$this->load->library('session');
 
-		$this->_tpl_model->setTemplate('admin', 4);
+		$this->_tpl_model->setTemplate('admin');
 	}
 
 	function index()
@@ -26,7 +26,12 @@ class Location extends CI_Controller
 		$form->roll->addInput('title', 'sqllinks');
 		$form->roll->input->title->setTitle('Nama');
 		$form->roll->input->title->setLinks('admin/location/form');
+
+		$form->roll->addInput('detail', 'sqlplaintext');
+		$form->roll->input->detail->setTitle('Deskripsi');
+		$form->roll->input->detail->setDisplayColumn(1);
 		
+		$form->roll->addReportAll();
 		$form->roll->action();
 		echo $form->roll->getForm();
 		$this->_tpl_model->show();
@@ -43,6 +48,9 @@ class Location extends CI_Controller
 		
 		$form->edit->addInput('title','text');
 		$form->edit->input->title->setTitle('Nama');
+		
+		$form->edit->addInput('detail','text');
+		$form->edit->input->detail->setTitle('Deskripsi');
 		
 		$form->edit->action();
 		echo $form->edit->getForm();
