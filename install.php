@@ -72,6 +72,7 @@ if ($PNAME) {
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/table.php ./application/libraries/");
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/file.php ./application/libraries/");
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/bsv.php ./application/libraries/");
+		install_exec("ln -s ../../../".$BASENAME."/application/libraries/tabs.php ./application/libraries/");
 		
 		install_exec("mkdir application/logs");
 		install_exec("ln -s ../../../".$BASENAME."/application/logs/index.html ./application/logs/");

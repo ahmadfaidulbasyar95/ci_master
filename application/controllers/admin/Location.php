@@ -16,27 +16,63 @@ class Location extends CI_Controller
 
 	function index()
 	{
-		$par_id = @intval($_GET['par_id']);
-		$form   = $this->_pea_model->newForm('location');
+		$id = @intval($_GET['id']);
+		include_once APPPATH.'libraries/tabs.php';
+		
+		$_GET['id']     = 0;
+		$_GET['par_id'] = $id;
+		ob_start();
+		$this->form();
+		$add = ob_get_clean();
+		
+		$_GET['id'] = $id;
+		ob_start();
+		$this->list();
+		$list = ob_get_clean();
 
-		$form->initRoll('WHERE `par_id`='.$par_id.' ORDER BY `title` ASC');
+		if ($id) {
+			ob_start();
+			$this->form();
+			$edit = ob_get_clean();
+			
+			echo lib_tabs(array(
+				'Ubah Lokasi'       => $edit,
+				'Sub Lokasi'        => $list,
+				'Tambah Sub Lokasi' => $add,
+			));
+		}else{
+			echo lib_tabs(array(
+				'Lokasi'        => $list,
+				'Tambah Lokasi' => $add,
+			));
+		}
+
+		$this->_tpl_model->show();
+	}
+
+	function list()
+	{
+		$id   = @intval($_GET['id']);
+		$form = $this->_pea_model->newForm('location');
+
+		$form->initRoll('WHERE `par_id`='.$id.' ORDER BY `title` ASC');
 
 		$form->roll->addInput('title', 'sqllinks');
 		$form->roll->input->title->setTitle('Nama');
-		$form->roll->input->title->setLinks('admin/location/form');
+		$form->roll->input->title->setLinks('admin/location');
 		
 		$form->roll->setDeleteTool(false);
 		$form->roll->setSaveTool(false);
 		$form->roll->addReportAll();
 		$form->roll->action();
 		echo $form->roll->getForm();
-		$this->_tpl_model->show();
 	}
 
 	function form()
 	{
-		$id   = @intval($_GET['id']);
-		$form = $this->_pea_model->newForm('location');
+		$id     = @intval($_GET['id']);
+		$par_id = @intval($_GET['par_id']);
+		$form   = $this->_pea_model->newForm('location');
 
 		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
 		
@@ -45,9 +81,12 @@ class Location extends CI_Controller
 		$form->edit->addInput('title','text');
 		$form->edit->input->title->setTitle('Nama');
 		$form->edit->input->title->setRequire();
+
+		if (!$id and $par_id) {
+			$form->edit->addExtraField('par_id', $par_id);
+		}
 		
 		$form->edit->action();
 		echo $form->edit->getForm();
-		$this->_tpl_model->show();
 	}
 }
