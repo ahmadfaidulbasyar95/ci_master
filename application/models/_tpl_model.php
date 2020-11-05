@@ -19,6 +19,8 @@ class _tpl_model extends CI_Model {
 	{
 		parent::__construct();
 
+		$this->load->model('_db_model');
+
 		$this->_url  = base_url();
 		$this->_root = FCPATH;
 
@@ -132,5 +134,24 @@ class _tpl_model extends CI_Model {
 		if ($file) {
 			echo '<script src="'.$file.'"></script>';
 		}
+	}
+
+	public function config($name = '', $index = '')
+	{
+		$ret = ($index) ? '' : array();
+		if ($name) {
+			$dt = $this->_db_model->getOne('SELECT `value` FROM `config` WHERE `name`="'.addslashes($name).'"');
+			if ($dt) {
+				$dt = json_decode($dt, 1);
+				if ($dt) {
+					if ($index) {
+						$ret = @$dt[$index];
+					}else{
+						$ret = $dt;
+					}
+				}
+			}
+		}
+		return $ret;
 	}
 }

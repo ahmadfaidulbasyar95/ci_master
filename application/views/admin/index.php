@@ -15,19 +15,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		?>
 	</head>
 	<body>
-		<div id="_nav_top" class="col-xs-4">
-			<div id="_nav_header">
-				<a id="_nav_collapse" href="#"><i class="fa fa-bars"></i></a>
-				<div>
-					<!--  -->
-				</div>
-			</div>
-			<div id="_body">
+		<div id="_desktop" class="menu_close" style="background-image: url('<?php echo $tpl->_url.'files/uploads/'.$tpl->config('dashboard', 'desktop_background'); ?>');">
+			<div id="_content">
 				<?php echo $tpl->content; ?>
 			</div>
+			<div id="_iframes"></div>
 		</div>
-		<div id="_nav_left" class="col-xs-8">
-			<!--  -->
+		<div id="_menu" style="display: none;">
+			<div>
+				<img src="<?php echo $tpl->_url.'files/uploads/'.$tpl->config('dashboard', 'desktop_background'); ?>">
+				<a href="#" class="ellipsis menu_close">Faid Faid Faid Faid Faid Faid Faid Faid Faid Faid Faid Faid </a>
+				<a href="#"><i class="fa fa-sign-out fa-fw"></i></a>
+			</div>
+			<div id="_menu_list">
+				<a href="#" class="ellipsis menu_close"><i class="fa fa-fw fa-cog"></i>Item 1</a>
+				<a href="#" class="ellipsis menu_close"><i class="fa fa-fw fa-cog"></i>Item 2</a>
+				<a href="#" class="ellipsis menu_close"><i class="fa fa-fw fa-cog"></i>Item 3 Item Item Item Item Item Item Item Item Item Item Item Item Item Item Item Item </a>
+			</div>
+		</div>
+		<div id="_taskbar">
+			<a id="_start" href="#"><i class="fa fa-bars fa-fw"></i></a>
 		</div>
 	</body>
 </html>

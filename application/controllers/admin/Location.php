@@ -19,11 +19,11 @@ class Location extends CI_Controller
 		$id = @intval($_GET['id']);
 		include_once APPPATH.'libraries/tabs.php';
 		
-		$_GET['id']     = 0;
-		$_GET['par_id'] = $id;
-		ob_start();
-		$this->form();
-		$add = ob_get_clean();
+		// $_GET['id']     = 0;
+		// $_GET['par_id'] = $id;
+		// ob_start();
+		// $this->form();
+		// $add = ob_get_clean();
 		
 		$_GET['id'] = $id;
 		ob_start();
@@ -31,19 +31,19 @@ class Location extends CI_Controller
 		$list = ob_get_clean();
 
 		if ($id) {
-			ob_start();
-			$this->form();
-			$edit = ob_get_clean();
+			// ob_start();
+			// $this->form();
+			// $edit = ob_get_clean();
 			
 			echo lib_tabs(array(
-				'Ubah Lokasi'       => $edit,
+				// 'Ubah Lokasi'       => $edit,
 				'Sub Lokasi'        => $list,
-				'Tambah Sub Lokasi' => $add,
+				// 'Tambah Sub Lokasi' => $add,
 			));
 		}else{
 			echo lib_tabs(array(
 				'Lokasi'        => $list,
-				'Tambah Lokasi' => $add,
+				// 'Tambah Lokasi' => $add,
 			));
 		}
 

@@ -17,8 +17,26 @@ class lib_pea
 		$this->_root = $opt['_root'];
 	}
 
-	public function initEdit($where = '', $table_id = 'id')
+	public function initEdit($where = '', $table_id = 'id', $make_data_exist = 0)
 	{
+		if ($where and $make_data_exist) { // only edit mode
+			if (empty($this->db->getOne('SELECT 1 FROM '.$this->table.' '.$where))) {
+				preg_match_all('~([a-zA-Z0-9_]+)`?\s?[=|\+|-|\/|*|<|>]+\s?([0-9,.]+|"(.*?)")~', str_replace('\"', '##PETIK##', $where), $match);
+				if ($match) {
+					$data = array();
+					foreach ($match[1] as $key => $value) {
+						if (empty($match[3][$key])) {
+							$data[$value] = $match[2][$key];
+						}else{
+							$data[$value] = str_replace('##PETIK##', '"', $match[3][$key]);
+						}
+					}
+					if ($data) {
+						$this->db->insert($this->table, $data);
+					}
+				}
+			}
+		}
 		include_once __DIR__.'/pea_edit.php';
 		$this->edit = new lib_pea_edit(array(
 			'table'    => $this->table,

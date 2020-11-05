@@ -1,8 +1,11 @@
 (function() {
 	window.addEventListener('load', function() { 
-		$('#_nav_collapse').on('click', function(event) {
+		$('#_start').on('click', function(event) {
 			event.preventDefault();
-			$('body').toggleClass('_nav_hide');
+			$('#_menu').toggle(300).toggleClass('active');
+		});
+		$('.menu_close').on('click', function(event) {
+			$('#_menu.active').toggle(300).toggleClass('active');
 		});
 	}, false);
 })();

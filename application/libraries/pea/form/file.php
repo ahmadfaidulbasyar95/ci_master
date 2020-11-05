@@ -23,6 +23,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		parent::__construct($opt, $name);
 		$this->upload    = new CI_Upload();
 		$this->image_lib = new CI_Image_lib();
+		$this->setFolder('files/uploads/');
 	}
 
 	public function setNewValue($newValue = '', $index = '')
