@@ -52,10 +52,10 @@ class _tpl_model extends CI_Model {
 			return false;
 		}
 		if (empty($file)) {
-			$file = 'index.php';
+			$file = 'index';
 		}
-		if (is_file($this->root.$file)) {
-			$this->layout = $file;
+		if (is_file($this->root.$file.'.php')) {
+			$this->layout = $file.'.php';
 			return true;
 		}
 		return false;
@@ -65,7 +65,7 @@ class _tpl_model extends CI_Model {
 	{
 		$__file__ = '';
 		if (is_file($this->root.$file.'.php')) {
-			$__file__ = $this->root.$file;
+			$__file__ = $this->root.$file.'.php';
 		}elseif (is_file($this->_root.'application/views/'.$file.'.php')) {
 			$__file__ = $this->_root.'application/views/'.$file.'.php';
 		}

@@ -16,7 +16,8 @@ class Dashboard extends CI_Controller
 
 	function index()
 	{
-
+		$this->_tpl_model->setLayout('blank');
+		$this->_tpl_model->view('Dashboard/index');
 		$this->_tpl_model->show();
 	}
 
