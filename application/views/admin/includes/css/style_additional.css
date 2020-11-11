@@ -32,6 +32,7 @@
 	position: fixed;
 	bottom: 0;
 	box-shadow: 0 0 5px black;
+	z-index: 99999999999999999999;
 }
 
 #_start {
@@ -80,6 +81,7 @@
 	max-width: 100%;
 	max-height: 80vh;
 	padding: 20px 15px 15px 15px;
+	z-index: 99999999999999999999;
 }
 #_user_info > img {
 	width: 40px;
@@ -170,6 +172,13 @@
 ._iframe_active ._iframe_body_clicker {
 	display: none;
 }
+._iframe_move.ui-draggable-dragging ._iframe_body_clicker ,
+._iframe_move.ui-resizable-resizing ._iframe_body_clicker {
+	display: block;
+}
+._iframe_move.ui-draggable-dragging {
+	cursor: grabbing;
+}
 #_iframe_toggles {
 	display: -webkit-inline-box;
 	overflow: auto;
@@ -185,7 +194,7 @@
 	white-space: nowrap;
 	color: white;
 	display: flex;
-	width: 100px;
+	width: 200px;
 	padding: 7px;
 }
 ._iframe_toggles._iframe_toggle_active ,
