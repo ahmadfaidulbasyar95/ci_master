@@ -154,13 +154,23 @@
 }
 ._iframe_title {
 	float: left;
-	width: calc(100% - 80px);
+	width: calc(100% - 100px);
 	text-align: left;
 }
+._iframe_title .fa {
+	margin-right: 5px;
+}
+._iframe_refresh ,
 ._iframe_minimize ,
 ._iframe_maximize ,
 ._iframe_close {
-	color: white;
+	color: white !important;
+}
+._iframe_refresh:hover ,
+._iframe_minimize:hover ,
+._iframe_maximize:hover ,
+._iframe_close:hover {
+	text-shadow: 0 0 5px;
 }
 ._iframe_body_clicker {
 	position: absolute;
@@ -185,9 +195,16 @@
 	width: calc(100% - 200px);
 	white-space: nowrap;
 }
+#_iframe_toggles .ui-state-highlight {
+	width: 200px;
+	display: inline-block;
+	height: 10px;
+}
 ._iframe_toggles {
 	display: inline-block;
 	height: 35px;
+	border-left: 1px solid #ffffff45;
+	border-right: 1px solid #ffffff45;
 }
 ._iframe_toggle_title {
 	overflow: hidden;
@@ -196,6 +213,12 @@
 	display: flex;
 	width: 200px;
 	padding: 7px;
+}
+._iframe_toggle_title .fa {
+	margin-right: 5px;
+}
+._iframe_toggle_title .fa:before {
+	vertical-align: middle;
 }
 ._iframe_toggles._iframe_toggle_active ,
 ._iframe_toggles:hover {

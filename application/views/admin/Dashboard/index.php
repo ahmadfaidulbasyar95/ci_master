@@ -10,7 +10,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<div id="_iframes">
 		<div class="_iframes" data-id="1">
 			<div class="_iframe_head">
-				<span class="_iframe_title ellipsis">Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1</span>
+				<span class="_iframe_title ellipsis"><i class="fa fa-fw fa-cog"></i>Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1 Window 1</span>
+				<a class="_iframe_refresh" href="#"><i class="fa fa-fw fa-refresh"></i></a>
 				<a class="_iframe_minimize" href="#"><i class="fa fa-fw fa-window-minimize"></i></a>
 				<a class="_iframe_maximize" href="#"><i class="fa fa-fw fa-window-restore"></i></a>
 				<a class="_iframe_close" href="#"><i class="fa fa-fw fa-window-close-o"></i></a>
@@ -20,7 +21,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		</div>
 		<div class="_iframes" data-id="2">
 			<div class="_iframe_head">
-				<span class="_iframe_title ellipsis">Window 2</span>
+				<span class="_iframe_title ellipsis"><i class="fa fa-fw fa-cog"></i>Window 2</span>
+				<a class="_iframe_refresh" href="#"><i class="fa fa-fw fa-refresh"></i></a>
 				<a class="_iframe_minimize" href="#"><i class="fa fa-fw fa-window-minimize"></i></a>
 				<a class="_iframe_maximize" href="#"><i class="fa fa-fw fa-window-restore"></i></a>
 				<a class="_iframe_close" href="#"><i class="fa fa-fw fa-window-close-o"></i></a>
@@ -46,10 +48,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<a id="_start" href="#"><i class="fa fa-bars fa-fw"></i> <span>Start</span></a>
 	<div id="_iframe_toggles">
 		<a class="_iframe_toggles" href="#" data-id="1">
-			<span class="_iframe_toggle_title">Window 1 Window 1 Window 1 Window 1 Window 1</span>
+			<span class="_iframe_toggle_title"><i class="fa fa-fw fa-cog"></i> Window 1 Window 1 Window 1 Window 1 Window 1</span>
 		</a>
 		<a class="_iframe_toggles" href="#" data-id="2">
-			<span class="_iframe_toggle_title">Window 2</span>
+			<span class="_iframe_toggle_title"><i class="fa fa-fw fa-cog"></i> Window 2</span>
 		</a>
 	</div>
 	<span id="_datetime"></span>

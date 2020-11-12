@@ -112,5 +112,14 @@
 				el.remove();
 			}, 300);
 		});
+		$('body').on('click', '._iframe_refresh', function(event) {
+			event.preventDefault();
+			var el = $(this).parents('._iframes').find('._iframe_body');
+			el.attr('src', el.contents().get(0).location.href);
+		});
+		$('#_iframe_toggles').sortable({
+			placeholder: "ui-state-highlight"
+		});
+		$('#_iframe_toggles').disableSelection();
 	}, false);
 })();
