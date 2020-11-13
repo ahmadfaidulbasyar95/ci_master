@@ -70,14 +70,26 @@
 			var el = $(this).parents('._iframes');
 			el.toggleClass('_iframe_move');
 			if (el.data('width') == undefined) {
-				el.data('width', w_width/2-2);
-				maximize_count++;
-				if (maximize_count%2 == 0) {
-					el.css('left', w_width/2-3);
+				if (w_width < w_height) {
+					el.data('width', w_width-5);
+				}else{
+					el.data('width', w_width/2-2);
+					maximize_count++;
+					if (maximize_count%2 == 0) {
+						el.css('left', w_width/2-3);
+					}
 				}
 			}
 			if (el.data('height') == undefined) {
-				el.data('height', w_height-36);
+				if (w_width < w_height) {
+					el.data('height', w_height/2-18);
+					maximize_count++;
+					if (maximize_count%2 == 0) {
+						el.css('top', w_height/2-18);
+					}
+				}else{
+					el.data('height', w_height-36);
+				}
 			}
 			if (el.hasClass('_iframe_move')) {
 				_iframe_resize(el, el.data('width'), el.data('height'));
