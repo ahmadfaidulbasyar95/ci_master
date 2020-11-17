@@ -157,5 +157,30 @@
 			$('._iframes[data-id="'+_iframe_id+'"]').trigger('click').toggle(300);
 			$('._iframe_toggles[data-id="'+_iframe_id+'"]').toggle(300);
 		});
+		$('body').on('click', 'a[target="_iframe_sub"]', function(event) {
+			event.preventDefault();
+			var el  = $(this);
+			var sub = el.next('div');
+			if (sub.length) {
+				if (el.hasClass('active')) {
+					sub.slideUp(300).removeClass('active');
+					el.removeClass('active');
+				}else{
+					sub.slideDown(300).addClass('active');
+					el.addClass('active');
+				}
+			}
+		});
+		$('a[target="_iframe_sub"]').each(function(index, el) {
+			var el  = $(this);
+			var sub = el.next('div');
+			if (sub.length) {
+				if (el.hasClass('active')) {
+					sub.addClass('active');
+				}else{
+					sub.hide();
+				}
+			}
+		});
 	}, false);
 })();

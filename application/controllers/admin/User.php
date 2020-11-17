@@ -20,14 +20,14 @@ class User extends CI_Controller
 
 		$form->initRoll('WHERE 1 ORDER BY `name` ASC');
 
-		$form->roll->setHeader('Data Pengguna');
+		$form->roll->setHeader('User');
 
 		$form->roll->addInput('name', 'sqllinks');
-		$form->roll->input->name->setTitle('Nama');
+		$form->roll->input->name->setTitle('Name');
 		$form->roll->input->name->setLinks('admin/user/form');
 
 		$form->roll->addInput('image', 'file');
-		$form->roll->input->image->setTitle('Foto');
+		$form->roll->input->image->setTitle('Image');
 		$form->roll->input->image->setFolder('files/user/');
 		$form->roll->input->image->setAllowedExtension(array('jpg', 'jpeg', 'gif', 'png', 'bmp'));
 		$form->roll->input->image->setResize(1080);
@@ -47,13 +47,13 @@ class User extends CI_Controller
 
 		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
 		
-		$form->edit->setHeader(!empty($id) ? 'Ubah Pengguna' : 'Tambah Pengguna');
+		$form->edit->setHeader(!empty($id) ? 'Edit User' : 'Add User');
 		
 		$form->edit->addInput('name','text');
-		$form->edit->input->name->setTitle('Nama');
+		$form->edit->input->name->setTitle('Name');
 
 		$form->edit->addInput('image', 'file');
-		$form->edit->input->image->setTitle('Foto');
+		$form->edit->input->image->setTitle('Image');
 		$form->edit->input->image->setFolder('files/user/');
 		$form->edit->input->image->setAllowedExtension(array('jpg', 'jpeg', 'gif', 'png', 'bmp'));
 		$form->edit->input->image->setResize(1080);

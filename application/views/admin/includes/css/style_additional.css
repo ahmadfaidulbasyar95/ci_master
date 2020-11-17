@@ -110,13 +110,13 @@
 #_menu_list {
 	padding: 10px 0;
 }
-#_menu_list > a {
+#_menu_list a {
 	color: white;
 	display: block;
 	padding: 5px;
 	font-size: 19px;
 }
-#_menu_list > a > .fa {
+#_menu_list a > .fa {
 	background: #847a7a;
 	padding: 5px;
 	width: 35px;
@@ -124,8 +124,14 @@
 	margin-right: 7px;
 	font-size: 25px;
 }
-#_menu_list > a:hover {
+#_menu_list a.active ,
+#_menu_list a:hover {
 	background: #403e3ea6;
+}
+#_menu_list div {
+	margin-left: 5px;
+	border-left: 2px solid;
+	margin-bottom: 5px;
 }
 
 ._iframes {
@@ -238,4 +244,9 @@ a {
 	._iframe_toggle_title {
 		width: 120px;
 	}
+}
+
+
+#_content {
+	padding: 15px;
 }

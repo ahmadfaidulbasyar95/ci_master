@@ -7,6 +7,7 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 	function __construct($opt, $name)
 	{
 		parent::__construct($opt, $name);
+		$this->setDefaultValue(1);
 		if ($this->init == 'roll') $this->setIncludes('checkall.min', 'js');
 	}
 

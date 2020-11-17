@@ -4,10 +4,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 include_once __DIR__.'/../bsv.php';
 class lib_pea
 {
-	private $table = '';
-	private $db    = '';
-	private $_url  = '';
-	private $_root = '';
+	public $table = '';
+	public $db    = '';
+	public $_url  = '';
+	public $_root = '';
 
 	function __construct($opt)
 	{

@@ -36,14 +36,14 @@ class Location extends CI_Controller
 			// $edit = ob_get_clean();
 			
 			echo lib_tabs(array(
-				// 'Ubah Lokasi'       => $edit,
-				'Sub Lokasi'        => $list,
-				// 'Tambah Sub Lokasi' => $add,
+				// 'Edit Location'       => $edit,
+				'Sub Location'        => $list,
+				// 'Add Sub Location' => $add,
 			));
 		}else{
 			echo lib_tabs(array(
-				'Lokasi'        => $list,
-				// 'Tambah Lokasi' => $add,
+				'Location'        => $list,
+				// 'Add Location' => $add,
 			));
 		}
 
@@ -58,7 +58,7 @@ class Location extends CI_Controller
 		$form->initRoll('WHERE `par_id`='.$id.' ORDER BY `title` ASC');
 
 		$form->roll->addInput('title', 'sqllinks');
-		$form->roll->input->title->setTitle('Nama');
+		$form->roll->input->title->setTitle('Title');
 		$form->roll->input->title->setLinks('admin/location');
 		
 		$form->roll->setDeleteTool(false);
@@ -76,10 +76,10 @@ class Location extends CI_Controller
 
 		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
 		
-		$form->edit->setHeader(!empty($id) ? 'Ubah Lokasi' : 'Tambah Lokasi');
+		$form->edit->setHeader(!empty($id) ? 'Edit Location' : 'Add Location');
 		
 		$form->edit->addInput('title','text');
-		$form->edit->input->title->setTitle('Nama');
+		$form->edit->input->title->setTitle('Title');
 		$form->edit->input->title->setRequire();
 
 		if (!$id and $par_id) {

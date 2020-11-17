@@ -27,12 +27,12 @@ class Dashboard extends CI_Controller
 
 		$form->initEdit('WHERE `name`="dashboard"', 'name', 1);
 		
-		$form->edit->setHeader('Pengaturan Dashboard');
+		$form->edit->setHeader('Configuration');
 
 		$form->edit->addInput('value', 'params');
 		$form->edit->input->value->setTitle('');
 		$form->edit->input->value->addInput('desktop_background', 'file');
-		$form->edit->input->value->element->desktop_background->setTitle('Gambar Desktop');
+		$form->edit->input->value->element->desktop_background->setTitle('Desktop Background');
 		$form->edit->input->value->element->desktop_background->setImageClick();
 
 		$form->edit->action();

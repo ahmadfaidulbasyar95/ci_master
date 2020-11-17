@@ -110,6 +110,8 @@ class _tpl_model extends CI_Model {
 			if (!filter_var($file, FILTER_VALIDATE_URL)) {
 				if (is_file($file)) {
 					$file = str_replace($this->_root, $this->_url, $file);
+				}elseif (is_file($this->_root.'application/'.$file)) {
+					$file = $this->_url.'application/'.$file;
 				}elseif (is_file($this->root.$file)) {
 					$file = $this->url.$file;
 				}else{
