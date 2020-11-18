@@ -23,7 +23,7 @@ class lib_pea_search extends lib_pea_edit
 	{
 		if (!$this->do_action) {
 			$this->do_action = 1;
-			if (isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
+			if (isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName])) {
 				$this->values = array();
 				foreach ($this->input as $key => $value) {
 					if (!$value->getPlainText()) {
@@ -58,7 +58,7 @@ class lib_pea_search extends lib_pea_edit
 					}
 				$this->form .= $this->formBodyAfter;
 				if ($this->saveTool) $this->form .= $this->formFooterBefore;
-					if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>';
+					if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>';
 				if ($this->saveTool) $this->form .= $this->formFooterAfter;
 			$this->form .= $this->formAfter;
 		$this->form .= '</form>';

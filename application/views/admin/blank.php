@@ -5,6 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 	<head>
 		<?php
+		$tpl->meta();
 		$tpl->css('includes/libraries/bootstrap-3.4.1-dist/css/bootstrap.min.css');
 		$tpl->css('includes/libraries/fontawesome-5-pro-master/css/all.css');
 		$tpl->css('includes/libraries/font-awesome-4.7.0/css/font-awesome.min.css');

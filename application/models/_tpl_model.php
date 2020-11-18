@@ -11,12 +11,16 @@ class _tpl_model extends CI_Model {
 	public $_url  = '';
 	public $_root = '';
 
-	public $content  = '';
+	public $meta    = array();
+	public $content = '';
+	public $config  = array();
 	
 	private $ob_start = 1;
 
 	function __construct()
 	{
+		include_once $this->_root.'application/libraries/file.php';
+		
 		parent::__construct();
 
 		$this->load->model('_db_model');
@@ -25,6 +29,13 @@ class _tpl_model extends CI_Model {
 		$this->_root = FCPATH;
 
 		$this->setTemplate();
+
+		$c = $this->config('site');
+		$this->meta_title(@$c['meta_title']);
+		$this->meta_description(@$c['meta_description']);
+		$this->meta_keyword(@$c['meta_keyword']);
+		$this->meta['domain'] = $c['domain'];
+		$this->meta['icon']   = $this->_url.'files/uploads/'.$c['icon'];
 
 		ob_start();
 	}
@@ -142,18 +153,89 @@ class _tpl_model extends CI_Model {
 	{
 		$ret = ($index) ? '' : array();
 		if ($name) {
-			$dt = $this->_db_model->getOne('SELECT `value` FROM `config` WHERE `name`="'.addslashes($name).'"');
-			if ($dt) {
-				$dt = json_decode($dt, 1);
-				if ($dt) {
-					if ($index) {
-						$ret = @$dt[$index];
+			$dt = array();
+			if (isset($this->config[$name])) {
+				$dt = $this->config[$name];
+			}else{
+				$fl = $this->_root.'files/cache/config/'.$name.'.cfg';
+				if (is_file($fl)) {
+					$dt = json_decode(lib_file_read($fl), 1);
+					if ($dt) {
+						$this->config[$name] = $dt;
 					}else{
-						$ret = $dt;
+						unlink($fl);
+						return $this->config($name, $index);
 					}
+				}else{
+					$dt = $this->_db_model->getOne('SELECT `value` FROM `config` WHERE `name`="'.addslashes($name).'"');
+					if ($dt) {
+						lib_file_write($fl, $dt);
+						$dt = json_decode($dt, 1);
+						if ($dt) {
+							$this->config[$name] = $dt;
+						}
+					}
+				}
+			}
+			if ($dt) {
+				if ($index) {
+					$ret = @$dt[$index];
+				}else{
+					$ret = $dt;
 				}
 			}
 		}
 		return $ret;
+	}
+
+	public function meta()
+	{
+		echo '<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>'.@$this->meta['title'].'</title>
+		<meta name="description" content="'.strip_tags(@$this->meta['description']).'">
+		<meta name="keywords" content="'.strip_tags(@$this->meta['keyword']).'">
+		<meta name="developer" content="AFB">
+		<meta name="Author" content="'.$this->meta['domain'].'">
+		<meta name="ROBOTS" content="all, index, follow">
+		<link rel="shortcut icon" type="image/x-icon" href="'.$this->meta['icon'].'">
+		<script type="text/javascript">var _ROOT="/";var _URL="'.$this->_url.'";</script>'.@$this->meta['add'];
+	}
+	public function meta_title($value = '', $is_add = 0)
+	{
+		if ($value) {
+			if ($is_add) {
+				$this->meta['title'] = $value.'|'.@$this->meta['title'];
+			}else{
+				$this->meta['title'] = $value;
+			}
+		}
+	}
+	public function meta_description($value = '', $is_add = 0)
+	{
+		if ($value) {
+			if ($is_add) {
+				$this->meta['description'] = $value.'. '.@$this->meta['description'];
+			}else{
+				$this->meta['description'] = $value;
+			}
+		}
+	}
+	public function meta_keyword($value = '', $is_add = 0)
+	{
+		if ($value) {
+			if ($is_add) {
+				$this->meta['keyword'] = $value.', '.@$this->meta['keyword'];
+			}else{
+				$this->meta['keyword'] = $value;
+			}
+		}
+	}
+	public function meta_add($value = '')
+	{
+		if ($value) {
+			$this->meta['add'] = @$this->meta['add'].$value;
+		}
 	}
 }

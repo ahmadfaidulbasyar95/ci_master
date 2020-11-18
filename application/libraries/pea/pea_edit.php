@@ -28,6 +28,7 @@ class lib_pea_edit
 	public $saveTool                   = 1;
 	public $saveButtonText             = '';
 	public $saveButtonClass            = 'btn btn-primary';
+	public $saveButtonName             = 'submit';
 	public $deleteTool                 = 0;
 	public $deleteButtonText           = '<i class="fa fa-trash"></i> Delete';
 	public $deleteButtonClass          = 'btn btn-danger';
@@ -84,10 +85,11 @@ class lib_pea_edit
 		$this->saveTool = ($saveTool) ? 1 : 0;
 	}
 
-	public function setSaveButton($text = '', $class = '')
+	public function setSaveButton($text = '', $class = '', $name = '')
 	{
 		if ($text) $this->saveButtonText   = $text;
 		if ($class) $this->saveButtonClass = $class;
+		if ($name) $this->saveButtonName   = $name;
 	}
 
 	public function setReturnTool($returnTool = 1)
@@ -306,7 +308,7 @@ class lib_pea_edit
 						$this->input->$key->onDeleteSuccess();
 					}
 				}else{
-					if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
+					if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName])) {
 						$isValid = 1;
 						$values  = array();
 						foreach ($select as $key => $value) {
@@ -376,7 +378,7 @@ class lib_pea_edit
 				$this->form .= $this->formBodyAfter;
 				if ($this->saveTool or $this->deleteTool or ($this->returnUrl and $this->returnTool)) $this->form .= $this->formFooterBefore;
 					if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
-					if ($this->saveTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
+					if ($this->saveTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
 					if ($this->deleteTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button>&nbsp;';
 				if ($this->saveTool or $this->deleteTool or ($this->returnUrl and $this->returnTool)) $this->form .= $this->formFooterAfter;
 			$this->form .= $this->formAfter;

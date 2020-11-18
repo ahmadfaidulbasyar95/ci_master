@@ -17,7 +17,7 @@ class Location extends CI_Controller
 	function index()
 	{
 		$id = @intval($_GET['id']);
-		include_once APPPATH.'libraries/tabs.php';
+		include_once $this->_tpl_model->_root.'application/libraries/tabs.php';
 		
 		// $_GET['id']     = 0;
 		// $_GET['par_id'] = $id;

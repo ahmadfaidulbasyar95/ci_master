@@ -271,7 +271,7 @@ class lib_pea_roll extends lib_pea_edit
 					}
 					$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
 				}
-				if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_submit'])) {
+				if ($this->saveTool and isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName])) {
 					$isValid = 1;
 					$values  = array();
 					foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
@@ -393,7 +393,7 @@ class lib_pea_roll extends lib_pea_edit
 								$this->form .= '<td colspan="'.$this->rollColumn.'" '.lib_bsv('', 'style="padding: 0;"').'><table style="width: 100%;"><tbody><tr style="background-color: inherit;">';
 									$this->form .= '<td>';
 										if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
-										if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_submit" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
+										if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
 									$this->form .= '</td>';
 									if ($this->displayColumnTool) {
 										$this->form .= '<td style="padding-left: 15px;">';

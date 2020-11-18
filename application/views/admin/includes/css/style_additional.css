@@ -16,7 +16,7 @@
 	height: 75px;
 	overflow: hidden;
 }
-#_menu_shortcut > a > .fa {
+#_menu_shortcut > a > i {
 	display: block;
 	width: 100%;
 	font-size: 35px;
@@ -76,11 +76,11 @@
 	box-shadow: 0 0 5px black;
 	position: fixed;
 	bottom: 35px;
-	width: 400px;
-	height: 700px;
+	width: 300px;
+	height: 500px;
 	max-width: 100%;
 	max-height: 80vh;
-	padding: 20px 15px 15px 15px;
+	padding: 15px 10px 10px 10px;
 	z-index: 99999999999999999999;
 }
 #_user_info > img {
@@ -114,24 +114,34 @@
 	color: white;
 	display: block;
 	padding: 5px;
-	font-size: 19px;
+	font-size: 15px;
 }
-#_menu_list a > .fa {
+#_menu_list a > i {
 	background: #847a7a;
 	padding: 5px;
-	width: 35px;
-	height: 35px;
+	width: 26px;
+	height: 26px;
 	margin-right: 7px;
-	font-size: 25px;
+	font-size: 17px;
 }
 #_menu_list a.active ,
 #_menu_list a:hover {
 	background: #403e3ea6;
 }
 #_menu_list div {
-	margin-left: 5px;
-	border-left: 2px solid;
+	margin-left: 15px;
 	margin-bottom: 5px;
+}
+#_menu_list a[target="_iframe_sub"]:after {
+	font: normal normal normal 14px/1 FontAwesome;
+	text-rendering: auto;
+	float: right;
+	margin-top: 6px;
+	margin-right: 5px;
+	content: "\f0d7";
+}
+#_menu_list a.active[target="_iframe_sub"]:after {
+	content: "\f0d8";
 }
 
 ._iframes {
@@ -198,7 +208,7 @@
 #_iframe_toggles {
 	display: -webkit-inline-box;
 	overflow: auto;
-	width: calc(100% - 200px);
+	width: calc(100% - 210px);
 	white-space: nowrap;
 }
 #_iframe_toggles .ui-state-highlight {

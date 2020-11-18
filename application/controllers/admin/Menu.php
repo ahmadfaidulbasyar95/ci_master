@@ -17,7 +17,7 @@ class Menu extends CI_Controller
 	function index()
 	{
 		$id = @intval($_GET['id']);
-		include_once APPPATH.'libraries/tabs.php';
+		include_once $this->_tpl_model->_root.'application/libraries/tabs.php';
 
 		$form = $this->_pea_model->newForm('menu');
 		$form->initSearch();
@@ -104,8 +104,19 @@ class Menu extends CI_Controller
 
 		$form->edit->addInput('icon','text');
 		$form->edit->input->icon->setTitle('Icon Class');
+		
+		$form->edit->addInput('url','text');
+		$form->edit->input->url->setTitle('Real URL');
+		$form->edit->input->url->setRequire();
+		$form->edit->input->url->setAttr('rel="menu_url"');
+		$form->edit->input->url->addTip('This is the real link in the system, normal format will be [controller]/[method] you can also copy from URL bar and the system will automatically find out the real Link is.');
 
-		if (!$position_id) {
+		if ($position_id) {
+			$form->edit->addInput('uri','text');
+			$form->edit->input->uri->setTitle('Search Engine Optimization URL');
+			$form->edit->input->uri->setRequire();
+			$form->edit->input->uri->setAttr('rel="menu_uri"');
+		}else{
 			$form->edit->addInput('shortcut', 'checkbox');
 			$form->edit->input->shortcut->setTitle('Shortcut');
 			$form->edit->input->shortcut->setCaption('show');

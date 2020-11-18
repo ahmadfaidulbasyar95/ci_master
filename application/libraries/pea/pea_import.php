@@ -22,7 +22,7 @@ class lib_pea_import extends lib_pea_edit
 			$this->do_action = 1;
 			$this->setIncludes(['js' => ['xlsx/xlsx.min','xlsx/xlsx.jszip','xlsx/xlsx.init']]);
 			if (isset($_POST['act'])) {
-				if (in_array($_POST['act'], [$this->table.'_'.$this->init.'_verify', $this->table.'_'.$this->init.'_submit'])) {
+				if (in_array($_POST['act'], [$this->table.'_'.$this->init.'_verify', $this->table.'_'.$this->init.'_'.$this->saveButtonName])) {
 					$select = array();
 					foreach ($this->input as $key => $value) {
 						$this->setIncludes($value->getIncludes());
@@ -45,7 +45,7 @@ class lib_pea_import extends lib_pea_edit
 					}
 					if ($isValid) {
 						$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
-						if ($_POST['act'] == $this->table.'_'.$this->init.'_submit') {
+						if ($_POST['act'] == $this->table.'_'.$this->init.'_'.$this->saveButtonName) {
 							$this->editValues['edit_id'] = $this->db->insert($this->table, $values);
 							foreach ($select as $key => $value) {
 								$this->input->$key->onSaveSuccess();
