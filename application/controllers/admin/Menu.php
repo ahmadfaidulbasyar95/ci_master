@@ -37,7 +37,7 @@ class Menu extends CI_Controller
 		echo $form->search->getForm();
 		
 		$_GET['position_id'] = @intval($keyword['position_id']);
-		if (@$_POST[$form->search->input->position_id->getName()] and $id) {
+		if (isset($_POST[$form->search->input->position_id->getName()]) and $id) {
 			redirect($form->_url.'admin/menu');
 		}
 
@@ -104,18 +104,31 @@ class Menu extends CI_Controller
 
 		$form->edit->addInput('icon','text');
 		$form->edit->input->icon->setTitle('Icon Class');
-		
+
 		$form->edit->addInput('url','text');
 		$form->edit->input->url->setTitle('Real URL');
 		$form->edit->input->url->setRequire();
 		$form->edit->input->url->setAttr('rel="menu_url"');
 		$form->edit->input->url->addTip('This is the real link in the system, normal format will be [controller]/[method] you can also copy from URL bar and the system will automatically find out the real Link is.');
+		
+		$form->edit->addInput('url_type','hidden');
+		$form->edit->input->url_type->setTitle('Real URL Type');
+		$form->edit->input->url_type->setAttr('rel="menu_url_type"');
 
 		if ($position_id) {
-			$form->edit->addInput('uri','text');
-			$form->edit->input->uri->setTitle('Search Engine Optimization URL');
-			$form->edit->input->uri->setRequire();
-			$form->edit->input->uri->setAttr('rel="menu_uri"');
+			$form->edit->addInput('uri_wrap', 'multiinput');
+			$form->edit->input->uri_wrap->setTitle('Search Engine Optimization URL');
+
+			$form->edit->input->uri_wrap->addInput('uri_1','plaintext');
+			$form->edit->input->uri_wrap->element->uri_1->setDefaultValue($form->_url);
+
+			$form->edit->input->uri_wrap->addInput('uri','text');
+			$form->edit->input->uri_wrap->element->uri->setTitle('SEO URL');
+			$form->edit->input->uri_wrap->element->uri->setRequire();
+			$form->edit->input->uri_wrap->element->uri->setAttr('rel="menu_uri"');
+			
+			$form->edit->input->uri_wrap->addInput('uri_2','plaintext');
+			$form->edit->input->uri_wrap->element->uri_2->setDefaultValue('.html');
 		}else{
 			$form->edit->addInput('shortcut', 'checkbox');
 			$form->edit->input->shortcut->setTitle('Shortcut');

@@ -47,10 +47,10 @@ class lib_pea_frm_datetimeinterval extends lib_pea_frm_text
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
-		if (!$this->isMultiform and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
+		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
 			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getDateValue($index)) : $this->getDateValue($index);
-			$form .= ($this->init == 'roll') ? $value : '<p>'.$value.'</p>';
+			$form .= ($this->init == 'roll' or $this->isMultiinput) ? $value : '<p>'.$value.'</p>';
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			// $name = ($this->isMultiform) ? $name.'[]' : $name;

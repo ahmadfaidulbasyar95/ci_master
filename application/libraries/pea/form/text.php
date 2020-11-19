@@ -13,6 +13,7 @@ class lib_pea_frm_text
 	public $_url                = '';
 	public $_root               = '';
 
+	public $isMultiinput = 0;
 	public $isMultiform  = 0;
 	public $includes_js  = array();
 	public $includes_css = array();
@@ -49,7 +50,8 @@ class lib_pea_frm_text
 		$this->_url     = $opt['_url'];
 		$this->_root    = $opt['_root'];
 
-		$this->isMultiform = isset($opt['isMultiform']) ? 1 : 0;
+		$this->isMultiinput = isset($opt['isMultiinput']) ? 1 : 0;
+		$this->isMultiform  = isset($opt['isMultiform']) ? 1 : 0;
 		
 		$this->title       = ucwords($name);
 		$this->caption     = ucwords($name);
@@ -289,10 +291,10 @@ class lib_pea_frm_text
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
-		if (!$this->isMultiform and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
+		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
 			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
-			$form .= ($this->init == 'roll') ? $value : '<p>'.$value.'</p>';
+			$form .= ($this->init == 'roll' or $this->isMultiinput) ? $value : '<p>'.$value.'</p>';
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;

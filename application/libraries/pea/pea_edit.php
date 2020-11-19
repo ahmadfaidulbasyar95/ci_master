@@ -280,6 +280,13 @@ class lib_pea_edit
 		if (!$this->do_action) {
 			$this->do_action = 1;
 			if ($this->init == 'add') $this->setDeleteTool(0);
+			foreach ($this->input as $key => $value) {
+				if ($value->type == 'multiinput') {
+					foreach ($value->element as $key1 => $value1) {
+						$this->input->$key1 = $value1;
+					}
+				}
+			}
 			$select = array();
 			foreach ($this->input as $key => $value) {
 				$this->setIncludes($value->getIncludes());

@@ -220,6 +220,13 @@ class lib_pea_roll extends lib_pea_edit
 	{
 		if (!$this->do_action) {
 			$this->do_action = 1;
+			foreach ($this->input as $key => $value) {
+				if ($value->type == 'multiinput') {
+					foreach ($value->element as $key1 => $value1) {
+						$this->input->$key1 = $value1;
+					}
+				}
+			}
 			$select = array();
 			if (isset($_POST[$this->table.'_display_submit'])) {
 				$_SESSION['pea_roll_display'][$this->table] = @(array)$_POST[$this->table.'_display'];
@@ -238,7 +245,10 @@ class lib_pea_roll extends lib_pea_edit
 				$this->setIncludes($value->getIncludes());
 				if ($value->displayColumnTool) {
 					$this->displayColumnTool = 1;
-					if (!$value->displayColumn) $value->setInputPosition('hidden');
+					if (!$value->displayColumn){
+						$value->setInputPosition('hidden');
+						$value->setPlainText();
+					}
 				}
 				if ($value->getInputPosition() == 'main') $this->rollColumn += 1;
 				if ($value->getFieldName()) {
