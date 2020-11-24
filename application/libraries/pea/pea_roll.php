@@ -194,7 +194,7 @@ class lib_pea_roll extends lib_pea_edit
 			return '
 <div class="'.lib_bsv('checkbox', 'form-check').'">
 	<label>
-		<input type="checkbox" name="'.$this->table.'_'.$this->init.'_delete_item['.$index.']" value="1" title="'.strip_tags($this->deleteButtonText).'">
+		<input type="checkbox" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete_item['.$index.']" value="1" title="'.strip_tags($this->deleteButtonText).'">
 		'.strip_tags($this->deleteButtonText).'
 	</label>
 </div>';
@@ -228,10 +228,10 @@ class lib_pea_roll extends lib_pea_edit
 				}
 			}
 			$select = array();
-			if (isset($_POST[$this->table.'_display_submit'])) {
+			if (isset($_POST[$this->table.'_'.$this->saveButtonName.'_display_submit'])) {
 				$_SESSION['pea_roll_display'][$this->table] = @(array)$_POST[$this->table.'_display'];
 			}
-			if (isset($_POST[$this->table.'_display_reset'])) {
+			if (isset($_POST[$this->table.'_'.$this->saveButtonName.'_display_reset'])) {
 				if (isset($_SESSION['pea_roll_display'][$this->table])) unset($_SESSION['pea_roll_display'][$this->table]);
 			}
 			if (isset($_SESSION['pea_roll_display'][$this->table])) {
@@ -269,9 +269,9 @@ class lib_pea_roll extends lib_pea_edit
 					}
 				}
 				unset($select['roll_id']);
-				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete'])) {
+				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete'])) {
 					foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
-						if (isset($_POST[$this->table.'_'.$this->init.'_delete_item'][$key])) {
+						if (isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete_item'][$key])) {
 							if ($this->onDeleteFunction) call_user_func($this->onDeleteFunction, $value, $this);
 							$this->db->delete($this->table, [$this->table_id => $value]);
 							foreach ($select as $key1 => $value1) {
@@ -319,8 +319,8 @@ class lib_pea_roll extends lib_pea_edit
 						}
 					}
 				}
-				if ($this->reportType and isset($_POST[$this->table.'_report'])) {
-					if (in_array($_POST[$this->table.'_report'], $this->reportType)) {
+				if ($this->reportType and isset($_POST[$this->table.'_'.$this->saveButtonName.'_report'])) {
+					if (in_array($_POST[$this->table.'_'.$this->saveButtonName.'_report'], $this->reportType)) {
 						$reportData = $this->db->getAll('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort());
 						if ($reportData) {
 							$reportOutput = array();
@@ -332,10 +332,10 @@ class lib_pea_roll extends lib_pea_edit
 								}			
 							}
 							include_once __DIR__.'/../file.php';
-							$reportPath = $this->_root.'application/cache/report/';
+							$reportPath = $this->_root.'files/cache/report/';
 							$reportFile = time().'_'.mt_rand(10000000,999999999);
 							lib_file_write($reportPath.$reportFile.'.json', json_encode($reportOutput));
-							redirect($this->url.'_Pea/report/'.$_POST[$this->table.'_report'].'/'.$reportFile);
+							redirect($this->url.'_Pea/report/'.$_POST[$this->table.'_'.$this->saveButtonName.'_report'].'/'.$reportFile);
 						}
 					}
 				}
@@ -422,8 +422,8 @@ class lib_pea_roll extends lib_pea_edit
 													}
 													$this->form .= '
 													<li style="padding: 0 15px;">
-														<button type="submit" name="'.$this->table.'_display_submit" title="SUBMIT" value="'.$this->init.'" class="'.$btn_default.' btn-sm" style="width: 50%;"><i class="fa fa-send"></i></button>
-														<button type="submit" name="'.$this->table.'_display_reset" title="RESET" value="'.$this->init.'" class="'.$btn_default.' btn-sm pull-right" style="width: calc(50% - 15px);"><i class="fa fa-times"></i></button>
+														<button type="submit" name="'.$this->table.'_'.$this->saveButtonName.'_display_submit" title="SUBMIT" value="'.$this->init.'" class="'.$btn_default.' btn-sm" style="width: 50%;"><i class="fa fa-send"></i></button>
+														<button type="submit" name="'.$this->table.'_'.$this->saveButtonName.'_display_reset" title="RESET" value="'.$this->init.'" class="'.$btn_default.' btn-sm pull-right" style="width: calc(50% - 15px);"><i class="fa fa-times"></i></button>
 													</li>';
 												$this->form .= '</ul>';
 											$this->form .= '</div>';
@@ -434,14 +434,14 @@ class lib_pea_roll extends lib_pea_edit
 										$this->form .= '<td style="padding-left: 15px;"><small>Export : </small>';
 											$this->form .= '<div class="btn-group form_pea_roll_report">';
 												foreach ($this->reportType as $value) {
-													$this->form .= '<button type="submit" name="'.$this->table.'_report" title="Export '.strtoupper($value).'" value="'.$value.'" class="'.$btn_default.' btn-sm">'.$this->reportTypeText[$value].'</button> ';
+													$this->form .= '<button type="submit" name="'.$this->table.'_'.$this->saveButtonName.'_report" title="Export '.strtoupper($value).'" value="'.$value.'" class="'.$btn_default.' btn-sm">'.$this->reportTypeText[$value].'</button> ';
 												}
 											$this->form .= '</div>';
 										$this->form .= '</td>';
 									}
 									$this->form .= '<td style="text-align: center;">'.$this->getPagination().'</td>';
 								$this->form .= '</tr></tbody></table></td>';
-								if ($this->deleteTool) $this->form .= '<td><button type="submit" name="'.$this->table.'_'.$this->init.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button></td>';
+								if ($this->deleteTool) $this->form .= '<td><button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button></td>';
 							$this->form .= $this->formTableItemFooterBefore;
 						$this->form .= $this->formTableFooterAfter;
 					$this->form .= $this->formTableAfter;

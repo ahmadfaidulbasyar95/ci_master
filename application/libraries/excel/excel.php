@@ -139,7 +139,7 @@ class lib_excel extends lib_excel_workbook
 	function save($filename='')
 	{
 		if (empty($filename)) {
-			$filename = FCPATH.'application/cache/report_save/Excel-'.date('Y-m-d-H-i-s').'.xlsx';
+			$filename = FCPATH.'files/cache/report_save/Excel-'.date('Y-m-d-H-i-s').'.xlsx';
 		}
 		$is_2007 = preg_match('~\.xlsx$~is', $filename);
 		if ($is_2007) {
@@ -176,18 +176,18 @@ $data = array(
 
 $excel = new lib_excel();
 $excel->create($data)->download('family.xlsx');									// .xls || .xlsx
-$excel->create($data)->save(FCPATH.'application/cache/family.xlsx');		// .xls || .xlsx
+$excel->create($data)->save(FCPATH.'files/cache/family.xlsx');		// .xls || .xlsx
 			## OR ##
 $obj = new lib_excel();
 $obj->create($data);
 $obj->download('family.xlsx');														// .xls || .xlsx
-$obj->save(FCPATH.'application/cache/family.xlsx');							// .xls || .xlsx
+$obj->save(FCPATH.'files/cache/family.xlsx');							// .xls || .xlsx
 
 ///////////////////////
 // READING FILE
 ///////////////////////
 $excel = new lib_excel();
-$output = $excel->read(FCPATH.'application/cache/family.xlsx')->sheet(2)->fetch();
+$output = $excel->read(FCPATH.'files/cache/family.xlsx')->sheet(2)->fetch();
 $output =
 Array
 (

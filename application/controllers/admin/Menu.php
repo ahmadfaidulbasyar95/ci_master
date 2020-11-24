@@ -78,6 +78,22 @@ class Menu extends CI_Controller
 		$form->roll->addInput('title', 'sqllinks');
 		$form->roll->input->title->setTitle('Title');
 		$form->roll->input->title->setLinks('admin/menu');
+
+		$form->roll->addInput('url', 'sqlplaintext');
+		$form->roll->input->url->setTitle('Real URL');
+
+		if ($position_id) {
+			$form->roll->addInput('uri', 'sqlplaintext');
+			$form->roll->input->uri->setTitle('SEO URL');
+			$form->roll->input->uri->setDisplayFunction(function($value='')
+			{
+				return '<a target="_BLANK" href="'.$this->_pea_model->_url.$value.'.html">'.$value.'</a>';
+			});
+		}else{
+			$form->roll->addInput('shortcut', 'checkbox');
+			$form->roll->input->shortcut->setTitle('Shortcut');
+			$form->roll->input->shortcut->setCaption('show');
+		}
 		
 		$form->roll->addInput('active', 'checkbox');
 		$form->roll->input->active->setTitle('Active');
@@ -101,6 +117,7 @@ class Menu extends CI_Controller
 		$form->edit->addInput('title','text');
 		$form->edit->input->title->setTitle('Title');
 		$form->edit->input->title->setRequire();
+		$form->edit->input->title->setAttr('rel="menu_title"');
 
 		$form->edit->addInput('icon','text');
 		$form->edit->input->icon->setTitle('Icon Class');

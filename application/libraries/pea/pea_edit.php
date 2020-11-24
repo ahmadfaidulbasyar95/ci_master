@@ -260,7 +260,7 @@ class lib_pea_edit
 	public function onSave($onSaveFunction = '')
 	{
 		if ($onSaveFunction) {
-			if (function_exists($onSaveFunction)) {
+			if (is_callable($onSaveFunction)) {
 				$this->onSaveFunction = $onSaveFunction;
 			}
 		}
@@ -269,7 +269,7 @@ class lib_pea_edit
 	public function onDelete($onDeleteFunction = '')
 	{
 		if ($onDeleteFunction) {
-			if (function_exists($onDeleteFunction)) {
+			if (is_callable($onDeleteFunction)) {
 				$this->onDeleteFunction = $onDeleteFunction;
 			}
 		}
@@ -307,7 +307,7 @@ class lib_pea_edit
 					}
 					unset($select['edit_id']);
 				}
-				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_delete']) and $this->where) {
+				if ($this->deleteTool and isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete']) and $this->where) {
 					if ($this->onDeleteFunction and @$this->editValues['edit_id']) call_user_func($this->onDeleteFunction, @$this->editValues['edit_id'], $this);
 					$this->db->delete($this->table, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));
 					$this->msg = str_replace('{msg}', $this->successDeleteMsg, $this->successMsgTpl).$this->onDeleteReloadParentScript;
@@ -377,7 +377,7 @@ class lib_pea_edit
 				$this->form .= $this->formHeaderAfter;
 				$this->form .= $this->formBodyBefore;
 					$this->form .= $this->msg;
-					if (!isset($_POST[$this->table.'_'.$this->init.'_delete'])) {
+					if (!isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete'])) {
 						foreach ($this->input as $value) {
 							if ($value->getInputPosition() == 'main') $this->form .= $value->getForm();
 						}
@@ -385,8 +385,8 @@ class lib_pea_edit
 				$this->form .= $this->formBodyAfter;
 				if ($this->saveTool or $this->deleteTool or ($this->returnUrl and $this->returnTool)) $this->form .= $this->formFooterBefore;
 					if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
-					if ($this->saveTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
-					if ($this->deleteTool and !isset($_POST[$this->table.'_'.$this->init.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button>&nbsp;';
+					if ($this->saveTool and !isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
+					if ($this->deleteTool and !isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete'])) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button>&nbsp;';
 				if ($this->saveTool or $this->deleteTool or ($this->returnUrl and $this->returnTool)) $this->form .= $this->formFooterAfter;
 			$this->form .= $this->formAfter;
 		$this->form .= '</form>';

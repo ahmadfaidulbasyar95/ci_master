@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 if (@$params[0] and @$params[1]) 
 {
-	$reportPath = $this->_root.'application/cache/report/';
+	$reportPath = $this->_root.'files/cache/report/';
 	$reportData = array();
 	if (is_file($reportPath.$params[1].'.json')) {
 		$reportData = json_decode(file_get_contents($reportPath.$params[1].'.json'), 1);

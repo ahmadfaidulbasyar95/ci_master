@@ -198,7 +198,7 @@ class lib_pea_frm_text
 	public function setDisplayFunction($displayFunction = '')
 	{
 		if ($displayFunction) {
-			if (function_exists($displayFunction)) {
+			if (is_callable($displayFunction)) {
 				$this->displayFunction = $displayFunction;
 			}
 		}
