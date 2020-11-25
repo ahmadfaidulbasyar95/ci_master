@@ -4,12 +4,13 @@
 			var e = $(this);
 			var v = e.val();
 			if (v) {
-				if (v.indexOf(_URL) == -1) {
+				if (v.indexOf(_URL) == -1 && v.indexOf('://') != -1) {
 					var t = 1;
 				}else{
 					var t = 0;
 					v = v.replace(_URL, '');
 					e.val(v);
+					e.parents('form').find('[rel="menu_title"]').trigger('keyup');
 				}
 				e.parents('form').find('[rel="menu_url_type"]').val(t);
 			}
@@ -24,7 +25,7 @@
 						url: _URL+'_Pea/menu',
 						type: 'POST',
 						dataType: 'html',
-						data: {v: v},
+						data: {v: v, id: u.data('id')},
 					})
 					.done(function(out) {
 						u.val(out);
@@ -42,7 +43,7 @@
 					url: _URL+'_Pea/menu',
 					type: 'POST',
 					dataType: 'html',
-					data: {v: v},
+					data: {v: v, id: e.data('id')},
 				})
 				.done(function(out) {
 					e.val(out);

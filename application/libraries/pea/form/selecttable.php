@@ -30,6 +30,21 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		if ($referenceCondition) $this->referenceCondition = 'WHERE '.$referenceCondition;
 	}
 
+	public function getReportOutput($value_ = '')
+	{
+		$option = array();
+		if (isset($GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb])) {
+			$option = $GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb];
+		}else{
+			$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition);
+			$GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb] = $option;
+		}
+		foreach ($option as $value) {
+			$this->addOption($value['key'], $value['value']);
+		}
+		return parent::getReportOutput($value_);
+	}
+
 	public function getForm($index = '')
 	{
 		$option = array();

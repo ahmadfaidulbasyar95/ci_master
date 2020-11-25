@@ -8,7 +8,7 @@ if (!empty($_GET['v'])) {
 	include_once __DIR__.'/../../output.php';
 	parse_str(@$parse_url['query'], $parse_url['query']);
 	lib_output_json(array(
-		'task' => $parse_url['path'],
+		'task' => preg_replace('~\/$~','',$parse_url['path']),
 		'get'  => $parse_url['query']
 	));
 }

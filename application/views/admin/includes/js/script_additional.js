@@ -182,5 +182,19 @@
 				}
 			}
 		});
+		$('body').on('keydown', function(event) {
+			if (event.originalEvent.key == 'F5') {
+				if ($('#_content').length) {
+					event.preventDefault();
+					document.location.href = document.location.href;
+				}else{
+					var x = $('._iframe_refresh', '._iframe_active');
+					if (x.length) {
+						event.preventDefault();
+						x.trigger('click');
+					}
+				}
+			}
+		});
 	}, false);
 })();

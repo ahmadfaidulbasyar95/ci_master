@@ -43,6 +43,7 @@ if ($PNAME) {
 			install_exec("mkdir application/config");
 			install_exec("cp ../".$BASENAME."/application/config/* ./application/config/");
 		}
+		install_exec("ln -s ../../".$BASENAME."/application/config_custom ./application/");
 		
 		install_exec("mkdir application/controllers");
 		install_exec("ln -s ../../../".$BASENAME."/application/controllers/index.html ./application/controllers/");

@@ -81,19 +81,29 @@ class Menu extends CI_Controller
 
 		$form->roll->addInput('url', 'sqlplaintext');
 		$form->roll->input->url->setTitle('Real URL');
+		$form->roll->input->url->setDisplayFunction(function($value='')
+		{
+			if (strpos($value, '://') === false) {
+				return $value;
+			}
+			return '<a target="_BLANK" href="'.$value.'.html">'.$value.'</a>';
+		});
 
 		if ($position_id) {
 			$form->roll->addInput('uri', 'sqlplaintext');
 			$form->roll->input->uri->setTitle('SEO URL');
 			$form->roll->input->uri->setDisplayFunction(function($value='')
 			{
-				return '<a target="_BLANK" href="'.$this->_pea_model->_url.$value.'.html">'.$value.'</a>';
+				return ($value and $value != '-') ? '<a target="_BLANK" href="'.$this->_pea_model->_url.$value.'.html">'.$value.'</a>' : '';
 			});
 		}else{
 			$form->roll->addInput('shortcut', 'checkbox');
 			$form->roll->input->shortcut->setTitle('Shortcut');
 			$form->roll->input->shortcut->setCaption('show');
 		}
+
+		$form->roll->addInput('orderby', 'orderby');
+		$form->roll->input->orderby->setTitle('Ordered');
 		
 		$form->roll->addInput('active', 'checkbox');
 		$form->roll->input->active->setTitle('Active');
@@ -142,7 +152,13 @@ class Menu extends CI_Controller
 			$form->edit->input->uri_wrap->addInput('uri','text');
 			$form->edit->input->uri_wrap->element->uri->setTitle('SEO URL');
 			$form->edit->input->uri_wrap->element->uri->setRequire();
-			$form->edit->input->uri_wrap->element->uri->setAttr('rel="menu_uri"');
+			$form->edit->input->uri_wrap->element->uri->setAttr('rel="menu_uri" data-id="'.$id.'"');
+
+			if (isset($_POST[$form->edit->input->url_type->getName()])) {
+				if ($_POST[$form->edit->input->url_type->getName()] == 1) {
+					$_POST[$form->edit->input->uri_wrap->element->uri->getName()] = '-';
+				}
+			}
 			
 			$form->edit->input->uri_wrap->addInput('uri_2','plaintext');
 			$form->edit->input->uri_wrap->element->uri_2->setDefaultValue('.html');

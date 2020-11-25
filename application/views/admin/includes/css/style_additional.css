@@ -260,3 +260,9 @@ a {
 #_content {
 	padding: 15px;
 }
+.form_pea_roll .form-group {
+	margin-bottom: 0;
+}
+.form_pea_roll .checkbox {
+	margin: 0;
+}
