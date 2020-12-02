@@ -269,14 +269,22 @@ class lib_pea_frm_text
 
 	public function getRollTitle($sortConfig = array(), $active = '', $is_desc = '')
 	{
-		$link = $sortConfig['base_url'];
-		$link = preg_replace('~'.$sortConfig['get_name'].'=[a-zA-Z0-9_]+&?~', '', $link);
-		$link = preg_replace('~'.$sortConfig['get_name'].'_desc=[a-zA-Z0-9]+&?~', '', $link);
-		$link .= (preg_match('/\?/', $link)) ? (preg_match('~[\?|&]$~', $link)) ? '' : '&' : '?';
-		$link .= $sortConfig['get_name'].'='.urlencode($this->fieldNameDb);
-		$link .= (($active == $this->fieldNameDb and $is_desc) or $active != $this->fieldNameDb) ? '' : '&'.$sortConfig['get_name'].'_desc=1';
+		$link  = $sortConfig['base_url'];
+		$link  = preg_replace('~'.$sortConfig['get_name'].'=[a-zA-Z0-9_]+&?~', '', $link);
+		$link  = preg_replace('~'.$sortConfig['get_name'].'_desc=[a-zA-Z0-9]+&?~', '', $link);
 		$title = $this->title;
-		$title .= ($active == $this->fieldNameDb) ? ($is_desc) ? ' <i class="fa fa-sort-alpha-desc"></i>' : ' <i class="fa fa-sort-alpha-asc"></i>' : '' ;
+		$link .= (preg_match('/\?/', $link)) ? (preg_match('~[\?|&]$~', $link)) ? '' : '&' : '?';
+		if ($active == $this->fieldNameDb) {
+			if ($is_desc) {
+				$title .= ' <i class="fa fa-sort-alpha-desc"></i>';
+			}else{
+				$link  .= $sortConfig['get_name'].'='.urlencode($this->fieldNameDb);
+				$link  .= '&'.$sortConfig['get_name'].'_desc=1';
+				$title .= ' <i class="fa fa-sort-alpha-asc"></i>';
+			}
+		}else{
+			$link .= $sortConfig['get_name'].'='.urlencode($this->fieldNameDb);
+		}
 		return '<a href="'.$link.'">'.$title.'</a>';
 	}
 

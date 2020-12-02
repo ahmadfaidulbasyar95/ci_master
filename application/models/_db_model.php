@@ -24,6 +24,15 @@ class _db_model extends CI_Model {
 		return $data;
 	}
 
+	public function getCol($query = '')
+	{
+		$data = array();
+		foreach ($this->getAll($query) as $value) {
+			$data[] = array_values($value)[0];
+		}
+		return $data;
+	}
+
 	public function getRow($query = '')
 	{
 		$query = $this->db->query($query);
@@ -34,6 +43,12 @@ class _db_model extends CI_Model {
 	{
 		$query = $this->db->query($query);
 		return @array_values($query->row_array())[0];
+	}
+
+	public function exec($query = '')
+	{
+		$query = $this->db->simple_query($query);
+		return $query;
 	}
 
 	public function insert($table = '', $data = array())

@@ -10,11 +10,6 @@ class lib_pea_frm_orderby extends lib_pea_frm_text
 		$this->setIncludes('orderby', 'js');
 	}
 
-	public function setValue($value = '', $index = '')
-	{
-		$this->value_roll[$index] = $index+1;
-	}
-
 	public function getForm($index = '')
 	{
 		$form = '';
@@ -23,8 +18,8 @@ class lib_pea_frm_orderby extends lib_pea_frm_text
 			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
 			$form .= $value;
 		}else{
-			$name = $this->name.'[]';
-			$form .= '<input type="hidden" name="'.$name.'" class="form-control" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.'>';
+			$name = $this->name.'['.$index.']';
+			$form .= '<input type="hidden" name="'.$name.'" class="form-control orderby_input" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.'>';
 			$form .= '<span class="orderby_button btn btn-default btn-xs" title="'.$this->caption.'"><i class="fa fa-exchange fa-fw" style="transform: rotate(90deg);"></i></span>';
 		}
 		$form .= '</td>';

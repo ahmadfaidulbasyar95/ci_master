@@ -376,7 +376,7 @@ class lib_pea_roll extends lib_pea_edit
 				$this->form .= $this->formHeader;
 			$this->form .= $this->formHeaderAfter;
 			$this->form .= $this->formBodyBefore;
-				$this->form .= '<form class="form_pea_roll" autocomplete="off" method="POST" action="" enctype="multipart/form-data">';
+				$this->form .= '<form class="form_pea_roll" autocomplete="off" method="POST" action="" enctype="multipart/form-data" data-pagination_offset="'.(@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page'])).'">';
 					$this->form .= $this->msg;
 					$this->form .= $this->formTableBefore;
 						$this->form .= $this->formTableHeaderBefore;

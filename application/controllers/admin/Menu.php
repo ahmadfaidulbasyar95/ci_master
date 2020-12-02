@@ -21,6 +21,9 @@ class Menu extends CI_Controller
 
 		$form = $this->_pea_model->newForm('menu');
 		$form->initSearch();
+
+		$form->search->addInput('keyword', 'text');
+		$form->search->input->keyword->setTitle('Search');
 		
 		$form->search->addInput('position_id', 'selecttable');
 		$form->search->input->position_id->setTitle('Menu Position');
@@ -37,6 +40,7 @@ class Menu extends CI_Controller
 		echo $form->search->getForm();
 		
 		$_GET['position_id'] = @intval($keyword['position_id']);
+		$_GET['keyword']     = @$keyword['keyword'];
 		if (isset($_POST[$form->search->input->position_id->getName()]) and $id) {
 			redirect($form->_url.'admin/menu');
 		}
@@ -71,9 +75,10 @@ class Menu extends CI_Controller
 	{
 		$id          = @intval($_GET['id']);
 		$position_id = @intval($_GET['position_id']);
+		$keyword     = @$_GET['keyword'];
 		$form        = $this->_pea_model->newForm('menu');
 
-		$form->initRoll('WHERE `par_id`='.$id.' AND `position_id`='.$position_id.' ORDER BY `orderby` ASC');
+		$form->initRoll('WHERE `par_id`='.$id.' AND `position_id`='.$position_id.' '.(($keyword) ? 'AND `title` LIKE "%'.addslashes($keyword).'%"' :'').' ORDER BY `orderby` ASC');
 
 		$form->roll->addInput('title', 'sqllinks');
 		$form->roll->input->title->setTitle('Title');
@@ -108,7 +113,18 @@ class Menu extends CI_Controller
 		$form->roll->addInput('active', 'checkbox');
 		$form->roll->input->active->setTitle('Active');
 		$form->roll->input->active->setCaption('yes');
-		
+
+		function menu_on_delete($id, $f)
+		{
+			$child = $f->db->getCol('SELECT `id` FROM `menu` WHERE `par_id`='.$id);
+			if ($child) {
+				foreach ($child as $value) {
+					menu_on_delete($value, $f);
+				}
+				$f->db->exec('DELETE FROM `menu` WHERE `id` IN('.implode(',', $child).')');
+			}
+		}
+		$form->roll->onDelete('menu_on_delete');
 		$form->roll->action();
 		return $form->roll->getForm();
 	}
