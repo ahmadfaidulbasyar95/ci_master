@@ -12,6 +12,7 @@ class Menu extends CI_Controller
 		$this->load->library('session');
 
 		$this->_tpl_model->setTemplate('admin');
+		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
 	}
 
 	function index()
@@ -66,6 +67,7 @@ class Menu extends CI_Controller
 				'Add Menu' => $add,
 			));
 		}
+		echo $this->_tpl_model->button('admin/menu/position?return='.urlencode($this->_tpl_model->_url_current), 'Menu Position', 'fa fa-pencil');
 
 		$this->_tpl_model->js('controllers/admin/menu.js');
 		$this->_tpl_model->show();
@@ -109,6 +111,9 @@ class Menu extends CI_Controller
 
 		$form->roll->addInput('orderby', 'orderby');
 		$form->roll->input->orderby->setTitle('Ordered');
+		if (isset($_GET[$form->roll->sortConfig['get_name']])) {
+			$form->roll->input->orderby->setPlaintext();
+		}
 		
 		$form->roll->addInput('active', 'checkbox');
 		$form->roll->input->active->setTitle('Active');
@@ -222,6 +227,7 @@ class Menu extends CI_Controller
 		
 		$form->roll->action();
 		echo $form->roll->getForm();
+		echo $this->_tpl_model->msg('Deleting this data will also deleting Menu in Position','warning');
 		
 		echo $form->edit->getForm();
 

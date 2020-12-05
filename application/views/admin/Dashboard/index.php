@@ -28,8 +28,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	<div id="_menu_list">
 		<a href="<?php echo $tpl->_url; ?>admin/dashboard/config" target="_iframe_sub" class="ellipsis"><i class="fa fa-fw fa-cog"></i>Control Panel</a>
 		<div>
-			<a href="<?php echo $tpl->_url; ?>admin/menu" target="_iframe" class="ellipsis menu_close"><i class="fa fa-fw fa-cog"></i>Menu Manager</a>
-			<a href="<?php echo $tpl->_url; ?>admin/menu/position" target="_iframe" class="ellipsis menu_close"><i class="fa fa-fw fa-cog"></i>Menu Position</a>
+			<a href="<?php echo $tpl->_url; ?>admin/menu" target="_iframe" class="ellipsis menu_close"><i class="fa fa-fw fa-list"></i>Menu Manager</a>
 			<a href="<?php echo $tpl->_url; ?>admin/dashboard/config" target="_iframe" class="ellipsis menu_close"><i class="fa fa-fw fa-cog"></i>Configuration</a>
 		</div>
 	</div>

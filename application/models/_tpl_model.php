@@ -8,12 +8,14 @@ class _tpl_model extends CI_Model {
 	public $url    = '';
 	public $layout = '';
 
-	public $_url  = '';
-	public $_root = '';
+	public $_url         = '';
+	public $_url_current = '';
+	public $_root        = '';
 
-	public $meta    = array();
-	public $content = '';
-	public $config  = array();
+	public $meta     = array();
+	public $content  = '';
+	public $config   = array();
+	public $nav_list = array();
 	
 	private $ob_start = 1;
 
@@ -25,8 +27,9 @@ class _tpl_model extends CI_Model {
 
 		$this->load->model('_db_model');
 
-		$this->_url  = base_url();
-		$this->_root = FCPATH;
+		$this->_url         = base_url();
+		$this->_url_current = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+		$this->_root        = FCPATH;
 
 		$this->setTemplate();
 
@@ -36,6 +39,7 @@ class _tpl_model extends CI_Model {
 		$this->meta_keyword(@$c['meta_keyword']);
 		$this->meta['domain'] = $c['domain'];
 		$this->meta['icon']   = $this->_url.'files/uploads/'.$c['icon'];
+		$this->nav_add($this->_url, '<i class="fa fa-home"></i> Home');
 
 		ob_start();
 	}
@@ -115,7 +119,7 @@ class _tpl_model extends CI_Model {
 		include $this->root.$this->layout;
 	}
 
-	public function validateUrl($file = '')
+	public function validateFile($file = '')
 	{
 		if ($file) {
 			if (!filter_var($file, FILTER_VALIDATE_URL)) {
@@ -135,7 +139,7 @@ class _tpl_model extends CI_Model {
 
 	public function css($file = '')
 	{
-		$file = $this->validateUrl($file);
+		$file = $this->validateFile($file);
 		if ($file) {
 			echo '<link rel="stylesheet" href="'.$file.'">';
 		}
@@ -143,7 +147,7 @@ class _tpl_model extends CI_Model {
 
 	public function js($file = '')
 	{
-		$file = $this->validateUrl($file);
+		$file = $this->validateFile($file);
 		if ($file) {
 			echo '<script src="'.$file.'"></script>';
 		}
@@ -237,5 +241,69 @@ class _tpl_model extends CI_Model {
 		if ($value) {
 			$this->meta['add'] = @$this->meta['add'].$value;
 		}
+	}
+
+	public function nav_add($link = '', $text = '', $index = 'AUTO')
+	{
+		if (!$text) {
+			$text = $this->meta['title'];
+		}
+		if ($link) {
+			if (!filter_var($link, FILTER_VALIDATE_URL)) {
+				$link = $this->_url.$link;
+			}
+		}
+		$dt = array(
+			'text' => $text,
+			'link' => $link,
+		);
+		if ($index == 'AUTO') {
+			$this->nav_list[] = $dt;
+		}else{
+			$this->nav_list[$index] = $dt;
+		}
+	}
+	public function nav_show()
+	{
+		$ret = '<ol class="breadcrumb">';
+		foreach ($this->nav_list as $value) {
+			if ($value['link']) {
+				$ret .= '<li><a href="'.$value['link'].'">'.$value['text'].'</a></li>';
+			}else{
+				$ret .= '<li class="active">'.$text.'</li>';
+			}
+		}
+		$ret .= '</ol>';
+		return $ret;
+	}
+
+	public function button($link = '', $text = '', $icon = 'fa fa-send')
+	{
+		if (!$link and @$_GET['return']) {
+			$link = $_GET['return'];
+			$icon = 'fa fa-chevron-left';
+		}
+		if ($link) {
+			if (!filter_var($link, FILTER_VALIDATE_URL)) {
+				$link = $this->_url.$link;
+			}
+			return '<button class="btn btn-default" onclick=\'window.location.href="'.$link.'"\'><i class="'.$icon.'"></i> '.$text.'</button>';
+		}
+		return '';
+	}
+	public function msg($text = '', $type = 'info')
+	{
+		$icon = array(
+			'success' => 'fa fa-check-circle',
+			'info'    => 'fa fa-info-circle',
+			'warning' => 'fa fa-warning',
+			'danger'  => 'fa fa-times-circle',
+		);
+		return '<div class="alert alert-'.$type.'" role="alert">
+			<i class="'.@$icon[$type].'"></i> '.$text.'
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>';
 	}
 }

@@ -12,6 +12,7 @@ class Location extends CI_Controller
 		$this->load->library('session');
 
 		$this->_tpl_model->setTemplate('admin');
+		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
 	}
 
 	function index()

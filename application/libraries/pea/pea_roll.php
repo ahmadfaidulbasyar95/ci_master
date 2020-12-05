@@ -26,12 +26,13 @@ class lib_pea_roll extends lib_pea_edit
 		'html'  => '<i class="fa fa-file-text-o"></i>',
 		'json'  => '<i class="fa fa-file-code-o"></i>',
 	);
-	public $rollValues                = array();
-	public $rollDeleteInput           = array();
-	public $rollDeleteCondition       = array();
-	public $rollColumn                = 0;
-	public $rollFoundRows             = 0;
-	public $sortConfig                = array(
+	public $dataEmptyMsg        = '<td colspan="{rollColumn}" style="text-align:center;">No Data Available</td>';
+	public $rollValues          = array();
+	public $rollDeleteInput     = array();
+	public $rollDeleteCondition = array();
+	public $rollColumn          = 0;
+	public $rollFoundRows       = 0;
+	public $sortConfig          = array(
 		'get_name' => 'sort',
 		'base_url' => '',
 	);
@@ -162,6 +163,11 @@ class lib_pea_roll extends lib_pea_edit
 	{
 		$this->formTableItemFooterBefore = $before;
 		$this->formTableItemFooterAfter  = $after;
+	}
+
+	public function setDataEmpty($msg='')
+	{
+		$this->dataEmptyMsg = $msg;
 	}
 
 	public function addReport($reportType = array('excel', 'pdf'))
@@ -388,13 +394,19 @@ class lib_pea_roll extends lib_pea_edit
 							$this->form .= $this->formTableItemHeaderBefore;
 						$this->form .= $this->formTableHeaderAfter;
 						$this->form .= $this->formTableBodyBefore;
-							foreach ($this->rollValues as $key => $value) {
-								$this->form .= $this->formTableItemBodyBefore;
-								$this->form .= '<input type="hidden" name="'.$this->table.'_'.$this->init.'_ids['.$key.']" value="'.$value['roll_id'].'">';
-								foreach ($this->input as $value1) {
-									if ($value1->getInputPosition() == 'main') $this->form .= $value1->getForm($key);
+							if ($this->rollValues) {
+								foreach ($this->rollValues as $key => $value) {
+									$this->form .= $this->formTableItemBodyBefore;
+									$this->form .= '<input type="hidden" name="'.$this->table.'_'.$this->init.'_ids['.$key.']" value="'.$value['roll_id'].'">';
+									foreach ($this->input as $value1) {
+										if ($value1->getInputPosition() == 'main') $this->form .= $value1->getForm($key);
+									}
+									if ($this->deleteTool) $this->form .= '<td>'.$this->getRollDeleteInput($key).'</td>'; 
+									$this->form .= $this->formTableItemBodyAfter;
 								}
-								if ($this->deleteTool) $this->form .= '<td>'.$this->getRollDeleteInput($key).'</td>'; 
+							}else{
+								$this->form .= $this->formTableItemBodyBefore;
+								$this->form .= str_replace('{rollColumn}', ($this->deleteTool) ? $this->rollColumn+1 : $this->rollColumn, $this->dataEmptyMsg);
 								$this->form .= $this->formTableItemBodyAfter;
 							}
 						$this->form .= $this->formTableBodyAfter;

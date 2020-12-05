@@ -20,6 +20,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		?>
 	</head>
 	<body>
+		<div>
+			<?php echo $tpl->nav_show(); ?>
+		</div>
 		<div id="_content">
 			<?php echo $tpl->content; ?>
 		</div>
