@@ -82,9 +82,17 @@ class Menu extends CI_Controller
 
 		$form->initRoll('WHERE `par_id`='.$id.' AND `position_id`='.$position_id.' '.(($keyword) ? 'AND `title` LIKE "%'.addslashes($keyword).'%"' :'').' ORDER BY `orderby` ASC');
 
+		$form->roll->addInput('id', 'sqlplaintext');
+		$form->roll->input->id->setTitle('ID');
+		$form->roll->input->id->setDisplayColumn(0);
+
 		$form->roll->addInput('title', 'sqllinks');
 		$form->roll->input->title->setTitle('Title');
 		$form->roll->input->title->setLinks('admin/menu');
+
+		$form->roll->addInput('icon', 'sqlplaintext');
+		$form->roll->input->icon->setTitle('Icon Class');
+		$form->roll->input->icon->setDisplayColumn(0);
 
 		$form->roll->addInput('url', 'sqlplaintext');
 		$form->roll->input->url->setTitle('Real URL');
@@ -225,6 +233,10 @@ class Menu extends CI_Controller
 		$form->roll->addInput('title', 'text');
 		$form->roll->input->title->setTitle('Title');
 		
+		$form->roll->onDelete(function($id, $f)
+		{
+			$f->db->exec('DELETE FROM `menu` WHERE `position_id`='.$id);
+		});
 		$form->roll->action();
 		echo $form->roll->getForm();
 		echo $this->_tpl_model->msg('Deleting this data will also deleting Menu in Position','warning');

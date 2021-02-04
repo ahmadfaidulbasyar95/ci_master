@@ -63,7 +63,7 @@ class lib_pea_roll extends lib_pea_edit
 			'get_name'        => 'page',
 			'base_url'        => $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'],
 			'num_links'       => 7,
-			'per_page'        => 15,
+			'per_page'        => 25,
 			'prev_msg'        => lib_bsv('<h5 class="pull-right text-muted">Result {from} - {to} from total {total}</h5>', '<h6 class="float-left text-muted" style="margin: 5px;">Result {from} - {to} from total {total}</h6>'),
 			'full_tag_open'   => lib_bsv('<ul class="pagination pagination-sm" style="margin:0; padding-top:3px;">', '<nav class="float-left" aria-label="..."><ul class="pagination pagination-sm" style="margin:0; padding-top:3px;">'),
 			'first_tag_open'  => lib_bsv('<li>', '<li class="page-item">'),
@@ -425,7 +425,7 @@ class lib_pea_roll extends lib_pea_edit
 													foreach ($this->input as $key => $value) {
 														if ($value->displayColumnTool) {
 															$this->form .= '
-															<li style="padding: 0 15px;">
+															<li style="padding: 0 15px 10px 15px;">
 																<div class="'.lib_bsv('checkbox', 'form-check').'">
 																	<label><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'" onchange="$(this).parents(\'.dropup\').addClass(\'open\');"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
 																</div>

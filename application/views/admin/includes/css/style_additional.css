@@ -109,6 +109,9 @@
 
 #_menu_list {
 	padding: 10px 0;
+	height: 430px;
+	overflow: auto;
+	max-height: calc(80vh - 70px);
 }
 #_menu_list a {
 	color: white;

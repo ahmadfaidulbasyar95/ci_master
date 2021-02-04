@@ -14,7 +14,12 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 
 	public function getDateValue($index = '')
 	{
-		return date($this->dateFormat, strtotime($this->getValue($index)));
+		$value = $this->getValue($index);
+		if ($value and $value != '0000-00-00') {
+			return date($this->dateFormat, strtotime($value));
+		}else{
+			return '';
+		}
 	}
 
 	public function setDateFormat($dateFormat = 'Y-m-d H:i:s')
@@ -24,7 +29,11 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 
 	public function getReportOutput($value = '')
 	{
-		return date($this->dateFormat, strtotime($value));
+		if ($value and $value != '0000-00-00') {
+			return date($this->dateFormat, strtotime($value));
+		}else{
+			return '';
+		}
 	}
 
 	public function getForm($index = '')

@@ -2,9 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 <div id="_desktop" class="menu_close" style="background-image: url('<?php echo $tpl->_url.'files/uploads/'.$tpl->config('dashboard', 'desktop_background'); ?>');">
-	<div id="_menu_shortcut">
-		<a href="<?php echo $tpl->_url; ?>admin/location" target="_iframe"><i class="fa fa-fw fa-pencil"></i>Menu Shortcut 1</a>
-	</div>
+	<?php 
+	$shortcut = $tpl->_db_model->getAll('SELECT * FROM `menu` WHERE `position_id`=0 AND `shortcut`=1 AND `active`=1 ORDER BY `orderby`');
+	echo $tpl->menu_show(array(0 => $shortcut), array(
+		'wrap' => '<div id="_menu_shortcut">[menu]</div>',
+		'item' => '<a href="[url]" target="_iframe"><i class="[icon]"></i>[title]</a>',
+	));
+	?>
 	<div id="_iframes">
 		<div class="_iframes" data-id="{id}" style="display: none;">
 			<div class="_iframe_head">
@@ -25,13 +29,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<a href="#" class="ellipsis menu_close">Faid</a>
 		<a href="#"><i class="fa fa-sign-out fa-fw"></i></a>
 	</div>
-	<div id="_menu_list">
-		<a href="<?php echo $tpl->_url; ?>admin/dashboard/config" target="_iframe_sub" class="ellipsis"><i class="fa fa-fw fa-cog"></i>Control Panel</a>
-		<div>
-			<a href="<?php echo $tpl->_url; ?>admin/menu" target="_iframe" class="ellipsis menu_close"><i class="fa fa-fw fa-list"></i>Menu Manager</a>
-			<a href="<?php echo $tpl->_url; ?>admin/dashboard/config" target="_iframe" class="ellipsis menu_close"><i class="fa fa-fw fa-cog"></i>Configuration</a>
-		</div>
-	</div>
+	<?php 
+	echo $tpl->menu_show(0, array(
+		'wrap'     => '<div id="_menu_list">[menu]</div>',
+		'item'     => '<a href="[url]" target="_iframe" class="ellipsis menu_close"><i class="[icon]"></i>[title]</a>',
+		'item_sub' => '<a href="[url]" target="_iframe_sub" class="ellipsis"><i class="[icon]"></i>[title]</a>
+									<div>
+										[submenu]
+									</div>',
+	)); 
+	?>
 </div>
 <div id="_taskbar">
 	<a id="_start" href="#"><i class="fa fa-bars fa-fw"></i> <span>Start</span></a>

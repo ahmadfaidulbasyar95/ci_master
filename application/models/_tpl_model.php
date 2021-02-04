@@ -16,6 +16,7 @@ class _tpl_model extends CI_Model {
 	public $content  = '';
 	public $config   = array();
 	public $nav_list = array();
+	public $menu     = array();
 	
 	private $ob_start = 1;
 
@@ -60,7 +61,6 @@ class _tpl_model extends CI_Model {
 		}
 		return false;
 	}
-
 	public function setLayout($file = '')
 	{
 		if (empty($this->name)) {
@@ -75,7 +75,6 @@ class _tpl_model extends CI_Model {
 		}
 		return false;
 	}
-
 	public function view($file = '', $vars = array())
 	{
 		$__file__ = '';
@@ -108,7 +107,6 @@ class _tpl_model extends CI_Model {
 		$this->ob_start = 0;
 		$this->content .= ob_get_clean();
 	}
-
 	public function show()
 	{
 		if ($this->ob_start) {
@@ -136,7 +134,6 @@ class _tpl_model extends CI_Model {
 		}
 		return $file;
 	}
-
 	public function css($file = '')
 	{
 		$file = $this->validateFile($file);
@@ -144,7 +141,6 @@ class _tpl_model extends CI_Model {
 			echo '<link rel="stylesheet" href="'.$file.'">';
 		}
 	}
-
 	public function js($file = '')
 	{
 		$file = $this->validateFile($file);
@@ -190,6 +186,73 @@ class _tpl_model extends CI_Model {
 			}
 		}
 		return $ret;
+	}
+	public function clean_cache()
+	{
+		include_once $this->_root.'application/libraries/path.php';
+		lib_path_delete($this->_root.'files/cache');
+	}
+
+	public function menu($position_id = 0)
+	{
+		if (isset($this->menu[$position_id])) {
+			$data = $this->menu[$position_id];
+		}else{
+			$data = $this->_db_model->getAll('SELECT * FROM `menu` WHERE `position_id`='.$position_id.' AND `active`=1 ORDER BY `orderby`');
+			if ($data) {
+				$data_ = array();
+				foreach ($data as $value) {
+					$data_[$value['par_id']][] = $value;
+				}
+				$data = $data_;
+				$this->menu[$position_id] = $data;
+			}
+		}
+		return $data;
+	}
+	public function menu_show($data = array(), $config_view = array())
+	{
+		if (is_numeric($data)) {
+			$data = $this->menu($data);
+		}
+		$config_view_def = array(
+			'wrap'     => '<ul class="nav navbar-nav navbar-right">[menu]</ul>',
+			'item'     => '<li><a href="[url]">[title]</a></li>',
+			'item_sub' => '<li class="dropdown">
+											<a href="#" class="dropdown-toggle" data-toggle="dropdown">[title] <b class="caret"></b></a>
+											<ul class="dropdown-menu">
+												[submenu]
+											</ul>
+										</li>',
+			'icon_def' => 'fa fa-fw fa-dot-circle',
+		);
+		$config_view = array_merge($config_view_def, $config_view);
+		return str_replace('[menu]', $this->menu_show_item(0, $data, $config_view), $config_view['wrap']);
+	}
+	public function menu_show_item($par_id = 0, $data = array(), $config_view = array())
+	{
+		$output = '';
+		if (isset($data[$par_id])) {
+			foreach ($data[$par_id] as $value) {
+				if (isset($data[$value['id']])) {
+					$out              = $config_view['item_sub'];
+					$value['submenu'] = $this->menu_show_item($value['id'], $data, $config_view);
+				}else{
+					$out = $config_view['item'];
+				}
+				if (!$value['url_type']) {
+					$value['url'] = ($value['position_id']) ? $this->_url.$value['uri'].'.html' : $this->_url.$value['url'];
+				}
+				if (!$value['icon']) {
+					$value['icon'] = $config_view['icon_def'];
+				}
+				foreach ($value as $key1 => $value1) {
+					$out = str_replace('['.$key1.']', $value1, $out);
+				}
+				$output .= $out;
+			}
+		}
+		return $output;
 	}
 
 	public function meta()
@@ -287,7 +350,7 @@ class _tpl_model extends CI_Model {
 			if (!filter_var($link, FILTER_VALIDATE_URL)) {
 				$link = $this->_url.$link;
 			}
-			return '<button class="btn btn-default" onclick=\'window.location.href="'.$link.'"\'><i class="'.$icon.'"></i> '.$text.'</button>';
+			return '<a href="http://" class="btn btn-default" onclick=\'window.location.href="'.$link.'"\'><i class="'.$icon.'"></i> '.$text.'</a>';
 		}
 		return '';
 	}

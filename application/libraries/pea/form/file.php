@@ -12,6 +12,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 	public $fileImgSize         = 0;
 	public $fileImgSizeThumb    = 0;
 	public $fileImgSizeThumbPre = 0;
+	public $imageClick          = 0;
 	public $newValue            = '';
 	public $newValue_roll       = array();
 	public $oldValue            = '';
@@ -82,6 +83,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 
 	public function setImageClick()
 	{
+		$this->imageClick = 1;
 		$this->toolModal .= 'image_viewer" data-magnify="gallery" data-group="'.$this->table.'_'.$this->init;
 		$this->setIncludes('image_viewer/css/jquery.magnify.min', 'css');
 		$this->setIncludes('image_viewer/js/jquery.magnify.min', 'js');
@@ -178,7 +180,14 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if ($value) $this->isRequire = '';
 		$value_text = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
 		if ($value and is_file($this->fileFolder.$value)) {
-			$form .= '<a class="'.$this->toolModal.'" href="'.str_replace($this->_root, $this->_url, $this->fileFolder).$value.'" target="_BLANK"><p>'.$value_text.'</p></a>';
+			$link = str_replace($this->_root, $this->_url, $this->fileFolder).$value;
+			if ($this->imageClick) {
+				$value_text = '<img class="img-thumbnail" style="height: 25px;" src="'.$link.'">'.$value_text;
+			}
+			if ($this->init != 'roll') {
+				$value_text = '<p>'.$value_text.'</p>';
+			}
+			$form .= '<a class="'.$this->toolModal.'" href="'.$link.'" target="_BLANK">'.$value_text.'</a>';
 		}
 		if (!$this->isPlainText) {
 			$name = (is_numeric($index)) ? $this->name.'__'.$index : $this->name;

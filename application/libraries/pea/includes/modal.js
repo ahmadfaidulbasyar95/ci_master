@@ -1,13 +1,13 @@
 (function() {
 	window.addEventListener('load', function() { 
 		if ($('#modal-modal_processing').length == 0) {
-			$('body').append('<div class="modal fade" id="modal-modal_processing"> <div class="modal-dialog"> <div class="modal-content"> <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="position: absolute;right: 30px;padding: 25px 5px;">&times;</button> <iframe src="#" name="modal_processing" style="width: 100%;height: 80vh;border: 0;"></iframe> </div> </div> </div>');
+			$('body').append('<div class="modal fade" id="modal-modal_processing"> <div class="modal-dialog"> <div class="modal-content"> <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="position: absolute;right: 20px;padding: 10px 5px;">&times;</button> <iframe src="#" name="modal_processing" style="width: 100%;height: 80vh;border: 0;"></iframe> </div> </div> </div>');
 			$('body').on('click', '.modal_processing', function(event) {
 				event.preventDefault();
 				if ($(this).hasClass('modal_large')) {
 					$('.modal-dialog','#modal-modal_processing').css({
 						'width':     '1200px',
-						'max-width': '100%'
+						'max-width': 'calc(100% - 20px)'
 					});
 				}else{
 					$('.modal-dialog','#modal-modal_processing').removeAttr('style');

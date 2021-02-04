@@ -29,6 +29,13 @@ class Dashboard extends CI_Controller
 		$this->_tpl_model->show();
 	}
 
+	function login()
+	{
+		$this->_tpl_model->setLayout('blank');
+		$this->_tpl_model->view('Dashboard/login');
+		$this->_tpl_model->show();
+	}
+
 	function config()
 	{
 		include_once $this->_tpl_model->_root.'application/libraries/tabs.php';
@@ -86,6 +93,19 @@ class Dashboard extends CI_Controller
 		$form->edit->input->value->element->desktop_background->setImageClick();
 		$form->edit->input->value->element->desktop_background->setRequire();
 
+		$form->edit->input->value->addInput('login_background', 'file');
+		$form->edit->input->value->element->login_background->setTitle('Login Background');
+		$form->edit->input->value->element->login_background->setImageClick();
+		$form->edit->input->value->element->login_background->setRequire();
+
+		$form->edit->input->value->addInput('login_uri', 'text');
+		$form->edit->input->value->element->login_uri->setTitle('Login URI');
+		$form->edit->input->value->element->login_uri->setRequire();
+		$name = $form->edit->input->value->element->login_uri->getName();
+		if (!empty($_POST[$name])) {
+			$_POST[$name] = preg_replace('~[^a-z0-9]~', '', strtolower($_POST[$name]));
+		}
+
 		$form->edit->setSaveButton('','','dashboard');
 		$form->edit->action();
 		$c_dashboard = $form->edit->getForm();
@@ -94,6 +114,10 @@ class Dashboard extends CI_Controller
 			'Site'      => $c_site,
 			'Dashboard' => $c_dashboard,
 		));
+
+		if ($_POST) {
+			$this->_tpl_model->clean_cache();
+		}
 
 		$this->_tpl_model->show();
 	}

@@ -124,7 +124,7 @@ class lib_pea_frm_text
 			}
 		}
 		$isUniq = $this->getUniq();
-		if ($isUniq and !$this->msg) {
+		if ($isUniq and !$this->msg and $value) {
 			$vId = $this->getValueID($index);
 			$q   = 'SELECT 1 FROM '.$this->table.' WHERE `'.$this->fieldNameDb.'` = "'.addslashes($value).'"';
 			if ($vId) {
