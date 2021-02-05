@@ -22,8 +22,6 @@ class _tpl_model extends CI_Model {
 
 	function __construct()
 	{
-		include_once $this->_root.'application/libraries/file.php';
-		
 		parent::__construct();
 
 		$this->load->model('_db_model');
@@ -31,6 +29,8 @@ class _tpl_model extends CI_Model {
 		$this->_url         = base_url();
 		$this->_url_current = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 		$this->_root        = FCPATH;
+		
+		include_once $this->_root.'application/libraries/file.php';
 
 		$this->setTemplate();
 

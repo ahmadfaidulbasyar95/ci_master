@@ -31,8 +31,24 @@ class Dashboard extends CI_Controller
 
 	function login()
 	{
+		$this->load->model('_encrypt_model');
+		$input = array(
+			'usr' => mt_rand(100000000000,500000000000),
+			'pwd' => mt_rand(500000000001,900000000000),
+			'msg' => '',
+		);
+		if (!empty($_POST['token'])) {
+			$token = $this->_encrypt_model->decodeToken($_POST['token']);
+			if ($token) {
+				pr($token);
+			}else{
+				$input['msg'] = $this->_tpl_model->msg('Token Expired', 'danger');
+			}
+		}
+		$input['token'] = $this->_encrypt_model->encodeToken($input['usr'].'|'.$input['pwd'], 2);
+
 		$this->_tpl_model->setLayout('blank');
-		$this->_tpl_model->view('Dashboard/login');
+		$this->_tpl_model->view('Dashboard/login', ['input' => $input]);
 		$this->_tpl_model->show();
 	}
 
@@ -117,6 +133,7 @@ class Dashboard extends CI_Controller
 
 		if ($_POST) {
 			$this->_tpl_model->clean_cache();
+			$this->_tpl_model->config('dashboard');
 		}
 
 		$this->_tpl_model->show();

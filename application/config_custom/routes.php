@@ -9,3 +9,11 @@ $route['([a-z0-9-]+).html'] = function($value='') {
 	}
 	return @$value['task'];
 };
+
+$c_dashboard = FCPATH.'files/cache/config/dashboard.cfg';
+if (is_file($c_dashboard)) {
+	$c_dashboard = json_decode(file_get_contents($c_dashboard), 1);
+	if ($c_dashboard) {
+		$route[$c_dashboard['login_uri']] = 'admin/dashboard/login';
+	}
+}

@@ -6,12 +6,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<div class="container" style="max-width: 500px;">
 			<form action="" method="POST" role="form" style="background: #000000a3;padding: 15px;">
 				<legend style="color: white;">Sign In</legend>
+				<?php echo $input['msg']; ?>
 				<div class="form-group">
-					<input name="username" type="text" class="form-control" placeholder="Username">
+					<input name="<?php echo $input['usr']; ?>" type="text" class="form-control" placeholder="Username">
 				</div>
 				<div class="form-group">
-					<input name="password" type="text" class="form-control" placeholder="Password">
+					<input name="<?php echo $input['pwd']; ?>" type="text" class="form-control" placeholder="Password">
 				</div>
+				<input type="hidden" name="token" value="<?php echo $input['token']; ?>">
 				<button type="submit" class="btn btn-info btn-block">Submit</button>
 			</form>
 		</div>
