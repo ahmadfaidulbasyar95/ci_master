@@ -39,6 +39,7 @@ class lib_pea_frm_text
 	public $inputPosition     = 'main';
 	public $isUniq            = 0;
 	public $attr              = '';
+	public $attr_class        = '';
 	
 	function __construct($opt, $name)
 	{
@@ -148,6 +149,18 @@ class lib_pea_frm_text
 	public function setAttr($attr = '')
 	{
 		$this->attr = $attr;
+	}
+	public function addAttr($attr = '')
+	{
+		$this->attr .= ' '.$attr;
+	}
+	public function setClass($class = '')
+	{
+		$this->attr_class = $class;
+	}
+	public function addClass($class = '')
+	{
+		$this->attr_class .= ' '.$class;
 	}
 
 	public function setRequire($isRequire = 1)
@@ -306,7 +319,7 @@ class lib_pea_frm_text
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
-			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
+			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control '.$this->attr_class.'" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
 		}
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

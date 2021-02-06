@@ -25,9 +25,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
 <div id="_menu" style="display: none;">
 	<div id="_user_info">
-		<img src="<?php echo $tpl->_url.'files/uploads/'.$tpl->config('dashboard', 'desktop_background'); ?>">
-		<a href="#" class="ellipsis menu_close">Faid</a>
-		<a href="#"><i class="fa fa-sign-out fa-fw"></i></a>
+		<img src="<?php echo $tpl->user['image']; ?>" style="background: white;">
+		<a href="<?php echo $tpl->_url.'admin/user/profile'; ?>" data-title="<i class='fa fa-fw fa-user-circle'></i>Profile" target="_iframe" class="ellipsis menu_close"><?php echo $tpl->user['name']; ?></a>
+		<a href="<?php echo $tpl->_url.'admin/user/logout'; ?>" onclick="return confirm('Logout ?')"><i class="fa fa-sign-out fa-fw"></i></a>
 	</div>
 	<?php 
 	echo $tpl->menu_show(0, array(

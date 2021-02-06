@@ -8,6 +8,8 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	public $referenceFieldKey   = '';
 	public $referenceFieldValue = '';
 	public $referenceCondition  = '';
+	public $options_load        = 0;
+	public $dependent           = array();
 
 	function __construct($opt, $name)
 	{
@@ -30,33 +32,51 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		if ($referenceCondition) $this->referenceCondition = 'WHERE '.$referenceCondition;
 	}
 
+	public function setDependent($name = '', $field = '')
+	{
+		if ($name and $field) {
+			$this->dependent = array(
+				'name'  => $name,
+				'field' => $field,
+			);
+			$this->setIncludes('selecttable_dependent', 'js');
+		}
+	}
+
+	public function getOptionTable()
+	{
+		if (!$this->options_load) {
+			if ($this->dependent) {
+				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition;
+				if ($this->referenceCondition) {
+					$token .= ' AND '.$this->dependent['field'].'="[v]"';
+				}else{
+					$token .= ' WHERE '.$this->dependent['field'].'="[v]"';
+				}
+				$this->db->load->model('_encrypt_model');
+				$token = $this->db->_encrypt_model->encodeToken($token, 30);
+				$this->addAttr('data-token="'.$token.'"');
+				$this->addAttr('data-dependent="'.$this->dependent['name'].'"');
+				$this->addClass('selecttable_dependent');
+			}else{
+				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition);
+				foreach ($option as $value) {
+					$this->addOption($value['key'], $value['value']);
+				}
+			}
+			$this->options_load = 1;
+		}
+	}
+
 	public function getReportOutput($value_ = '')
 	{
-		$option = array();
-		if (isset($GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb])) {
-			$option = $GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb];
-		}else{
-			$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition);
-			$GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb] = $option;
-		}
-		foreach ($option as $value) {
-			$this->addOption($value['key'], $value['value']);
-		}
+		$this->getOptionTable();
 		return parent::getReportOutput($value_);
 	}
 
 	public function getForm($index = '')
 	{
-		$option = array();
-		if (isset($GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb])) {
-			$option = $GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb];
-		}else{
-			$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition);
-			$GLOBALS['pea_selecttable_'.$this->table.'_'.$this->init.'_'.$this->fieldNameDb] = $option;
-		}
-		foreach ($option as $value) {
-			$this->addOption($value['key'], $value['value']);
-		}
+		$this->getOptionTable();
 		return parent::getForm($index);
 	}
 }

@@ -19,7 +19,7 @@ class lib_pea_frm_orderby extends lib_pea_frm_text
 			$form .= $value;
 		}else{
 			$name = $this->name.'['.$index.']';
-			$form .= '<input type="hidden" name="'.$name.'" class="form-control orderby_input" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.'>';
+			$form .= '<input type="hidden" name="'.$name.'" class="form-control orderby_input '.$this->attr_class.'" value="'.$this->getValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.'>';
 			$form .= '<span class="orderby_button btn btn-default btn-xs" title="'.$this->caption.'"><i class="fa fa-exchange fa-fw" style="transform: rotate(90deg);"></i></span>';
 		}
 		$form .= '</td>';

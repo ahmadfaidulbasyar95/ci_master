@@ -9,7 +9,10 @@ class User extends CI_Controller
 		parent::__construct();
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
-		$this->load->library('session');
+
+		if ($this->router->method != 'login') {
+			$this->_tpl_model->user_login_validate();
+		}
 
 		$this->_tpl_model->setTemplate('admin');
 		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
@@ -17,11 +20,24 @@ class User extends CI_Controller
 
 	function index()
 	{
-		echo $this->_tpl_model->button('admin/user/form?return='.urlencode($this->_tpl_model->_url_current), 'Add User', 'fa fa-plus');
-
 		$form = $this->_pea_model->newForm('user');
 
-		$form->initRoll('WHERE 1 ORDER BY `name` ASC');
+		$form->initSearch();
+
+		$form->search->addInput('keyword', 'keyword');
+		$form->search->input->keyword->setTitle('Search');
+		$form->search->input->keyword->addSearchField('name,username,email,phone');
+				
+		$form->search->formWrap('<div style="float:right;margin-bottom: 10px;">','</div>');
+		
+		$add_sql = $form->search->action();
+		$keyword = $form->search->keyword();
+		
+		echo $form->search->getForm();
+
+		echo $this->_tpl_model->button('admin/user/form?return='.urlencode($this->_tpl_model->_url_current), 'Add User', 'fa fa-plus');
+
+		$form->initRoll($add_sql.' ORDER BY `name` ASC');
 
 		$form->roll->addInput('name', 'sqllinks');
 		$form->roll->input->name->setTitle('Name');
@@ -76,6 +92,13 @@ class User extends CI_Controller
 		$this->_tpl_model->show();
 	}
 
+	function profile()
+	{
+		$_GET['id']    = $this->_tpl_model->user['id'];
+		$_GET['title'] = 'Profile';
+		$this->form();
+	}
+
 	function form()
 	{
 		$id   = @intval($_GET['id']);
@@ -88,41 +111,68 @@ class User extends CI_Controller
 
 		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
 		
-		$form->edit->setHeader(!empty($id) ? 'Edit User' : 'Add User');
+		if (isset($_GET['title'])) {
+			$form->edit->setHeader($_GET['title']);
+		}else{
+			$form->edit->setHeader(!empty($id) ? 'Edit User' : 'Add User');
+		}
 		
 		$form->edit->addInput('name','text');
 		$form->edit->input->name->setTitle('Name');
 		$form->edit->input->name->setRequire();
-		
-		$form->edit->addInput('username','text');
-		$form->edit->input->username->setTitle('Username');
-		$form->edit->input->username->setRequire();
-		$form->edit->input->username->setUniq();
 
 		if (!$id) {
+			$form->edit->addInput('username','text');
+			$form->edit->input->username->setTitle('Username');
+			$form->edit->input->username->setRequire();
+			$form->edit->input->username->setUniq();
+		
 			$form->edit->addInput('password','text');
 			$form->edit->input->password->setTitle('Password');
+			$form->edit->input->password->setType('password');
 			$form->edit->input->password->setRequire();
 			$name = $form->edit->input->password->getName();
 			if (!empty($_POST[$name])) {
-				$this->load->model('_encrypt_model');
-				$_POST[$name] = $this->_encrypt_model->encode($_POST[$name]);
+				if ($_POST[$name] != @$_POST['password_re']) {
+					$form->edit->input->password->msg = str_replace('{msg}', '<b>Password and Re-Password</b> does not Match', $form->edit->input->password->failMsgTpl);
+				}else{
+					$this->load->model('_encrypt_model');
+					$_POST[$name] = $this->_encrypt_model->encode($_POST[$name]);
+				}
 			}
+
+			$form->edit->addInput('password_re', 'plaintext');
+			$form->edit->input->password_re->setTitle('Re-Password');
+			$form->edit->input->password_re->setValue('<input type="password" name="password_re" class="form-control" value="" title="Re-Password" placeholder="Re-Password" required="required">');
+		
+			$form->edit->addInput('email','text');
+			$form->edit->input->email->setTitle('Email');
+			$form->edit->input->email->setType('email');
+			$form->edit->input->email->setRequire();
+			$form->edit->input->email->setUniq();
+			
+			$form->edit->addInput('phone','text');
+			$form->edit->input->phone->setTitle('Phone');
+			$form->edit->input->phone->setType('number');
+			$form->edit->input->phone->setRequire();
+			$form->edit->input->phone->setUniq();
 		}else{
+			$form->edit->addInput('username', 'sqlplaintext');
+			$form->edit->input->username->setTitle('Username');
+			$form->edit->input->username->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+
 			$form->edit->addInput('password', 'plaintext');
 			$form->edit->input->password->setTitle('Password');
-			$form->edit->input->password->setValue($this->_tpl_model->button('admin/user/pwd?id='.$id.'&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat'));
+			$form->edit->input->password->setValue($this->_tpl_model->button('admin/user/pwd?id='.$id.'&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+
+			$form->edit->addInput('email', 'sqlplaintext');
+			$form->edit->input->email->setTitle('Email');
+			$form->edit->input->email->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=email&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+
+			$form->edit->addInput('phone', 'sqlplaintext');
+			$form->edit->input->phone->setTitle('Phone');
+			$form->edit->input->phone->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=phone&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
 		}
-		
-		$form->edit->addInput('email','text');
-		$form->edit->input->email->setTitle('Email');
-		$form->edit->input->email->setType('email');
-		$form->edit->input->email->setUniq();
-		
-		$form->edit->addInput('phone','text');
-		$form->edit->input->phone->setTitle('Phone');
-		$form->edit->input->phone->setType('number');
-		$form->edit->input->phone->setUniq();
 
 		$form->edit->addInput('image', 'file');
 		$form->edit->input->image->setTitle('Image');
@@ -140,6 +190,25 @@ class User extends CI_Controller
 
 		$form->edit->addInput('birth_date', 'date');
 		$form->edit->input->birth_date->setTitle('Birthdate');
+
+		$form->edit->addInput('location_data', 'params');
+		$form->edit->input->location_data->setTitle('Location');
+
+		$form->edit->input->location_data->addInput('location_input', 'multiinput');
+		$form->edit->input->location_data->element->location_input->setTitle('Location');
+
+		$form->edit->input->location_data->element->location_input->addInput('province_id', 'selecttable');
+		$form->edit->input->location_data->element->location_input->element->province_id->setTitle('Province');
+		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceTable('location');
+		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceCondition( '`type_id`=1' );
+
+		$form->edit->input->location_data->element->location_input->addInput('city_id', 'selecttable');
+		$form->edit->input->location_data->element->location_input->element->city_id->setTitle('City');
+		$form->edit->input->location_data->element->location_input->element->city_id->setReferenceTable('location');
+		$form->edit->input->location_data->element->location_input->element->city_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_data->element->location_input->element->city_id->setReferenceCondition( '`type_id`=2' );
+		$form->edit->input->location_data->element->location_input->element->city_id->setDependent( $form->edit->input->location_data->element->location_input->element->province_id->getName(), 'par_id' );
 
 		$form->edit->addInput('active', 'checkbox');
 		$form->edit->input->active->setTitle('Active');
@@ -186,17 +255,113 @@ class User extends CI_Controller
 			
 			$form->edit->addInput('password','text');
 			$form->edit->input->password->setTitle('New Password');
+			$form->edit->input->password->setType('password');
 			$form->edit->input->password->setRequire();
 			$name = $form->edit->input->password->getName();
 			if (!empty($_POST[$name])) {
-				$this->load->model('_encrypt_model');
-				$_POST[$name] = $this->_encrypt_model->encode($_POST[$name]);
+				if ($_POST[$name] != @$_POST['password_re']) {
+					$form->edit->input->password->msg = str_replace('{msg}', '<b>Password and Re-Password</b> does not Match', $form->edit->input->password->failMsgTpl);
+				}else{
+					$this->load->model('_encrypt_model');
+					$_POST[$name] = $this->_encrypt_model->encode($_POST[$name]);
+				}
 			}
+
+			$form->edit->addInput('password_re', 'plaintext');
+			$form->edit->input->password_re->setTitle('Re-Password');
+			$form->edit->input->password_re->setValue('<input type="password" name="password_re" class="form-control" value="" title="Re-Password" placeholder="Re-Password" required="required">');
 
 			$form->edit->action();
 			$form->edit->input->password->setValue('');
 			echo $form->edit->getForm();
 			$this->_tpl_model->show();
 		}
+	}
+
+	function usr()
+	{
+		$id = @intval($_GET['id']);
+		$this->_tpl_model->setLayout('blank');
+		if ($id) {
+			$form = $this->_pea_model->newForm('user');
+			
+			$form->initEdit('WHERE `id`='.$id);
+
+			$form->edit->addInput('name', 'sqlplaintext');
+			$form->edit->input->name->setTitle('Name');
+
+			switch (@$_GET['act']) {
+				case 'email':
+					$form->edit->setHeader('Change Email');
+					
+					$form->edit->addInput('email','text');
+					$form->edit->input->email->setTitle('Email');
+					$form->edit->input->email->setType('email');
+					$form->edit->input->email->setRequire();
+					$form->edit->input->email->setUniq();
+					break;
+
+				case 'phone':
+					$form->edit->setHeader('Change Phone');
+					
+					$form->edit->addInput('phone','text');
+					$form->edit->input->phone->setTitle('Phone');
+					$form->edit->input->phone->setType('number');
+					$form->edit->input->phone->setRequire();
+					$form->edit->input->phone->setUniq();
+					break;		
+				
+				default:
+					$form->edit->setHeader('Change Username');
+					
+					$form->edit->addInput('username','text');
+					$form->edit->input->username->setTitle('Username');
+					$form->edit->input->username->setRequire();
+					$form->edit->input->username->setUniq();
+					break;
+			}
+
+			$form->edit->action();
+			echo $form->edit->getForm();
+			$this->_tpl_model->show();
+		}
+	}
+
+	function login()
+	{
+		if ($this->router->uri->uri_string != $this->_tpl_model->config('dashboard', 'login_uri')) {
+			show_404();
+		}
+		$this->load->model('_encrypt_model');
+		$input = array(
+			'usr' => mt_rand(100000000000,500000000000),
+			'pwd' => mt_rand(500000000001,900000000000),
+			'msg' => '',
+		);
+		if (!empty($_POST['token'])) {
+			$token = $this->_encrypt_model->decodeToken($_POST['token']);
+			if ($token) {
+				$token = explode('|', $token);
+				if (!empty($_POST[$token[0]]) and !empty($_POST[$token[1]])) {
+					if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]])) {
+						redirect($this->_tpl_model->_url.'admin/dashboard');
+					}else{
+						$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
+					}
+				}
+			}else{
+				$input['msg'] = $this->_tpl_model->msg('Token Expired', 'danger');
+			}
+		}
+		$input['token'] = $this->_encrypt_model->encodeToken($input['usr'].'|'.$input['pwd'], 2);
+
+		$this->_tpl_model->setLayout('blank');
+		$this->_tpl_model->view('User/login', ['input' => $input]);
+		$this->_tpl_model->show();
+	}
+	function logout()
+	{
+		$this->_tpl_model->user_logout();
+		redirect($this->_tpl_model->_url);
 	}
 }

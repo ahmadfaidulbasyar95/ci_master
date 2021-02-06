@@ -17,6 +17,8 @@ class _tpl_model extends CI_Model {
 	public $config   = array();
 	public $nav_list = array();
 	public $menu     = array();
+	public $user     = array();
+	public $user_msg = '';
 	
 	private $ob_start = 1;
 
@@ -25,6 +27,7 @@ class _tpl_model extends CI_Model {
 		parent::__construct();
 
 		$this->load->model('_db_model');
+		$this->load->library('session');
 
 		$this->_url         = base_url();
 		$this->_url_current = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
@@ -340,7 +343,55 @@ class _tpl_model extends CI_Model {
 		return $ret;
 	}
 
-	public function button($link = '', $text = '', $icon = 'fa fa-send')
+	public function user_msg($value='')
+	{
+		if ($value) {
+			$this->user_msg = $value;
+		}else{
+			return $this->user_msg;
+		}
+	}
+	public function user_login($usr='',$pwd='')
+	{
+		if ($usr and $pwd) {
+			$data = $this->_db_model->getRow('SELECT * FROM `user` WHERE `username`="'.addslashes($usr).'"');
+			if ($data) {
+				if (!$data['active']) {
+					$this->user_msg('Your account has been blocked');
+					return false;
+				}
+				$this->load->model('_encrypt_model');
+				$pwd_current = $this->_encrypt_model->decode($data['password']);
+				if ($pwd == $pwd_current) {
+					$_SESSION['user_login'] = $data;
+					return true;
+				}
+			}
+		}
+		$this->user_msg('Invalid Username or Password');
+		return false;
+	}
+	public function user_login_validate()
+	{
+		if (empty($_SESSION['user_login'])) {
+			show_error('Please Sign In', 401, '401 Unauthorized');
+		}else{
+			$this->user          = $_SESSION['user_login'];
+			$this->user['image'] = $this->validateFile($this->_root.'files/user/thumb/'.$this->user['image']);
+			if (!$this->user['image']) {
+				$this->user['image'] = $this->_url.'files/uploads/'.$this->config('user', 'img_def');
+			}
+			return $this->user;
+		}
+	}
+	public function user_logout()
+	{
+		if (isset($_SESSION['user_login'])) {
+			unset($_SESSION['user_login']);
+		}
+	}
+
+	public function button($link = '', $text = '', $icon = 'fa fa-send', $cls = '')
 	{
 		if (!$link and @$_GET['return']) {
 			$link = $_GET['return'];
@@ -350,7 +401,7 @@ class _tpl_model extends CI_Model {
 			if (!filter_var($link, FILTER_VALIDATE_URL)) {
 				$link = $this->_url.$link;
 			}
-			return '<a href="http://" class="btn btn-default" onclick=\'window.location.href="'.$link.'"\'><i class="'.$icon.'"></i> '.$text.'</a>';
+			return '<a href="http://" class="btn btn-default '.$cls.'" onclick=\'window.location.href="'.$link.'"\'><i class="'.$icon.'"></i> '.$text.'</a>';
 		}
 		return '';
 	}

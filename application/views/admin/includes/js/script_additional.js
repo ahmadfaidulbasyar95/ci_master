@@ -148,7 +148,8 @@
 		$('body').on('click', 'a[target="_iframe"]', function(event) {
 			event.preventDefault();
 			_iframe_id++;
-			var n = $(this).html();
+			var x = $(this).data('title');
+			var n = (x) ? x : $(this).html();
 			var h = $(this).attr('href');
 			var i = _iframes_item.toString().replace('{title}', n).replace('{id}', _iframe_id).replace('{url}', h);
 			var t = _iframe_toggles_item.toString().replace('{title}', n).replace('{id}', _iframe_id);

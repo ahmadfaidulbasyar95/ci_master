@@ -9,7 +9,8 @@ class Menu extends CI_Controller
 		parent::__construct();
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
-		$this->load->library('session');
+
+		$this->_tpl_model->user_login_validate();
 
 		$this->_tpl_model->setTemplate('admin');
 		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
@@ -42,8 +43,13 @@ class Menu extends CI_Controller
 		
 		$_GET['position_id'] = @intval($keyword['position_id']);
 		$_GET['keyword']     = @$keyword['keyword'];
-		if (isset($_POST[$form->search->input->position_id->getName()]) and $id) {
-			redirect($form->_url.'admin/menu');
+		if (isset($_SESSION['menu_position_id'])) {
+			if ($_SESSION['menu_position_id'] != $_GET['position_id']) {
+				$_SESSION['menu_position_id'] = $_GET['position_id'];
+				redirect($form->_url.'admin/menu');
+			}
+		}else{
+			$_SESSION['menu_position_id'] = $_GET['position_id'];
 		}
 
 		$_GET['id']     = 0;
@@ -80,7 +86,7 @@ class Menu extends CI_Controller
 		$keyword     = @$_GET['keyword'];
 		$form        = $this->_pea_model->newForm('menu');
 
-		$form->initRoll('WHERE `par_id`='.$id.' AND `position_id`='.$position_id.' '.(($keyword) ? 'AND `title` LIKE "%'.addslashes($keyword).'%"' :'').' ORDER BY `orderby` ASC');
+		$form->initRoll('WHERE `par_id`='.$id.' AND `position_id`='.$position_id.' '.(($keyword) ? 'AND (`title` LIKE "%'.addslashes($keyword).'%" OR `url` LIKE "%'.addslashes($keyword).'%")' :'').' ORDER BY `orderby` ASC');
 
 		$form->roll->addInput('id', 'sqlplaintext');
 		$form->roll->input->id->setTitle('ID');

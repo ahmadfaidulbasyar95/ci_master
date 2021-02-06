@@ -57,7 +57,7 @@ class lib_pea_frm_datetimeinterval extends lib_pea_frm_text
 			$id   = (is_numeric($index)) ? $this->name.'__'.$index : $this->name;
 			$form .= '<input type="hidden" name="'.$name.'" value="'.$this->getValue($index).'">';
 			$form .= '<input type="hidden" name="'.$name.'" value="'.$this->getValue($index).'">';
-			$form .= '<input id="'.$id.'" type="text" class="form-control fm_daterangepicker" value="" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.' data-config=\''.json_encode($this->dateConfig).'\'>';
+			$form .= '<input id="'.$id.'" type="text" class="form-control fm_daterangepicker '.$this->attr_class.'" value="" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.' data-config=\''.json_encode($this->dateConfig).'\'>';
 		}
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

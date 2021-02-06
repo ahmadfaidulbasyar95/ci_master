@@ -9,7 +9,8 @@ class Dashboard extends CI_Controller
 		parent::__construct();
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
-		$this->load->library('session');
+
+		$this->_tpl_model->user_login_validate();
 
 		$this->_tpl_model->setTemplate('admin');
 		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
@@ -26,29 +27,6 @@ class Dashboard extends CI_Controller
 	{
 		$this->_tpl_model->setLayout('blank');
 		$this->_tpl_model->view('Dashboard/main');
-		$this->_tpl_model->show();
-	}
-
-	function login()
-	{
-		$this->load->model('_encrypt_model');
-		$input = array(
-			'usr' => mt_rand(100000000000,500000000000),
-			'pwd' => mt_rand(500000000001,900000000000),
-			'msg' => '',
-		);
-		if (!empty($_POST['token'])) {
-			$token = $this->_encrypt_model->decodeToken($_POST['token']);
-			if ($token) {
-				pr($token);
-			}else{
-				$input['msg'] = $this->_tpl_model->msg('Token Expired', 'danger');
-			}
-		}
-		$input['token'] = $this->_encrypt_model->encodeToken($input['usr'].'|'.$input['pwd'], 2);
-
-		$this->_tpl_model->setLayout('blank');
-		$this->_tpl_model->view('Dashboard/login', ['input' => $input]);
 		$this->_tpl_model->show();
 	}
 
@@ -126,9 +104,25 @@ class Dashboard extends CI_Controller
 		$form->edit->action();
 		$c_dashboard = $form->edit->getForm();
 
+		$form->initEdit('WHERE `name`="user"', 'name', 1);		
+		$form->edit->setHeader('User');
+
+		$form->edit->addInput('value', 'params');
+		$form->edit->input->value->setTitle('');
+
+		$form->edit->input->value->addInput('img_def', 'file');
+		$form->edit->input->value->element->img_def->setTitle('Default Image');
+		$form->edit->input->value->element->img_def->setImageClick();
+		$form->edit->input->value->element->img_def->setRequire();
+
+		$form->edit->setSaveButton('','','user');
+		$form->edit->action();
+		$c_user = $form->edit->getForm();
+
 		echo lib_tabs(array(
 			'Site'      => $c_site,
 			'Dashboard' => $c_dashboard,
+			'User'      => $c_user,
 		));
 
 		if ($_POST) {

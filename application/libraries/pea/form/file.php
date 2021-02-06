@@ -192,7 +192,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if (!$this->isPlainText) {
 			$name = (is_numeric($index)) ? $this->name.'__'.$index : $this->name;
 			// $name = ($this->isMultiform) ? $name.'[]' : $name;
-			$form .= '<input type="file" name="'.$name.'" class="form-control" value="" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
+			$form .= '<input type="file" name="'.$name.'" class="form-control '.$this->attr_class.'" value="" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
 		}
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

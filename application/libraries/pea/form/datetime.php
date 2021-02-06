@@ -48,7 +48,7 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
-			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control" value="'.$this->getDateValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
+			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control '.$this->attr_class.'" value="'.$this->getDateValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
 		}
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

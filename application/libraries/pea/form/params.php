@@ -28,6 +28,13 @@ class lib_pea_frm_params extends lib_pea_frm_text
 
 	public function getIncludes()
 	{
+		foreach ($this->element as $key => $value) {
+			if ($value->type == 'multiinput') {
+				foreach ($value->element as $key1 => $value1) {
+					$this->element->$key1 = $value1;
+				}
+			}
+		}
 		$includes_js  = array();
 		$includes_css = array();
 		foreach ($this->element as $value) {
@@ -138,7 +145,7 @@ class lib_pea_frm_params extends lib_pea_frm_text
 	{
 		$form = '';
 		foreach ($this->element as $key => $value) {
-			$form .= $value->getForm();
+			if ($value->getInputPosition() == 'main') $form .= $value->getForm();
 		}
 		return $form;
 	}

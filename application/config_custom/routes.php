@@ -14,6 +14,6 @@ $c_dashboard = FCPATH.'files/cache/config/dashboard.cfg';
 if (is_file($c_dashboard)) {
 	$c_dashboard = json_decode(file_get_contents($c_dashboard), 1);
 	if ($c_dashboard) {
-		$route[$c_dashboard['login_uri']] = 'admin/dashboard/login';
+		$route[$c_dashboard['login_uri']] = 'admin/user/login';
 	}
 }
