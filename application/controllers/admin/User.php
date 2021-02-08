@@ -81,6 +81,11 @@ class User extends CI_Controller
 		$form->roll->input->birth_date->setPlainText();
 		$form->roll->input->birth_date->setDisplayColumn();
 
+		$form->roll->addInput('location_detail', 'sqlplaintext');
+		$form->roll->input->location_detail->setTitle('Address');
+		$form->roll->input->location_detail->setFieldName('CONCAT(`address`," ",`location_detail`)');
+		$form->roll->input->location_detail->setDisplayColumn();
+
 		$form->roll->addInput('active', 'checkbox');
 		$form->roll->input->active->setTitle('Active');
 		$form->roll->input->active->setCaption('yes');
@@ -187,9 +192,11 @@ class User extends CI_Controller
 		$form->edit->input->gender->addOption('-- Select Gender --', '');
 		$form->edit->input->gender->addOption('Male', 1);
 		$form->edit->input->gender->addOption('Female', 2);
+		$form->edit->input->gender->setRequire();
 
 		$form->edit->addInput('birth_date', 'date');
 		$form->edit->input->birth_date->setTitle('Birthdate');
+		$form->edit->input->birth_date->setRequire();
 
 		$form->edit->addInput('location_data', 'params');
 		$form->edit->input->location_data->setTitle('Location');
@@ -202,6 +209,8 @@ class User extends CI_Controller
 		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceTable('location');
 		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceCondition( '`type_id`=1' );
+		$form->edit->input->location_data->element->location_input->element->province_id->addOption( '-- Select Province --', '' );
+		$form->edit->input->location_data->element->location_input->element->province_id->setRequire();
 
 		$form->edit->input->location_data->element->location_input->addInput('city_id', 'selecttable');
 		$form->edit->input->location_data->element->location_input->element->city_id->setTitle('City');
@@ -209,6 +218,30 @@ class User extends CI_Controller
 		$form->edit->input->location_data->element->location_input->element->city_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_data->element->location_input->element->city_id->setReferenceCondition( '`type_id`=2' );
 		$form->edit->input->location_data->element->location_input->element->city_id->setDependent( $form->edit->input->location_data->element->location_input->element->province_id->getName(), 'par_id' );
+		$form->edit->input->location_data->element->location_input->element->city_id->addOption( '-- Select City --', '' );
+		$form->edit->input->location_data->element->location_input->element->city_id->setRequire();
+
+		$form->edit->input->location_data->element->location_input->addInput('district_id', 'selecttable');
+		$form->edit->input->location_data->element->location_input->element->district_id->setTitle('District');
+		$form->edit->input->location_data->element->location_input->element->district_id->setReferenceTable('location');
+		$form->edit->input->location_data->element->location_input->element->district_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_data->element->location_input->element->district_id->setReferenceCondition( '`type_id`=3' );
+		$form->edit->input->location_data->element->location_input->element->district_id->setDependent( $form->edit->input->location_data->element->location_input->element->city_id->getName(), 'par_id' );
+		$form->edit->input->location_data->element->location_input->element->district_id->addOption( '-- Select District --', '' );
+		$form->edit->input->location_data->element->location_input->element->district_id->setRequire();
+
+		$form->edit->input->location_data->element->location_input->addInput('village_id', 'selecttable');
+		$form->edit->input->location_data->element->location_input->element->village_id->setTitle('Village');
+		$form->edit->input->location_data->element->location_input->element->village_id->setReferenceTable('location');
+		$form->edit->input->location_data->element->location_input->element->village_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_data->element->location_input->element->village_id->setReferenceCondition( '`type_id`=4' );
+		$form->edit->input->location_data->element->location_input->element->village_id->setDependent( $form->edit->input->location_data->element->location_input->element->district_id->getName(), 'par_id' );
+		$form->edit->input->location_data->element->location_input->element->village_id->addOption( '-- Select Village --', '' );
+		$form->edit->input->location_data->element->location_input->element->village_id->setRequire();
+
+		$form->edit->addInput('address', 'text');
+		$form->edit->input->address->setTitle('Address');
+		$form->edit->input->address->setRequire();
 
 		$form->edit->addInput('active', 'checkbox');
 		$form->edit->input->active->setTitle('Active');
@@ -219,11 +252,15 @@ class User extends CI_Controller
 			$data = $f->db->getRow('SELECT * FROM `user` WHERE `id`='.$id);
 			if ($data) {
 				$data_update = array();
-				if ($data['location_id']) {
-					$location = $f->db->getRow('SELECT `title`,`detail` FROM `location` WHERE `id`='.$data['location_id']);
-					if ($location) {
-						$data_update['location_title']  = $location['title'];
-						$data_update['location_detail'] = $location['detail'];
+				if ($data['location_data']) {
+					$data['location_data'] = @(array)json_decode($data['location_data'], 1);
+					if (!empty($data['location_data']['village_id'])) {
+						$data_update['location_id'] = $data['location_data']['village_id'];
+						$location                   = $f->db->getRow('SELECT `title`,`detail` FROM `location` WHERE `id`='.$data_update['location_id']);
+						if ($location) {
+							$data_update['location_title']  = $location['title'];
+							$data_update['location_detail'] = $location['detail'];
+						}
 					}
 				}
 				if ($data_update) {
