@@ -13,7 +13,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 
 	public function getSelectedValue($index = '')
 	{
-		$value = $this->getValue($index);
+		$value    = $this->getValue($index);
 		$selected = '';
 		foreach ($this->options as $key => $val) {
 			if ($value == $val) $selected = $key;
@@ -26,10 +26,17 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		if ($key) $this->options[$key] = $value;
 	}
 
+	public function addOptions($options = array())
+	{
+		foreach ($options as $key => $value) {
+			$this->addOption($key, $value);
+		}
+	}
+
 	public function getOption($index = '')
 	{
 		$options = '';
-		$value = $this->getValue($index);
+		$value   = $this->getValue($index);
 		foreach ($this->options as $key => $val) {
 			$options .= ($value == $val) ? '<option value="'.$val.'" selected>'.$key.'</option>' : '<option value="'.$val.'">'.$key.'</option>'; 
 		}
@@ -51,12 +58,20 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
 			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getSelectedValue($index)) : $this->getSelectedValue($index);
+			if (is_array($value)) {
+				$value = implode(', ', $value);
+			}
 			$form .= ($this->init == 'roll' or $this->isMultiinput) ? $value : '<p>'.$value.'</p>';
 		}else{
+			$value = $this->getValue($index);
+			if (is_array($value)) {
+				$value = json_encode($value);
+			}
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
+			$name = ($this->isMultiselect) ? $name.'[]' : $name;
 			$form .= '
-<select name="'.$name.'" class="form-control '.$this->attr_class.'" title="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.' data-value="'.$this->getValue($index).'">
+<select name="'.$name.'" class="form-control '.$this->attr_class.'" title="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.' data-value="'.$value.'">
 	'.$this->getOption($index).'
 </select>';
 		}

@@ -10,7 +10,7 @@ class Menu extends CI_Controller
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
 
-		$this->_tpl_model->user_login_validate();
+		$this->_tpl_model->user_login_validate(1);
 
 		$this->_tpl_model->setTemplate('admin');
 		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
@@ -40,6 +40,7 @@ class Menu extends CI_Controller
 		$keyword = $form->search->keyword();
 		
 		echo $form->search->getForm();
+		echo $this->_tpl_model->button('admin/menu/position?return='.urlencode($this->_tpl_model->_url_current), 'Menu Position', 'fa fa-pencil', '', 'style="float: right;margin-right: 10px;"');
 		
 		$_GET['position_id'] = @intval($keyword['position_id']);
 		$_GET['keyword']     = @$keyword['keyword'];
@@ -73,7 +74,6 @@ class Menu extends CI_Controller
 				'Add Menu' => $add,
 			));
 		}
-		echo $this->_tpl_model->button('admin/menu/position?return='.urlencode($this->_tpl_model->_url_current), 'Menu Position', 'fa fa-pencil');
 
 		$this->_tpl_model->js('controllers/admin/menu.js');
 		$this->_tpl_model->show();

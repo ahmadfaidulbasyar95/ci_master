@@ -13,10 +13,11 @@ class lib_pea_frm_text
 	public $_url                = '';
 	public $_root               = '';
 
-	public $isMultiinput = 0;
-	public $isMultiform  = 0;
-	public $includes_js  = array();
-	public $includes_css = array();
+	public $isMultiinput  = 0;
+	public $isMultiform   = 0;
+	public $isMultiselect = 0;
+	public $includes_js   = array();
+	public $includes_css  = array();
 
 	public $title             = '';
 	public $caption           = '';

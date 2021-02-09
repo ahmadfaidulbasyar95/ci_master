@@ -16,6 +16,16 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		parent::__construct($opt, $name);
 	}
 
+	public function getSelectedValue($index = '')
+	{
+		$value    = $this->getValue($index);
+		$selected = array();
+		foreach ($this->options as $key => $val) {
+			if ($value == $val) $selected[$val] = $key;
+		}
+		return $selected;
+	}
+
 	public function setReferenceTable($referenceTable = '')
 	{
 		if ($referenceTable) $this->referenceTable = $referenceTable;

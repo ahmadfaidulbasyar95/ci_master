@@ -343,7 +343,7 @@ class _tpl_model extends CI_Model {
 		return $ret;
 	}
 
-	public function user_msg($value='')
+	public function user_msg($value = '')
 	{
 		if ($value) {
 			$this->user_msg = $value;
@@ -351,13 +351,28 @@ class _tpl_model extends CI_Model {
 			return $this->user_msg;
 		}
 	}
-	public function user_login($usr='',$pwd='')
+	public function user_login($usr = '',$pwd = '', $type = 0)
 	{
 		if ($usr and $pwd) {
 			$data = $this->_db_model->getRow('SELECT * FROM `user` WHERE `username`="'.addslashes($usr).'"');
 			if ($data) {
 				if (!$data['active']) {
 					$this->user_msg('Your account has been blocked');
+					return false;
+				}
+				$data['group_ids']  = @(array)json_decode($data['group_ids']);
+				$data['group_data'] = array();
+				if ($data['group_ids']) {
+					$data['group_data'] = $this->_db_model->getAll('SELECT * FROM `user_group` WHERE `id` IN('.implode(',', $data['group_ids']).')');
+				}
+				$allowed = 0;
+				foreach ($data['group_data'] as $value) {
+					if ($value['type'] == $type) {
+						$allowed = 1;
+					}
+				}
+				if (!$allowed) {
+					$this->user_msg('Your account does not have access on this page');
 					return false;
 				}
 				$this->load->model('_encrypt_model');
@@ -371,12 +386,21 @@ class _tpl_model extends CI_Model {
 		$this->user_msg('Invalid Username or Password');
 		return false;
 	}
-	public function user_login_validate()
+	public function user_login_validate($type = 0)
 	{
 		if (empty($_SESSION['user_login'])) {
 			show_error('Please Sign In', 401, '401 Unauthorized');
 		}else{
-			$this->user          = $_SESSION['user_login'];
+			$this->user = $_SESSION['user_login'];
+			$allowed    = 0;
+			foreach ($this->user['group_data'] as $value) {
+				if ($value['type'] == $type) {
+					$allowed = 1;
+				}
+			}
+			if (!$allowed) {
+				show_error('Your account does not have access on this page', 401, '401 Unauthorized');
+			}
 			$this->user['image'] = $this->validateFile($this->_root.'files/user/thumb/'.$this->user['image']);
 			if (!$this->user['image']) {
 				$this->user['image'] = $this->_url.'files/uploads/'.$this->config('user', 'img_def');
@@ -391,7 +415,7 @@ class _tpl_model extends CI_Model {
 		}
 	}
 
-	public function button($link = '', $text = '', $icon = 'fa fa-send', $cls = '')
+	public function button($link = '', $text = '', $icon = 'fa fa-send', $cls = '', $attr = '')
 	{
 		if (!$link and @$_GET['return']) {
 			$link = $_GET['return'];
@@ -401,7 +425,7 @@ class _tpl_model extends CI_Model {
 			if (!filter_var($link, FILTER_VALIDATE_URL)) {
 				$link = $this->_url.$link;
 			}
-			return '<a href="http://" class="btn btn-default '.$cls.'" onclick=\'window.location.href="'.$link.'"\'><i class="'.$icon.'"></i> '.$text.'</a>';
+			return '<a href="http://" class="btn btn-default '.$cls.'" onclick=\'window.location.href="'.$link.'"\' '.$attr.'><i class="'.$icon.'"></i> '.$text.'</a>';
 		}
 		return '';
 	}

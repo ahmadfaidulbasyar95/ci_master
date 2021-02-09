@@ -10,7 +10,7 @@ class Location extends CI_Controller
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
 
-		$this->_tpl_model->user_login_validate();
+		$this->_tpl_model->user_login_validate(1);
 
 		$this->_tpl_model->setTemplate('admin');
 		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');

@@ -11,11 +11,16 @@ class User extends CI_Controller
 		$this->load->model('_tpl_model');
 
 		if ($this->router->method != 'login') {
-			$this->_tpl_model->user_login_validate();
+			$this->_tpl_model->user_login_validate(1);
 		}
 
 		$this->_tpl_model->setTemplate('admin');
 		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
+
+		$this->user_group_type = array(
+			'Public' => 0,
+			'Admin'  => 1,
+		);
 	}
 
 	function index()
@@ -35,7 +40,8 @@ class User extends CI_Controller
 		
 		echo $form->search->getForm();
 
-		echo $this->_tpl_model->button('admin/user/form?return='.urlencode($this->_tpl_model->_url_current), 'Add User', 'fa fa-plus');
+		echo $this->_tpl_model->button('admin/user/form?return='.urlencode($this->_tpl_model->_url_current), 'Add User', 'fa fa-plus', '', 'style="margin-right: 10px;"');
+		echo $this->_tpl_model->button('admin/user/group?return='.urlencode($this->_tpl_model->_url_current), 'Group', 'fa fa-pencil');
 
 		$form->initRoll($add_sql.' ORDER BY `name` ASC');
 
@@ -45,6 +51,12 @@ class User extends CI_Controller
 		$form->roll->input->name->setModal();
 		$form->roll->input->name->setModalReload();
 		$form->roll->input->name->setModalLarge();
+
+		$form->roll->addInput('group_ids', 'multiselect');
+		$form->roll->input->group_ids->setTitle('Group');
+		$form->roll->input->group_ids->setReferenceTable('user_group');
+		$form->roll->input->group_ids->setReferenceField('title', 'id');
+		$form->roll->input->group_ids->setPlainText();
 
 		$form->roll->addInput('username', 'sqlplaintext');
 		$form->roll->input->username->setTitle('Username');
@@ -127,6 +139,12 @@ class User extends CI_Controller
 		$form->edit->input->name->setRequire();
 
 		if (!$id) {
+			$form->edit->addInput('group_ids','multiselect');
+			$form->edit->input->group_ids->setTitle('Group');
+			$form->edit->input->group_ids->setReferenceTable('user_group');
+			$form->edit->input->group_ids->setReferenceField('title', 'id');
+			$form->edit->input->group_ids->setRequire();
+					
 			$form->edit->addInput('username','text');
 			$form->edit->input->username->setTitle('Username');
 			$form->edit->input->username->setRequire();
@@ -162,6 +180,13 @@ class User extends CI_Controller
 			$form->edit->input->phone->setRequire();
 			$form->edit->input->phone->setUniq();
 		}else{
+			$form->edit->addInput('group_ids', 'multiselect');
+			$form->edit->input->group_ids->setTitle('Group');
+			$form->edit->input->group_ids->setReferenceTable('user_group');
+			$form->edit->input->group_ids->setReferenceField('title', 'id');
+			$form->edit->input->group_ids->setPlainText();
+			$form->edit->input->group_ids->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=group_ids&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+
 			$form->edit->addInput('username', 'sqlplaintext');
 			$form->edit->input->username->setTitle('Username');
 			$form->edit->input->username->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
@@ -328,6 +353,15 @@ class User extends CI_Controller
 			$form->edit->input->name->setTitle('Name');
 
 			switch (@$_GET['act']) {
+				case 'group_ids':
+					$form->edit->setHeader('Change Group');
+					
+					$form->edit->addInput('group_ids','multiselect');
+					$form->edit->input->group_ids->setTitle('Group');
+					$form->edit->input->group_ids->setReferenceTable('user_group');
+					$form->edit->input->group_ids->setReferenceField('title', 'id');
+					$form->edit->input->group_ids->setRequire();
+					break;
 				case 'email':
 					$form->edit->setHeader('Change Email');
 					
@@ -364,6 +398,49 @@ class User extends CI_Controller
 		}
 	}
 
+	function group()
+	{
+		echo $this->_tpl_model->button('admin/user/group_form?return='.urlencode($this->_tpl_model->_url_current), 'Add Group', 'fa fa-plus', '', 'style="margin-bottom: 5px;"');
+
+		$form = $this->_pea_model->newForm('user_group');
+	
+		$form->initRoll('WHERE 1 ORDER BY `id` ASC');
+
+		$form->roll->addInput('title', 'sqllinks');
+		$form->roll->input->title->setTitle('Title');
+		$form->roll->input->title->setLinks('admin/user/group_form');
+
+		$form->roll->addInput('type', 'select');
+		$form->roll->input->type->setTitle('Type');
+		$form->roll->input->type->addOptions($this->user_group_type);
+		$form->roll->input->type->setPlainText();
+		
+		$form->roll->setSaveTool(false);
+		$form->roll->action();
+		echo $form->roll->getForm();
+		$this->_tpl_model->show();
+	}
+	function group_form()
+	{
+		$id   = @intval($_GET['id']);
+		$form = $this->_pea_model->newForm('user_group');
+
+		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
+
+		$form->edit->setHeader(!empty($id) ? 'Edit Group' : 'Add Group');
+
+		$form->edit->addInput('title', 'text');
+		$form->edit->input->title->setTitle('Title');
+
+		$form->edit->addInput('type', 'select');
+		$form->edit->input->type->setTitle('Type');
+		$form->edit->input->type->addOptions($this->user_group_type);
+		
+		$form->edit->action();
+		echo $form->edit->getForm();
+		$this->_tpl_model->show();
+	}
+
 	function login()
 	{
 		if ($this->router->uri->uri_string != $this->_tpl_model->config('dashboard', 'login_uri')) {
@@ -380,7 +457,7 @@ class User extends CI_Controller
 			if ($token) {
 				$token = explode('|', $token);
 				if (!empty($_POST[$token[0]]) and !empty($_POST[$token[1]])) {
-					if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]])) {
+					if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]], 1)) {
 						redirect($this->_tpl_model->_url.'admin/dashboard');
 					}else{
 						$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
