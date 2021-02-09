@@ -41,6 +41,7 @@ class lib_pea_frm_text
 	public $isUniq            = 0;
 	public $attr              = '';
 	public $attr_class        = '';
+	public $searchFunction    = '';
 	
 	function __construct($opt, $name)
 	{
@@ -302,10 +303,22 @@ class lib_pea_frm_text
 		return '<a href="'.$link.'">'.$title.'</a>';
 	}
 
+	public function setSearchFunction($searchFunction='')
+	{
+		if ($searchFunction) {
+			if (is_callable($searchFunction)) {
+				$this->searchFunction = $searchFunction;
+			}
+		}
+	}
 	public function getSearchSql()
 	{
 		$value = $this->getValue();
-		return (!$value and $value != '0') ? '' : '`'.$this->fieldNameDb.'` = "'.addslashes($value).'"';
+		if (!$value and $value != '0') {
+			return '';
+		}else{
+			return ($this->searchFunction) ? call_user_func($this->searchFunction, $value) : '`'.$this->fieldNameDb.'` = "'.addslashes($value).'"';
+		}
 	}
 
 	public function getForm($index = '')

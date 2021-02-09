@@ -29,9 +29,19 @@ class User extends CI_Controller
 
 		$form->initSearch();
 
+		$form->search->addInput('group_ids', 'selecttable');
+		$form->search->input->group_ids->setTitle('Group');
+		$form->search->input->group_ids->setReferenceTable('user_group');
+		$form->search->input->group_ids->setReferenceField('title', 'id');
+		$form->search->input->group_ids->addOption('-- Select Group --', '');
+		$form->search->input->group_ids->setSearchFunction(function($value='')
+		{
+			return '`group_ids` LIKE "%\"'.$value.'\"%"';
+		});
+
 		$form->search->addInput('keyword', 'keyword');
 		$form->search->input->keyword->setTitle('Search');
-		$form->search->input->keyword->addSearchField('name,username,email,phone');
+		$form->search->input->keyword->addSearchField('name,username,email,phone,location_detail,address');
 				
 		$form->search->formWrap('<div style="float:right;margin-bottom: 10px;">','</div>');
 		
