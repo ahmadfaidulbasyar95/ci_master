@@ -59,7 +59,12 @@
 		var maximize_count = 0;
 		$('#_start').on('click', function(event) {
 			event.preventDefault();
-			$('#_menu').toggle(300).toggleClass('active');
+			var s_m = $('#_menu');
+			s_m.toggle(300).toggleClass('active');
+			if (s_m.hasClass('active')) {
+				$('._iframe_active').removeClass('_iframe_active');
+				$('._iframe_toggle_active').removeClass('_iframe_toggle_active');
+			}
 		});
 		$('.menu_close').on('click', function(event) {
 			$('#_menu.active').toggle(300).toggleClass('active');

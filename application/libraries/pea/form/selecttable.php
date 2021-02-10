@@ -8,6 +8,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	public $referenceFieldKey   = '';
 	public $referenceFieldValue = '';
 	public $referenceCondition  = '';
+	public $referenceNested     = '';
 	public $options_load        = 0;
 	public $dependent           = array();
 
@@ -42,6 +43,11 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		if ($referenceCondition) $this->referenceCondition = 'WHERE '.$referenceCondition;
 	}
 
+	public function setReferenceNested($referenceNested = '')
+	{
+		if ($referenceNested) $this->referenceNested = $referenceNested;
+	}
+
 	public function setDependent($name = '', $field = '')
 	{
 		if ($name and $field) {
@@ -56,8 +62,9 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	public function getOptionTable()
 	{
 		if (!$this->options_load) {
+			$nested = ($this->referenceNested) ? ', '.$this->referenceNested.' AS `nested`' : '';
 			if ($this->dependent) {
-				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition;
+				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition;
 				if ($this->referenceCondition) {
 					$token .= ' AND '.$this->dependent['field'].'="[v]"';
 				}else{
@@ -67,15 +74,36 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 				$token = $this->db->_encrypt_model->encodeToken($token, 30);
 				$this->addAttr('data-token="'.$token.'"');
 				$this->addAttr('data-dependent="'.$this->dependent['name'].'"');
+				$this->addAttr('data-nested="'.$this->referenceNested.'"');
 				$this->addClass('selecttable_dependent');
 			}else{
-				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value` FROM '.$this->referenceTable.' '.$this->referenceCondition);
+				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition);
+				if ($this->referenceNested) {
+					$option = $this->getOptionNested($option);
+				}
 				foreach ($option as $value) {
 					$this->addOption($value['key'], $value['value']);
 				}
 			}
 			$this->options_load = 1;
 		}
+	}
+
+	public function getOptionNested($option = array(), $nested = 0, $prefix = '')
+	{
+		$option_ = array();
+		$prefix_ = ($prefix) ? $prefix.' ' : '';
+		foreach ($option as $key => $value) {
+			if ($value['nested'] == $nested) {
+				$value['key'] = $prefix_.$value['key'];
+				$option_[]    = $value;
+				unset($option[$key]);
+				foreach ($this->getOptionNested($option, $value['value'], $prefix_.'->') as $value_) {
+					$option_[] = $value_;
+				}
+			}
+		}
+		return $option_;
 	}
 
 	public function getReportOutput($value_ = '')

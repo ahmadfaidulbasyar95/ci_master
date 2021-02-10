@@ -71,7 +71,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
 			$name = ($this->isMultiselect) ? $name.'[]' : $name;
 			$form .= '
-<select name="'.$name.'" class="form-control '.$this->attr_class.'" title="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.' data-value="'.$value.'">
+<select name="'.$name.'" class="form-control '.$this->attr_class.'" title="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.' data-value=\''.$value.'\'>
 	'.$this->getOption($index).'
 </select>';
 		}

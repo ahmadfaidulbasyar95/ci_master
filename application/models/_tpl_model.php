@@ -11,14 +11,22 @@ class _tpl_model extends CI_Model {
 	public $_url         = '';
 	public $_url_current = '';
 	public $_root        = '';
+	
+	public $class  = '';
+	public $method = '';
+	public $task   = '';
 
-	public $meta     = array();
-	public $content  = '';
-	public $config   = array();
-	public $nav_list = array();
-	public $menu     = array();
-	public $user     = array();
-	public $user_msg = '';
+	public $meta            = array();
+	public $content         = '';
+	public $config          = array();
+	public $nav_list        = array();
+	public $menu            = array();
+	public $user            = array();
+	public $user_msg        = '';
+	public $user_group_type = array(
+		'Public' => 0,
+		'Admin'  => 1,
+	);
 	
 	private $ob_start = 1;
 
@@ -32,6 +40,10 @@ class _tpl_model extends CI_Model {
 		$this->_url         = base_url();
 		$this->_url_current = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 		$this->_root        = FCPATH;
+
+		$this->class  = $this->router->class;
+		$this->method = $this->router->method;
+		$this->task   = $this->router->uri->uri_string;
 		
 		include_once $this->_root.'application/libraries/file.php';
 
@@ -365,11 +377,17 @@ class _tpl_model extends CI_Model {
 				if ($data['group_ids']) {
 					$data['group_data'] = $this->_db_model->getAll('SELECT * FROM `user_group` WHERE `id` IN('.implode(',', $data['group_ids']).')');
 				}
-				$allowed = 0;
-				foreach ($data['group_data'] as $value) {
+				$allowed          = 0;
+				$data['menu_ids'] = array();
+				foreach ($this->user_group_type as $value) {
+					$data['menu_ids'][$value] = array();
+				}
+				foreach ($data['group_data'] as $key => $value) {
+					$data['group_data'][$key]['menu_ids'] = @(array)json_decode($value['menu_ids']);
 					if ($value['type'] == $type) {
 						$allowed = 1;
 					}
+					$data['menu_ids'][$value['type']] = array_merge($data['menu_ids'][$value['type']], $data['group_data'][$key]['menu_ids']);
 				}
 				if (!$allowed) {
 					$this->user_msg('Your account does not have access on this page');
@@ -396,6 +414,22 @@ class _tpl_model extends CI_Model {
 			foreach ($this->user['group_data'] as $value) {
 				if ($value['type'] == $type) {
 					$allowed = 1;
+				}
+			}
+			if ($allowed) {
+				if (!in_array('all', $this->user['menu_ids'][$type])) {
+					$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->_tpl_model->task).'%"');
+					if (!$menu) {
+						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->_tpl_model->method, '', $this->_tpl_model->task)).'%"');
+					}
+					if ($menu) {
+						$allowed = 0;
+						foreach ($menu as $menu_id) {
+							if (in_array($menu_id, $this->user['menu_ids'][$type])) {
+								$allowed = 1;
+							}
+						}
+					}
 				}
 			}
 			if (!$allowed) {

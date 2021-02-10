@@ -117,21 +117,26 @@ class Menu extends CI_Controller
 			{
 				return ($value and $value != '-') ? '<a target="_BLANK" href="'.$this->_pea_model->_url.$value.'.html">'.$value.'</a>' : '';
 			});
+
+			$form->roll->addInput('protect', 'checkbox');
+			$form->roll->input->protect->setTitle('Protected');
+			$form->roll->input->protect->setCaption('yes');
+			$form->roll->input->protect->setDefaultValue(0);
 		}else{
 			$form->roll->addInput('shortcut', 'checkbox');
 			$form->roll->input->shortcut->setTitle('Shortcut');
 			$form->roll->input->shortcut->setCaption('show');
 		}
+		
+		$form->roll->addInput('active', 'checkbox');
+		$form->roll->input->active->setTitle('Active');
+		$form->roll->input->active->setCaption('yes');
 
 		$form->roll->addInput('orderby', 'orderby');
 		$form->roll->input->orderby->setTitle('Ordered');
 		if (isset($_GET[$form->roll->sortConfig['get_name']])) {
 			$form->roll->input->orderby->setPlaintext();
 		}
-		
-		$form->roll->addInput('active', 'checkbox');
-		$form->roll->input->active->setTitle('Active');
-		$form->roll->input->active->setCaption('yes');
 
 		function menu_on_delete($id, $f)
 		{
@@ -197,11 +202,21 @@ class Menu extends CI_Controller
 			
 			$form->edit->input->uri_wrap->addInput('uri_2','plaintext');
 			$form->edit->input->uri_wrap->element->uri_2->setDefaultValue('.html');
+
+			$form->edit->addInput('protect', 'checkbox');
+			$form->edit->input->protect->setTitle('Protect from unauthorized user');
+			$form->edit->input->protect->setCaption('yes');
+			$form->edit->input->protect->setDefaultValue(0);
+			
+			$form->edit->addExtraField('type', 0);
 		}else{
 			$form->edit->addInput('shortcut', 'checkbox');
 			$form->edit->input->shortcut->setTitle('Shortcut');
 			$form->edit->input->shortcut->setCaption('show');
 			$form->edit->input->shortcut->setDefaultValue('');
+
+			$form->edit->addExtraField('protect', 1);
+			$form->edit->addExtraField('type', 1);
 		}
 
 		$form->edit->addInput('active', 'checkbox');

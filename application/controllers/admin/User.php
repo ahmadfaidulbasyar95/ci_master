@@ -10,17 +10,12 @@ class User extends CI_Controller
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
 
-		if ($this->router->method != 'login') {
+		if (!in_array($this->_tpl_model->method, ['login','logout'])) {
 			$this->_tpl_model->user_login_validate(1);
 		}
 
 		$this->_tpl_model->setTemplate('admin');
 		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
-
-		$this->user_group_type = array(
-			'Public' => 0,
-			'Admin'  => 1,
-		);
 	}
 
 	function index()
@@ -422,9 +417,10 @@ class User extends CI_Controller
 
 		$form->roll->addInput('type', 'select');
 		$form->roll->input->type->setTitle('Type');
-		$form->roll->input->type->addOptions($this->user_group_type);
+		$form->roll->input->type->addOptions($this->_tpl_model->user_group_type);
 		$form->roll->input->type->setPlainText();
 		
+		$form->roll->setRollDeleteCondition('{roll_id}==1');
 		$form->roll->setSaveTool(false);
 		$form->roll->action();
 		echo $form->roll->getForm();
@@ -444,7 +440,22 @@ class User extends CI_Controller
 
 		$form->edit->addInput('type', 'select');
 		$form->edit->input->type->setTitle('Type');
-		$form->edit->input->type->addOptions($this->user_group_type);
+		$form->edit->input->type->addOptions($this->_tpl_model->user_group_type);
+
+		$form->edit->addInput('menu_ids', 'multiselect');
+		$form->edit->input->menu_ids->setTitle('Menu');
+		$form->edit->input->menu_ids->setReferenceTable('menu');
+		$form->edit->input->menu_ids->setReferenceField('title','id');
+		$form->edit->input->menu_ids->setReferenceCondition('`protect`=1');
+		$form->edit->input->menu_ids->setDependent($form->edit->input->type->getName(), 'type');
+		$form->edit->input->menu_ids->setReferenceNested('par_id');
+		$form->edit->input->menu_ids->addAttr('size="10"');
+		$form->edit->input->menu_ids->addOption('All Menu', 'all');
+
+		if ($id == 1) {
+			$form->edit->input->type->setPlainText();
+			$form->edit->input->menu_ids->setPlainText();
+		}
 		
 		$form->edit->action();
 		echo $form->edit->getForm();
@@ -453,7 +464,7 @@ class User extends CI_Controller
 
 	function login()
 	{
-		if ($this->router->uri->uri_string != $this->_tpl_model->config('dashboard', 'login_uri')) {
+		if ($this->_tpl_model->task != $this->_tpl_model->config('dashboard', 'login_uri')) {
 			show_404();
 		}
 		$this->load->model('_encrypt_model');
@@ -486,6 +497,6 @@ class User extends CI_Controller
 	function logout()
 	{
 		$this->_tpl_model->user_logout();
-		redirect($this->_tpl_model->_url);
+		redirect($this->_tpl_model->_url.$this->_tpl_model->config('dashboard', 'login_uri'));
 	}
 }
