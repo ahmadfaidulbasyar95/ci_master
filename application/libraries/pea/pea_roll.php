@@ -333,7 +333,11 @@ class lib_pea_roll extends lib_pea_edit
 							foreach ($reportData as $key => $value) {
 								foreach ($this->input as $key1 => $value1) {
 									if (isset($value[$key1]) and $value1->getInputPosition() == 'main') {
-										$reportOutput[$key][$value1->title] = $value1->getReportOutput($value[$key1]);
+										$value_report = $value1->getReportOutput($value[$key1], $_POST[$this->table.'_'.$this->saveButtonName.'_report']);
+										if ($value1->displayReportFunction) {
+											$value_report = call_user_func($value1->displayReportFunction, $value_report);
+										}
+										$reportOutput[$key][$value1->title] = $value_report;
 									}
 								}			
 							}

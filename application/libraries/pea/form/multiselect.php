@@ -51,10 +51,15 @@ class lib_pea_frm_multiselect extends lib_pea_frm_selecttable
 		}
 	}
 
-	public function getReportOutput($value_ = '')
+	public function getReportOutput($value_ = '', $type = '')
 	{
 		$this->getOptionTable();
-		return parent::getReportOutput($value_);
+		$value    = @(array)json_decode($value_, 1);
+		$selected = array();
+		foreach ($this->options as $key => $val) {
+			if (in_array($val, $value)) $selected[$val] = $key;
+		}
+		return implode((in_array($type, ['excel','json'])) ? $this->delimiter_alt : $this->delimiter, $selected);
 	}
 
 	public function getForm($index = '')

@@ -4,6 +4,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 include_once __DIR__.'/text.php';
 class lib_pea_frm_multiinput extends lib_pea_frm_text
 {	
+	public $delimiter = '';
+
 	function __construct($opt, $name)
 	{
 		parent::__construct($opt, $name);
@@ -12,6 +14,11 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 		$this->setType('multiinput');
 
 		$this->element = new stdClass();
+	}
+
+	public function setDelimiter($delimiter = '')
+	{
+		$this->delimiter = $delimiter;
 	}
 
 	public function addInput($name, $type)
@@ -44,9 +51,11 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 		if ($this->init != 'roll') $form .= '<div class="form-group">';
 		if (in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		$form .= '<div class="form-inline">';
+		$forms = array();
 		foreach ($this->element as $key => $value) {
-			$form .= $value->getForm();
+			$forms[] = $value->getForm();
 		}
+		$form .= implode($this->delimiter, $forms);
 		$form .= '</div>';
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if ($this->init != 'roll') $form .= '</div>';

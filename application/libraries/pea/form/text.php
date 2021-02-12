@@ -19,29 +19,30 @@ class lib_pea_frm_text
 	public $includes_js   = array();
 	public $includes_css  = array();
 
-	public $title             = '';
-	public $caption           = '';
-	public $name              = '';
-	public $fieldName         = '';
-	public $fieldNameDb       = '';
-	public $value             = '';
-	public $value_roll        = array();
-	public $defaultValue      = '';
-	public $type              = 'text';
-	public $isRequire         = '';
-	public $tips              = '';
-	public $isPlainText       = 0;
-	public $displayFunction   = '';
-	public $displayColumn     = 1;
-	public $displayColumnTool = 0;
-	public $msg               = '';
-	public $failMsg           = array();
-	public $failMsgTpl        = '';
-	public $inputPosition     = 'main';
-	public $isUniq            = 0;
-	public $attr              = '';
-	public $attr_class        = '';
-	public $searchFunction    = '';
+	public $title                 = '';
+	public $caption               = '';
+	public $name                  = '';
+	public $fieldName             = '';
+	public $fieldNameDb           = '';
+	public $value                 = '';
+	public $value_roll            = array();
+	public $defaultValue          = '';
+	public $type                  = 'text';
+	public $isRequire             = '';
+	public $tips                  = '';
+	public $isPlainText           = 0;
+	public $displayFunction       = '';
+	public $displayReportFunction = '';
+	public $displayColumn         = 1;
+	public $displayColumnTool     = 0;
+	public $msg                   = '';
+	public $failMsg               = array();
+	public $failMsgTpl            = '';
+	public $inputPosition         = 'main';
+	public $isUniq                = 0;
+	public $attr                  = '';
+	public $attr_class            = '';
+	public $searchFunction        = '';
 	
 	function __construct($opt, $name)
 	{
@@ -210,11 +211,22 @@ class lib_pea_frm_text
 		return $this->msg;
 	}
 
-	public function setDisplayFunction($displayFunction = '')
+	public function setDisplayFunction($displayFunction = '', $use_in_report = 0)
 	{
 		if ($displayFunction) {
 			if (is_callable($displayFunction)) {
 				$this->displayFunction = $displayFunction;
+				if ($use_in_report) {
+					$this->displayReportFunction = $displayFunction;
+				}
+			}
+		}
+	}
+	public function setDisplayReportFunction($displayReportFunction = '')
+	{
+		if ($displayReportFunction) {
+			if (is_callable($displayReportFunction)) {
+				$this->displayReportFunction = $displayReportFunction;
 			}
 		}
 	}

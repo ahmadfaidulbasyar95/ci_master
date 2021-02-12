@@ -62,6 +62,7 @@ class User extends CI_Controller
 		$form->roll->input->group_ids->setReferenceTable('user_group');
 		$form->roll->input->group_ids->setReferenceField('title', 'id');
 		$form->roll->input->group_ids->setPlainText();
+		$form->roll->input->group_ids->setDisplayColumn();
 
 		$form->roll->addInput('username', 'sqlplaintext');
 		$form->roll->input->username->setTitle('Username');
@@ -108,6 +109,8 @@ class User extends CI_Controller
 		$form->roll->input->active->setCaption('yes');
 		$form->roll->input->active->setDisplayColumn();
 		
+		$form->roll->setRollDeleteCondition('{roll_id} == '.$this->_tpl_model->user['id']);
+
 		$form->roll->addReportAll();
 		$form->roll->action();
 		echo $form->roll->getForm();
@@ -414,14 +417,32 @@ class User extends CI_Controller
 		$form->roll->addInput('title', 'sqllinks');
 		$form->roll->input->title->setTitle('Title');
 		$form->roll->input->title->setLinks('admin/user/group_form');
+		$form->roll->input->title->setModal();
+		$form->roll->input->title->setModalReload();
+		$form->roll->input->title->setModalLarge();
 
 		$form->roll->addInput('type', 'select');
 		$form->roll->input->type->setTitle('Type');
 		$form->roll->input->type->addOptions($this->_tpl_model->user_group_type);
 		$form->roll->input->type->setPlainText();
+		$form->roll->input->type->setDisplayColumn();
+
+		$form->roll->addInput('menu_ids', 'multiselect');
+		$form->roll->input->menu_ids->setTitle('Menu');
+		$form->roll->input->menu_ids->setReferenceTable('menu');
+		$form->roll->input->menu_ids->setReferenceField('title','id');
+		$form->roll->input->menu_ids->setReferenceCondition('`protect`=1');
+		$form->roll->input->menu_ids->setReferenceNested('par_id');
+		$form->roll->input->menu_ids->addAttr('size="10"');
+		$form->roll->input->menu_ids->addOption('All Menu', 'all');
+		$form->roll->input->menu_ids->setDelimiter('<br>');
+		$form->roll->input->menu_ids->setDelimiterAlt(' , ');
+		$form->roll->input->menu_ids->setPlainText();
+		$form->roll->input->menu_ids->setDisplayColumn();
 		
 		$form->roll->setRollDeleteCondition('{roll_id}==1');
 		$form->roll->setSaveTool(false);
+		$form->roll->addReportAll();
 		$form->roll->action();
 		echo $form->roll->getForm();
 		$this->_tpl_model->show();
@@ -431,12 +452,18 @@ class User extends CI_Controller
 		$id   = @intval($_GET['id']);
 		$form = $this->_pea_model->newForm('user_group');
 
+		if ($id) {
+			$_GET['return'] = '';
+			$this->_tpl_model->setLayout('blank');
+		}
+		
 		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
 
 		$form->edit->setHeader(!empty($id) ? 'Edit Group' : 'Add Group');
 
 		$form->edit->addInput('title', 'text');
 		$form->edit->input->title->setTitle('Title');
+		$form->edit->input->title->setRequire();
 
 		$form->edit->addInput('type', 'select');
 		$form->edit->input->type->setTitle('Type');
@@ -454,6 +481,7 @@ class User extends CI_Controller
 
 		if ($id == 1) {
 			$form->edit->input->type->setPlainText();
+			$form->edit->input->menu_ids->setDelimiter('<br>');
 			$form->edit->input->menu_ids->setPlainText();
 		}
 		
@@ -496,7 +524,7 @@ class User extends CI_Controller
 	}
 	function logout()
 	{
-		$this->_tpl_model->user_logout();
+		$this->_tpl_model->user_logout(1);
 		redirect($this->_tpl_model->_url.$this->_tpl_model->config('dashboard', 'login_uri'));
 	}
 }

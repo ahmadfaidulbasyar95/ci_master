@@ -63,7 +63,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	{
 		if (!$this->options_load) {
 			$nested = ($this->referenceNested) ? ', '.$this->referenceNested.' AS `nested`' : '';
-			if ($this->dependent) {
+			if ($this->dependent and !$this->isPlainText) {
 				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition;
 				if ($this->referenceCondition) {
 					$token .= ' AND '.$this->dependent['field'].'="[v]"';

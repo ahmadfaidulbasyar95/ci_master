@@ -244,6 +244,7 @@ class Menu extends CI_Controller
 
 		$form->edit->addInput('title', 'text');
 		$form->edit->input->title->setTitle('Title');
+		$form->edit->input->title->setRequire();
 		
 		$form->edit->action();
 	
@@ -253,6 +254,7 @@ class Menu extends CI_Controller
 
 		$form->roll->addInput('title', 'text');
 		$form->roll->input->title->setTitle('Title');
+		$form->roll->input->title->setRequire();
 		
 		$form->roll->onDelete(function($id, $f)
 		{

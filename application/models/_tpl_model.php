@@ -57,6 +57,21 @@ class _tpl_model extends CI_Model {
 		$this->meta['icon']   = $this->_url.'files/uploads/'.$c['icon'];
 		$this->nav_add($this->_url, '<i class="fa fa-home"></i> Home');
 
+		if (!($this->class == 'dashboard' and in_array($this->method, ['index','main']))) {
+			$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes($this->task.($_GET ? '?'.http_build_query($_GET) : '')).'%" LIMIT 1');
+			if (!$menu) {
+				$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes($this->task).'%" LIMIT 1');
+			}
+			if ($menu) {
+				foreach ($this->menu_parent($menu['id'], $menu['position_id']) as $value) {
+					if (!$value['url_type']) {
+						$value['url'] = ($value['position_id']) ? $this->_url.$value['uri'].'.html' : $this->_url.$value['url'];
+					}
+					$this->nav_add($value['url'], $value['title']);
+				}
+			}
+		}
+
 		ob_start();
 	}
 
@@ -224,6 +239,21 @@ class _tpl_model extends CI_Model {
 			}
 		}
 		return $data;
+	}
+	public function menu_parent($menu_id = 0, $position_id = 0)
+	{
+		$data = array();
+		foreach ($this->menu($position_id) as $value) {
+			foreach ($value as $value1) {
+				$data[$value1['id']] = $value1;
+			}
+		}
+		$out = array();
+		while (isset($data[$menu_id])) {
+			$out[$menu_id] = $data[$menu_id];
+			$menu_id       = $data[$menu_id]['par_id'];
+		}
+		return array_reverse($out);
 	}
 	public function menu_show($data = array(), $config_view = array())
 	{
@@ -396,7 +426,7 @@ class _tpl_model extends CI_Model {
 				$this->load->model('_encrypt_model');
 				$pwd_current = $this->_encrypt_model->decode($data['password']);
 				if ($pwd == $pwd_current) {
-					$_SESSION['user_login'] = $data;
+					$_SESSION['user_login'][$type] = $data;
 					return true;
 				}
 			}
@@ -406,10 +436,10 @@ class _tpl_model extends CI_Model {
 	}
 	public function user_login_validate($type = 0)
 	{
-		if (empty($_SESSION['user_login'])) {
+		if (empty($_SESSION['user_login'][$type])) {
 			show_error('Please Sign In', 401, '401 Unauthorized');
 		}else{
-			$this->user = $_SESSION['user_login'];
+			$this->user = $_SESSION['user_login'][$type];
 			$allowed    = 0;
 			foreach ($this->user['group_data'] as $value) {
 				if ($value['type'] == $type) {
@@ -418,7 +448,10 @@ class _tpl_model extends CI_Model {
 			}
 			if ($allowed) {
 				if (!in_array('all', $this->user['menu_ids'][$type])) {
-					$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->_tpl_model->task).'%"');
+					$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->_tpl_model->task.($_GET ? '?'.http_build_query($_GET) : '')).'%"');
+					if (!$menu) {
+						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->_tpl_model->task).'%"');
+					}
 					if (!$menu) {
 						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->_tpl_model->method, '', $this->_tpl_model->task)).'%"');
 					}
@@ -442,10 +475,10 @@ class _tpl_model extends CI_Model {
 			return $this->user;
 		}
 	}
-	public function user_logout()
+	public function user_logout($type = 0)
 	{
-		if (isset($_SESSION['user_login'])) {
-			unset($_SESSION['user_login']);
+		if (isset($_SESSION['user_login'][$type])) {
+			unset($_SESSION['user_login'][$type]);
 		}
 	}
 

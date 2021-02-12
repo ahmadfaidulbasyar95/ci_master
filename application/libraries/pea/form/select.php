@@ -4,11 +4,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 include_once __DIR__.'/text.php';
 class lib_pea_frm_select extends lib_pea_frm_text
 {	
-	public $options = array();
+	public $options       = array();
+	public $delimiter     = ', ';
+	public $delimiter_alt = ', ';
 
 	function __construct($opt, $name)
 	{
 		parent::__construct($opt, $name);
+	}
+
+	public function setDelimiter($delimiter = '')
+	{
+		$this->delimiter     = $delimiter;
+		$this->delimiter_alt = $delimiter;
+	}
+
+	public function setDelimiterAlt($delimiter_alt = '')
+	{
+		$this->delimiter_alt = $delimiter_alt;
 	}
 
 	public function getSelectedValue($index = '')
@@ -59,7 +72,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		if ($this->isPlainText) {
 			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getSelectedValue($index)) : $this->getSelectedValue($index);
 			if (is_array($value)) {
-				$value = implode(', ', $value);
+				$value = implode($this->delimiter, $value);
 			}
 			$form .= ($this->init == 'roll' or $this->isMultiinput) ? $value : '<p>'.$value.'</p>';
 		}else{
