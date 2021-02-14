@@ -77,15 +77,14 @@ class lib_pea_frm_params extends lib_pea_frm_text
 	{
 		$values = json_decode($value, 1);
 		foreach ($this->element as $key => $value) {
-			$value->setValue(@$values[$key]);
+			$value->setValue(@$values[$key], $index);
 		}		
 	}
 
-	public function setValueID($value = '', $index = '')
+	public function setValueID($value_ = '', $index = '')
 	{
-		$values = json_decode($value, 1);
 		foreach ($this->element as $key => $value) {
-			$value->setValueID(@$values[$key]);
+			$value->setValueID($value_, $index);
 		}
 	}
 
@@ -145,7 +144,7 @@ class lib_pea_frm_params extends lib_pea_frm_text
 	{
 		$form = '';
 		foreach ($this->element as $key => $value) {
-			if ($value->getInputPosition() == 'main') $form .= $value->getForm();
+			if ($value->getInputPosition() == 'main') $form .= $value->getForm($index);
 		}
 		return $form;
 	}

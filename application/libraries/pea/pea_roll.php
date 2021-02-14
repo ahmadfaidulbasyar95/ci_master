@@ -45,7 +45,7 @@ class lib_pea_roll extends lib_pea_edit
 		$this->setSuccessMsg('Success Save Data'); 
 		$this->setDeleteTool(1); 
 		
-		$this->tableWrap('<table class="table table-striped table-bordered table-hover">','</table>');
+		$this->tableWrap('<div class="table-responsive" style="width: 100%;"><table class="table table-striped table-bordered table-hover">','</table></div>');
 		$this->tableHeaderWrap('<thead>','</thead>');
 		$this->tableBodyWrap('<tbody>','</tbody>');
 		$this->tableFooterWrap('<tfoot>','</tfoot>');

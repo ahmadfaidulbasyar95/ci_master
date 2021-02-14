@@ -205,6 +205,13 @@ class lib_pea_edit
 		return $out;
 	}
 
+	public function setModalResponsive()
+	{
+		$this->setIncludes(array(
+			'js' => array('modal_responsive.min'),
+		));
+	}
+
 	public function addInput($name, $type)
 	{
 		if (is_file(__DIR__.'/form/'.$type.'.php')) {

@@ -36,16 +36,14 @@ class User extends CI_Controller
 
 		$form->search->addInput('keyword', 'keyword');
 		$form->search->input->keyword->setTitle('Search');
-		$form->search->input->keyword->addSearchField('name,username,email,phone,location_detail,address');
+		$form->search->input->keyword->addSearchField('name,username,email,phone,province_title,city_title,district_title,village_title,address');
 				
-		$form->search->formWrap('<div style="float:right;margin-bottom: 10px;">','</div>');
-		
 		$add_sql = $form->search->action();
 		$keyword = $form->search->keyword();
 		
 		echo $form->search->getForm();
 
-		echo $this->_tpl_model->button('admin/user/form?return='.urlencode($this->_tpl_model->_url_current), 'Add User', 'fa fa-plus', '', 'style="margin-right: 10px;"');
+		echo $this->_tpl_model->button('admin/user/form', 'Add User', 'fa fa-plus', 'modal_reload', 'style="margin-right: 10px;"', 1);
 		echo $this->_tpl_model->button('admin/user/group?return='.urlencode($this->_tpl_model->_url_current), 'Group', 'fa fa-pencil');
 
 		$form->initRoll($add_sql.' ORDER BY `name` ASC');
@@ -55,7 +53,6 @@ class User extends CI_Controller
 		$form->roll->input->name->setLinks('admin/user/form');
 		$form->roll->input->name->setModal();
 		$form->roll->input->name->setModalReload();
-		$form->roll->input->name->setModalLarge();
 
 		$form->roll->addInput('group_ids', 'multiselect');
 		$form->roll->input->group_ids->setTitle('Group');
@@ -101,7 +98,7 @@ class User extends CI_Controller
 
 		$form->roll->addInput('location_detail', 'sqlplaintext');
 		$form->roll->input->location_detail->setTitle('Address');
-		$form->roll->input->location_detail->setFieldName('CONCAT(`address`," ",`location_detail`)');
+		$form->roll->input->location_detail->setFieldName('CONCAT(`address`," ",`village_title`,", ",`district_title`,", ",`city_title`,", ",`province_title`)');
 		$form->roll->input->location_detail->setDisplayColumn();
 
 		$form->roll->addInput('active', 'checkbox');
@@ -129,10 +126,8 @@ class User extends CI_Controller
 		$id   = @intval($_GET['id']);
 		$form = $this->_pea_model->newForm('user');
 
-		if ($id) {
-			$_GET['return'] = '';
-			$this->_tpl_model->setLayout('blank');
-		}
+		$_GET['return'] = '';
+		$this->_tpl_model->setLayout('blank');
 
 		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
 		
@@ -141,6 +136,7 @@ class User extends CI_Controller
 		}else{
 			$form->edit->setHeader(!empty($id) ? 'Edit User' : 'Add User');
 		}
+		$form->edit->setModalResponsive();
 		
 		$form->edit->addInput('name','text');
 		$form->edit->input->name->setTitle('Name');
@@ -231,46 +227,43 @@ class User extends CI_Controller
 		$form->edit->input->birth_date->setTitle('Birthdate');
 		$form->edit->input->birth_date->setRequire();
 
-		$form->edit->addInput('location_data', 'params');
-		$form->edit->input->location_data->setTitle('Location');
+		$form->edit->addInput('location_input', 'multiinput');
+		$form->edit->input->location_input->setTitle('Location');
 
-		$form->edit->input->location_data->addInput('location_input', 'multiinput');
-		$form->edit->input->location_data->element->location_input->setTitle('Location');
+		$form->edit->input->location_input->addInput('province_id', 'selecttable');
+		$form->edit->input->location_input->element->province_id->setTitle('Province');
+		$form->edit->input->location_input->element->province_id->setReferenceTable('location');
+		$form->edit->input->location_input->element->province_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_input->element->province_id->setReferenceCondition( '`type_id`=1' );
+		$form->edit->input->location_input->element->province_id->addOption( '-- Select Province --', '' );
+		$form->edit->input->location_input->element->province_id->setRequire();
 
-		$form->edit->input->location_data->element->location_input->addInput('province_id', 'selecttable');
-		$form->edit->input->location_data->element->location_input->element->province_id->setTitle('Province');
-		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceTable('location');
-		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceField( 'title', 'id' );
-		$form->edit->input->location_data->element->location_input->element->province_id->setReferenceCondition( '`type_id`=1' );
-		$form->edit->input->location_data->element->location_input->element->province_id->addOption( '-- Select Province --', '' );
-		$form->edit->input->location_data->element->location_input->element->province_id->setRequire();
+		$form->edit->input->location_input->addInput('city_id', 'selecttable');
+		$form->edit->input->location_input->element->city_id->setTitle('City');
+		$form->edit->input->location_input->element->city_id->setReferenceTable('location');
+		$form->edit->input->location_input->element->city_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_input->element->city_id->setReferenceCondition( '`type_id`=2' );
+		$form->edit->input->location_input->element->city_id->setDependent( $form->edit->input->location_input->element->province_id->getName(), 'par_id' );
+		$form->edit->input->location_input->element->city_id->addOption( '-- Select City --', '' );
+		$form->edit->input->location_input->element->city_id->setRequire();
 
-		$form->edit->input->location_data->element->location_input->addInput('city_id', 'selecttable');
-		$form->edit->input->location_data->element->location_input->element->city_id->setTitle('City');
-		$form->edit->input->location_data->element->location_input->element->city_id->setReferenceTable('location');
-		$form->edit->input->location_data->element->location_input->element->city_id->setReferenceField( 'title', 'id' );
-		$form->edit->input->location_data->element->location_input->element->city_id->setReferenceCondition( '`type_id`=2' );
-		$form->edit->input->location_data->element->location_input->element->city_id->setDependent( $form->edit->input->location_data->element->location_input->element->province_id->getName(), 'par_id' );
-		$form->edit->input->location_data->element->location_input->element->city_id->addOption( '-- Select City --', '' );
-		$form->edit->input->location_data->element->location_input->element->city_id->setRequire();
+		$form->edit->input->location_input->addInput('district_id', 'selecttable');
+		$form->edit->input->location_input->element->district_id->setTitle('District');
+		$form->edit->input->location_input->element->district_id->setReferenceTable('location');
+		$form->edit->input->location_input->element->district_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_input->element->district_id->setReferenceCondition( '`type_id`=3' );
+		$form->edit->input->location_input->element->district_id->setDependent( $form->edit->input->location_input->element->city_id->getName(), 'par_id' );
+		$form->edit->input->location_input->element->district_id->addOption( '-- Select District --', '' );
+		$form->edit->input->location_input->element->district_id->setRequire();
 
-		$form->edit->input->location_data->element->location_input->addInput('district_id', 'selecttable');
-		$form->edit->input->location_data->element->location_input->element->district_id->setTitle('District');
-		$form->edit->input->location_data->element->location_input->element->district_id->setReferenceTable('location');
-		$form->edit->input->location_data->element->location_input->element->district_id->setReferenceField( 'title', 'id' );
-		$form->edit->input->location_data->element->location_input->element->district_id->setReferenceCondition( '`type_id`=3' );
-		$form->edit->input->location_data->element->location_input->element->district_id->setDependent( $form->edit->input->location_data->element->location_input->element->city_id->getName(), 'par_id' );
-		$form->edit->input->location_data->element->location_input->element->district_id->addOption( '-- Select District --', '' );
-		$form->edit->input->location_data->element->location_input->element->district_id->setRequire();
-
-		$form->edit->input->location_data->element->location_input->addInput('village_id', 'selecttable');
-		$form->edit->input->location_data->element->location_input->element->village_id->setTitle('Village');
-		$form->edit->input->location_data->element->location_input->element->village_id->setReferenceTable('location');
-		$form->edit->input->location_data->element->location_input->element->village_id->setReferenceField( 'title', 'id' );
-		$form->edit->input->location_data->element->location_input->element->village_id->setReferenceCondition( '`type_id`=4' );
-		$form->edit->input->location_data->element->location_input->element->village_id->setDependent( $form->edit->input->location_data->element->location_input->element->district_id->getName(), 'par_id' );
-		$form->edit->input->location_data->element->location_input->element->village_id->addOption( '-- Select Village --', '' );
-		$form->edit->input->location_data->element->location_input->element->village_id->setRequire();
+		$form->edit->input->location_input->addInput('village_id', 'selecttable');
+		$form->edit->input->location_input->element->village_id->setTitle('Village');
+		$form->edit->input->location_input->element->village_id->setReferenceTable('location');
+		$form->edit->input->location_input->element->village_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_input->element->village_id->setReferenceCondition( '`type_id`=4' );
+		$form->edit->input->location_input->element->village_id->setDependent( $form->edit->input->location_input->element->district_id->getName(), 'par_id' );
+		$form->edit->input->location_input->element->village_id->addOption( '-- Select Village --', '' );
+		$form->edit->input->location_input->element->village_id->setRequire();
 
 		$form->edit->addInput('address', 'text');
 		$form->edit->input->address->setTitle('Address');
@@ -284,21 +277,13 @@ class User extends CI_Controller
 		{
 			$data = $f->db->getRow('SELECT * FROM `user` WHERE `id`='.$id);
 			if ($data) {
-				$data_update = array();
-				if ($data['location_data']) {
-					$data['location_data'] = @(array)json_decode($data['location_data'], 1);
-					if (!empty($data['location_data']['village_id'])) {
-						$data_update['location_id'] = $data['location_data']['village_id'];
-						$location                   = $f->db->getRow('SELECT `title`,`detail` FROM `location` WHERE `id`='.$data_update['location_id']);
-						if ($location) {
-							$data_update['location_title']  = $location['title'];
-							$data_update['location_detail'] = $location['detail'];
-						}
-					}
-				}
-				if ($data_update) {
-					$f->db->update('user', $data_update, $id);
-				}
+				$data_update = array(
+					'province_title' => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['province_id']),
+					'city_title'     => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['city_id']),
+					'district_title' => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['district_id']),
+					'village_title'  => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['village_id']),
+				);
+				$f->db->update('user', $data_update, $id);
 			}
 		});
 		$form->edit->action();
@@ -316,6 +301,7 @@ class User extends CI_Controller
 			$form->initEdit('WHERE `id`='.$id);
 			
 			$form->edit->setHeader('Change Password');
+			$form->edit->setModalResponsive();
 
 			$form->edit->addInput('name', 'sqlplaintext');
 			$form->edit->input->name->setTitle('Name');
@@ -356,6 +342,8 @@ class User extends CI_Controller
 			$form = $this->_pea_model->newForm('user');
 			
 			$form->initEdit('WHERE `id`='.$id);
+			
+			$form->edit->setModalResponsive();
 
 			$form->edit->addInput('name', 'sqlplaintext');
 			$form->edit->input->name->setTitle('Name');
@@ -408,7 +396,9 @@ class User extends CI_Controller
 
 	function group()
 	{
-		echo $this->_tpl_model->button('admin/user/group_form?return='.urlencode($this->_tpl_model->_url_current), 'Add Group', 'fa fa-plus', '', 'style="margin-bottom: 5px;"');
+		$this->_tpl_model->nav_add('', 'Group');
+
+		echo $this->_tpl_model->button('admin/user/group_form', 'Add Group', 'fa fa-plus', 'modal_reload', 'style="margin-bottom: 5px;"', 1);
 
 		$form = $this->_pea_model->newForm('user_group');
 	
@@ -419,7 +409,6 @@ class User extends CI_Controller
 		$form->roll->input->title->setLinks('admin/user/group_form');
 		$form->roll->input->title->setModal();
 		$form->roll->input->title->setModalReload();
-		$form->roll->input->title->setModalLarge();
 
 		$form->roll->addInput('type', 'select');
 		$form->roll->input->type->setTitle('Type');
@@ -452,14 +441,13 @@ class User extends CI_Controller
 		$id   = @intval($_GET['id']);
 		$form = $this->_pea_model->newForm('user_group');
 
-		if ($id) {
-			$_GET['return'] = '';
-			$this->_tpl_model->setLayout('blank');
-		}
+		$_GET['return'] = '';
+		$this->_tpl_model->setLayout('blank');
 		
 		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
 
 		$form->edit->setHeader(!empty($id) ? 'Edit Group' : 'Add Group');
+		$form->edit->setModalResponsive();
 
 		$form->edit->addInput('title', 'text');
 		$form->edit->input->title->setTitle('Title');

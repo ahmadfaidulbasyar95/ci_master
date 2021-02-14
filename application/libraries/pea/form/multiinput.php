@@ -50,10 +50,10 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 		if ($this->init == 'roll') $form .= '<td>';
 		if ($this->init != 'roll') $form .= '<div class="form-group">';
 		if (in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
-		$form .= '<div class="form-inline">';
+		$form .= '<div class="form-inline '.$this->attr_class.'" '.$this->attr.'>';
 		$forms = array();
 		foreach ($this->element as $key => $value) {
-			$forms[] = $value->getForm();
+			$forms[] = $value->getForm($index);
 		}
 		$form .= implode($this->delimiter, $forms);
 		$form .= '</div>';

@@ -37,7 +37,7 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 	public function getForm($index = '')
 	{
 		$form = '';
-		if ($this->init == 'roll') $form .= '<td>';
+		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '<td>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
@@ -48,7 +48,7 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
 			$value = ($this->getValue($index)) ? 'checked="checked"' : '';
 			$form .= '
-<div class="'.lib_bsv('checkbox', 'form-check').'">
+<div class="'.lib_bsv('checkbox', 'form-check').' '.$this->attr_class.'">
 	<label>
 		<input type="checkbox" name="'.$name.'" value="1" title="'.$this->caption.'" '.$this->attr.' '.$value.'>
 		'.$this->caption.'
@@ -57,7 +57,7 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 		}
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
-		if ($this->init == 'roll') $form .= '</td>';
+		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '</td>';
 		return $form;
 	}
 }

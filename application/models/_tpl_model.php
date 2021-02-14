@@ -62,6 +62,14 @@ class _tpl_model extends CI_Model {
 			if (!$menu) {
 				$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes($this->task).'%" LIMIT 1');
 			}
+			if (!$menu) {
+				$method_ = explode('_',$this->method);
+				$method_ = (count($method_) == 1) ? '' : '/'.$method_[0];
+				$menu    = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, $method_ , $this->task)).'%" LIMIT 1');
+			}
+			if (!$menu) {
+				$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, '' , $this->task)).'%" LIMIT 1');
+			}
 			if ($menu) {
 				foreach ($this->menu_parent($menu['id'], $menu['position_id']) as $value) {
 					if (!$value['url_type']) {
@@ -378,7 +386,7 @@ class _tpl_model extends CI_Model {
 			if ($value['link']) {
 				$ret .= '<li><a href="'.$value['link'].'">'.$value['text'].'</a></li>';
 			}else{
-				$ret .= '<li class="active">'.$text.'</li>';
+				$ret .= '<li class="active">'.$value['text'].'</li>';
 			}
 		}
 		$ret .= '</ol>';
@@ -482,7 +490,7 @@ class _tpl_model extends CI_Model {
 		}
 	}
 
-	public function button($link = '', $text = '', $icon = 'fa fa-send', $cls = '', $attr = '')
+	public function button($link = '', $text = '', $icon = 'fa fa-send', $cls = '', $attr = '', $use_modal = 0)
 	{
 		if (!$link and @$_GET['return']) {
 			$link = $_GET['return'];
@@ -492,7 +500,11 @@ class _tpl_model extends CI_Model {
 			if (!filter_var($link, FILTER_VALIDATE_URL)) {
 				$link = $this->_url.$link;
 			}
-			return '<a href="http://" class="btn btn-default '.$cls.'" onclick=\'window.location.href="'.$link.'"\' '.$attr.'><i class="'.$icon.'"></i> '.$text.'</a>';
+			if ($use_modal) {
+				return '<a href="'.$link.'" class="btn btn-default modal_processing '.$cls.'" '.$attr.'><i class="'.$icon.'"></i> '.$text.'</a>';
+			}else{
+				return '<a href="http://" class="btn btn-default '.$cls.'" onclick=\'window.location.href="'.$link.'"\' '.$attr.'><i class="'.$icon.'"></i> '.$text.'</a>';
+			}
 		}
 		return '';
 	}

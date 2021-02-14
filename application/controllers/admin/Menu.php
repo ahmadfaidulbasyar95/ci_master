@@ -236,6 +236,8 @@ class Menu extends CI_Controller
 
 	function position()
 	{
+		$this->_tpl_model->nav_add('', 'Menu Position');
+
 		$form = $this->_pea_model->newForm('menu_position');
 
 		$form->initEdit();
