@@ -40,6 +40,7 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 	{
 		$form = '';
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '<td>';
+		$form .= $this->formBefore;
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
@@ -52,6 +53,7 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 		}
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
+		$form .= $this->formAfter;
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '</td>';
 		return $form;
 	}

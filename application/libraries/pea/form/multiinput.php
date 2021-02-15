@@ -48,6 +48,7 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 	{
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
+		$form .= $this->formBefore;
 		if ($this->init != 'roll') $form .= '<div class="form-group">';
 		if (in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		$form .= '<div class="form-inline '.$this->attr_class.'" '.$this->attr.'>';
@@ -59,6 +60,7 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 		$form .= '</div>';
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if ($this->init != 'roll') $form .= '</div>';
+		$form .= $this->formAfter;
 		if ($this->init == 'roll') $form .= '</td>';
 		return $form;
 	}

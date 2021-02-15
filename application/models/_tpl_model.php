@@ -227,6 +227,7 @@ class _tpl_model extends CI_Model {
 	}
 	public function clean_cache()
 	{
+		$this->config = array();
 		include_once $this->_root.'application/libraries/path.php';
 		lib_path_delete($this->_root.'files/cache');
 	}

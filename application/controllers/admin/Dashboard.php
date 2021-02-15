@@ -57,6 +57,10 @@ class Dashboard extends CI_Controller
 		$form->edit->input->value->element->domain->setTitle('Domain');
 		$form->edit->input->value->element->domain->setRequire();
 
+		$form->edit->input->value->addInput('home_uri', 'text');
+		$form->edit->input->value->element->home_uri->setTitle('Homepage URI');
+		$form->edit->input->value->element->home_uri->setRequire();
+
 		$form->edit->input->value->addInput('icon', 'file');
 		$form->edit->input->value->element->icon->setTitle('Icon');
 		$form->edit->input->value->element->icon->setImageClick();
@@ -128,6 +132,7 @@ class Dashboard extends CI_Controller
 		if ($_POST) {
 			$this->_tpl_model->clean_cache();
 			$this->_tpl_model->config('dashboard');
+			$this->_tpl_model->config('site');
 		}
 
 		$this->_tpl_model->show();
