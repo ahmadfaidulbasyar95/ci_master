@@ -48,6 +48,7 @@ if ($PNAME) {
 		install_exec("mkdir application/controllers");
 		install_exec("ln -s ../../../".$BASENAME."/application/controllers/index.html ./application/controllers/");
 		install_exec("ln -s ../../../".$BASENAME."/application/controllers/_Pea.php ./application/controllers/");
+		install_exec("ln -s ../../../".$BASENAME."/application/controllers/User.php ./application/controllers/");
 		install_exec("ln -s ../../../".$BASENAME."/application/controllers/Welcome.php ./application/controllers/");
 		install_exec("ln -s ../../../".$BASENAME."/application/controllers/admin ./application/controllers/");
 		
@@ -95,6 +96,7 @@ if ($PNAME) {
 		install_exec("ln -s ../../../".$BASENAME."/application/views/welcome_message.php ./application/views/");
 		install_exec("ln -s ../../../".$BASENAME."/application/views/errors ./application/views/");
 		install_exec("ln -s ../../../".$BASENAME."/application/views/admin ./application/views/");
+		install_exec("ln -s ../../../".$BASENAME."/application/views/User ./application/views/");
 		
 		install_exec("ln -s ../../".$BASENAME."/application/.htaccess ./application/");
 		install_exec("ln -s ../../".$BASENAME."/application/index.html ./application/");

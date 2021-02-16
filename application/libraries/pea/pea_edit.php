@@ -11,6 +11,7 @@ class lib_pea_edit
 	public $_url     = '';
 	public $_root    = '';
 
+	public $data                       = array();
 	public $returnUrl                  = '';
 	public $editValues                 = array();
 	public $form                       = '';
@@ -78,6 +79,20 @@ class lib_pea_edit
 		$this->returnTool        = 1;
 		$this->returnButtonText  = '<i class="fa fa-chevron-left"></i>&nbsp;';
 		$this->returnButtonClass = lib_bsv('btn btn-default', 'btn btn-secondary');
+	}
+
+	public function setData($key = '', $value = '')
+	{
+		if ($key) {
+			$this->data[$key] = $value;
+		}
+	}
+	public function getData($key = '')
+	{
+		if ($key) {
+			return (isset($this->data[$key])) ? $this->data[$key] : '' ;
+		}
+		return false;
 	}
 
 	public function setSaveTool($saveTool = 1)

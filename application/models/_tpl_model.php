@@ -443,10 +443,27 @@ class _tpl_model extends CI_Model {
 		$this->user_msg('Invalid Username or Password');
 		return false;
 	}
+	public function user_pwd_validate($pwd = '', $type = 0)
+	{
+		if (!empty($_SESSION['user_login'][$type])) {
+			$this->load->model('_encrypt_model');
+			$pwd_current = $this->_encrypt_model->decode($_SESSION['user_login'][$type]['password']);
+			if ($pwd == $pwd_current) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public function user_login_validate($type = 0)
 	{
 		if (empty($_SESSION['user_login'][$type])) {
-			show_error('Please Sign In', 401, '401 Unauthorized');
+			if ($type == 1) {
+				show_error('Please Sign In', 401, '401 Unauthorized');
+			}else{
+				$_SESSION['user_return'] = $this->_url_current;
+				$_SESSION['user_post']   = $_POST;
+				redirect($this->_url.'user/login');
+			}
 		}else{
 			$this->user = $_SESSION['user_login'][$type];
 			$allowed    = 0;
@@ -481,6 +498,10 @@ class _tpl_model extends CI_Model {
 			if (!$this->user['image']) {
 				$this->user['image'] = $this->_url.'files/uploads/'.$this->config('user', 'img_def');
 			}
+			if (isset($_SESSION['user_post_load'])) {
+				$_POST = $_SESSION['user_post_load'];
+				unset($_SESSION['user_post_load']);
+			}
 			return $this->user;
 		}
 	}
@@ -502,6 +523,11 @@ class _tpl_model extends CI_Model {
 				$link = $this->_url.$link;
 			}
 			if ($use_modal) {
+				$js = 'modal.min';
+				if (!in_array($js, @(array)$GLOBALS['pea_includes_load']['js'])) {
+					$GLOBALS['pea_includes_load']['js'][] = $js;
+					echo '<script src="'.$this->_url.'application/libraries/pea/includes/'.$js.'.js"></script>';
+				}
 				return '<a href="'.$link.'" class="btn btn-default modal_processing '.$cls.'" '.$attr.'><i class="'.$icon.'"></i> '.$text.'</a>';
 			}else{
 				return '<a href="http://" class="btn btn-default '.$cls.'" onclick=\'window.location.href="'.$link.'"\' '.$attr.'><i class="'.$icon.'"></i> '.$text.'</a>';

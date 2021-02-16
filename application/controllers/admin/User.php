@@ -268,6 +268,7 @@ class User extends CI_Controller
 		$form->edit->addInput('address', 'text');
 		$form->edit->input->address->setTitle('Address');
 		$form->edit->input->address->setRequire();
+		$form->edit->input->address->addTip('Jl. Jendral Sudirman No.123 RT.05/06');
 
 		$form->edit->addInput('active', 'checkbox');
 		$form->edit->input->active->setTitle('Active');

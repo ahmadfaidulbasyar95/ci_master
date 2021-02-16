@@ -119,6 +119,16 @@ class Dashboard extends CI_Controller
 		$form->edit->input->value->element->img_def->setImageClick();
 		$form->edit->input->value->element->img_def->setRequire();
 
+		$form->edit->input->value->addInput('home_uri', 'text');
+		$form->edit->input->value->element->home_uri->setTitle('Homepage URI');
+		$form->edit->input->value->element->home_uri->setRequire();
+
+		$form->edit->input->value->addInput('group_id', 'selecttable');
+		$form->edit->input->value->element->group_id->setTitle('Select Group for New User');
+		$form->edit->input->value->element->group_id->setReferenceTable('user_group');
+		$form->edit->input->value->element->group_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->value->element->group_id->setReferenceCondition( '`type`=0' );
+
 		$form->edit->setSaveButton('','','user');
 		$form->edit->action();
 		$c_user = $form->edit->getForm();

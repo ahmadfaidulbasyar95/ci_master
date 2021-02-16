@@ -20,17 +20,19 @@ if (is_file($c_dashboard)) {
 	}
 }
 
-$c_site = FCPATH.'files/cache/config/site.cfg';
-if (is_file($c_site)) {
-	$c_site = json_decode(file_get_contents($c_site), 1);
-	if ($c_site) {
-		$parse_url = parse_url($c_site['home_uri']);
-		parse_str(@$parse_url['query'], $parse_url['query']);
-		foreach ($parse_url['query'] as $key => $value) {
-			if (!isset($_GET[$key])) {
-				$_GET[$key] = $value;
+if ($GLOBALS['CFG']->config['base_url'] == $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']) {
+	$c_site = FCPATH.'files/cache/config/site.cfg';
+	if (is_file($c_site)) {
+		$c_site = json_decode(file_get_contents($c_site), 1);
+		if ($c_site) {
+			$parse_url = parse_url($c_site['home_uri']);
+			parse_str(@$parse_url['query'], $parse_url['query']);
+			foreach ($parse_url['query'] as $key => $value) {
+				if (!isset($_GET[$key])) {
+					$_GET[$key] = $value;
+				}
 			}
+			$route['default_controller'] = preg_replace('~\/$~','',$parse_url['path']);
 		}
-		$route['default_controller'] = preg_replace('~\/$~','',$parse_url['path']);
 	}
 }
