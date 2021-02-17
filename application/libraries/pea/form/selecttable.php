@@ -71,7 +71,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 					$token .= ' WHERE '.$this->dependent['field'].'="[v]"';
 				}
 				$this->db->load->model('_encrypt_model');
-				$token = $this->db->_encrypt_model->encodeToken($token, 30);
+				$token = $this->db->_encrypt_model->encodeToken($token, 60);
 				$this->addAttr('data-token="'.$token.'"');
 				$this->addAttr('data-dependent="'.$this->dependent['name'].'"');
 				$this->addAttr('data-nested="'.$this->referenceNested.'"');

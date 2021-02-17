@@ -58,6 +58,9 @@
 								option += '<option value="'+val.value+'"'+val.selected+'>'+val.key+'</option>';
 							});
 							elem.html(option).trigger('change');
+						})
+						.fail(function() {
+							alert("Something Wrong. Please try again later or reload this page !");
 						});
 					}else{
 						elem.html(option_def).trigger('change');
