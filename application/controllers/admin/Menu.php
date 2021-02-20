@@ -34,13 +34,12 @@ class Menu extends CI_Controller
 		$form->search->input->position_id->addOption( 'Admin', '' );
 		$form->search->input->position_id->setAttr( 'onchange=\'$(this).parents("form").find("[type=\"submit\"]").trigger("click");\'' );
 		
-		$form->search->formWrap('<div style="float:right">','</div>');
-		
 		$add_sql = $form->search->action();
 		$keyword = $form->search->keyword();
 		
 		echo $form->search->getForm();
-		echo $this->_tpl_model->button('admin/menu/position?return='.urlencode($this->_tpl_model->_url_current), 'Menu Position', 'fa fa-pencil', '', 'style="float: right;margin-right: 10px;"');
+		echo $this->_tpl_model->button('admin/menu/position?return='.urlencode($this->_tpl_model->_url_current), '<span class="hidden-xs">Menu</span> Position', 'fa fa-pencil', '', 'style="float: right;margin-right: 10px;margin-bottom: 15px;"');
+		echo '<div class="visible-xs" style="height: 150px;"></div>';
 		
 		$_GET['position_id'] = @intval($keyword['position_id']);
 		$_GET['keyword']     = @$keyword['keyword'];

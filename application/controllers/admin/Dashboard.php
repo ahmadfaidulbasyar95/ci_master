@@ -141,8 +141,6 @@ class Dashboard extends CI_Controller
 
 		if ($_POST) {
 			$this->_tpl_model->clean_cache();
-			$this->_tpl_model->config('dashboard');
-			$this->_tpl_model->config('site');
 		}
 
 		$this->_tpl_model->show();

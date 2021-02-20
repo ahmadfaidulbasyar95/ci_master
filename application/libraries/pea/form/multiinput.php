@@ -4,7 +4,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 include_once __DIR__.'/text.php';
 class lib_pea_frm_multiinput extends lib_pea_frm_text
 {	
-	public $delimiter = '';
+	public $delimiter     = '';
+	public $delimiter_alt = '';
 
 	function __construct($opt, $name)
 	{
@@ -18,7 +19,13 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 
 	public function setDelimiter($delimiter = '')
 	{
-		$this->delimiter = $delimiter;
+		$this->delimiter     = $delimiter;
+		$this->delimiter_alt = $delimiter;
+	}
+
+	public function setDelimiterAlt($delimiter_alt = '')
+	{
+		$this->delimiter_alt = $delimiter_alt;
 	}
 
 	public function addInput($name, $type)
@@ -42,6 +49,21 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 				$this->element->$name->setFailMsg($value, $key);
 			} 
 		}else die('PEA::FORM "'.$type.'" tidak tersedia');
+	}
+
+	public function getReportOutput($value_ = [], $type = '')
+	{
+		$out = [];
+		foreach ($this->element as $key => $value) {
+			if (isset($value_[$key])) {
+				$v = $value->getReportOutput($value_[$key], $type);
+				if ($value->displayReportFunction) {
+					$v = call_user_func($value->displayReportFunction, $v);
+				}
+				$out[] = $v;
+			}
+		}
+		return implode((in_array($type, ['excel','json'])) ? $this->delimiter_alt : $this->delimiter, $out);
 	}
 
 	public function getForm($index = '')

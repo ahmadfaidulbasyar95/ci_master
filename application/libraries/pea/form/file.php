@@ -179,7 +179,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		$value = $this->getValue($index);
 		if ($value) $this->isRequire = '';
-		$value_text = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
+		$value_text = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $this->getValueID($index)) : $this->getValue($index);
 		if ($value and is_file($this->fileFolder.$value)) {
 			$link = str_replace($this->_root, $this->_url, $this->fileFolder).$value;
 			if ($this->imageClick) {

@@ -12,7 +12,7 @@ class lib_pea_search extends lib_pea_edit
 		parent::__construct($opt);
 
 		$this->setSaveButton('<i class="fa fa-search"></i>&nbsp;'); 
-		$this->formWrap('<div style="float:right;margin-bottom: 10px;">','</div>');
+		$this->formWrap('<div style="float:right;margin-bottom: 15px;">','</div>');
 	}
 
 	public function keyword()

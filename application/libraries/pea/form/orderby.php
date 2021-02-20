@@ -15,7 +15,7 @@ class lib_pea_frm_orderby extends lib_pea_frm_text
 		$form = '';
 		$form .= '<td>';
 		if ($this->isPlainText) {
-			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index)) : $this->getValue($index);
+			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $this->getValueID($index)) : $this->getValue($index);
 			$form .= $value;
 		}else{
 			$name = $this->name.'['.$index.']';

@@ -49,7 +49,7 @@
 	padding: 5px 10px 5px 0px;
 	border-radius: 50%;
 }
-#_start .fa {
+#_start i {
 	border: 2px solid #337ab7;
 	padding: 3px;
 	border-radius: 50%;
@@ -58,7 +58,7 @@
 	margin: 5px;
 	transition: .3s;
 }
-#_menu.active + #_taskbar > #_start .fa{
+#_menu.active + #_taskbar > #_start i{
 	transform: rotate(90deg);
 }
 
@@ -176,7 +176,7 @@
 	width: calc(100% - 100px);
 	text-align: left;
 }
-._iframe_title .fa {
+._iframe_title i {
 	margin-right: 5px;
 }
 ._iframe_refresh ,
@@ -233,10 +233,11 @@
 	width: 200px;
 	padding: 7px;
 }
-._iframe_toggle_title .fa {
+._iframe_toggle_title i {
 	margin-right: 5px;
+	font-size: larger;
 }
-._iframe_toggle_title .fa:before {
+._iframe_toggle_title i:before {
 	vertical-align: middle;
 }
 ._iframe_toggles._iframe_toggle_active ,

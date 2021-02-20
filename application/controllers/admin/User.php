@@ -43,8 +43,8 @@ class User extends CI_Controller
 		
 		echo $form->search->getForm();
 
-		echo $this->_tpl_model->button('admin/user/form', 'Add User', 'fa fa-plus', 'modal_reload', 'style="margin-right: 10px;"', 1);
-		echo $this->_tpl_model->button('admin/user/group?return='.urlencode($this->_tpl_model->_url_current), 'Group', 'fa fa-pencil');
+		echo $this->_tpl_model->button('admin/user/form', 'Add User', 'fa fa-plus', 'modal_reload', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"', 1);
+		echo $this->_tpl_model->button('admin/user/group?return='.urlencode($this->_tpl_model->_url_current), 'Group', 'fa fa-pencil', '', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"');
 
 		$form->initRoll($add_sql.' ORDER BY `name` ASC');
 
@@ -399,7 +399,7 @@ class User extends CI_Controller
 	{
 		$this->_tpl_model->nav_add('', 'Group');
 
-		echo $this->_tpl_model->button('admin/user/group_form', 'Add Group', 'fa fa-plus', 'modal_reload', 'style="margin-bottom: 5px;"', 1);
+		echo $this->_tpl_model->button('admin/user/group_form', 'Add Group', 'fa fa-plus', 'modal_reload', 'style="margin-bottom: 15px;"', 1);
 
 		$form = $this->_pea_model->newForm('user_group');
 	
@@ -494,11 +494,13 @@ class User extends CI_Controller
 			$token = $this->_encrypt_model->decodeToken($_POST['token']);
 			if ($token) {
 				$token = explode('|', $token);
-				if (!empty($_POST[$token[0]]) and !empty($_POST[$token[1]])) {
-					if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]], 1)) {
-						redirect($this->_tpl_model->_url.'admin/dashboard');
-					}else{
-						$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
+				if (count($token) == 2) {
+					if (!empty($_POST[$token[0]]) and !empty($_POST[$token[1]])) {
+						if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]], 1)) {
+							redirect($this->_tpl_model->_url.'admin/dashboard');
+						}else{
+							$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
+						}
 					}
 				}
 			}else{

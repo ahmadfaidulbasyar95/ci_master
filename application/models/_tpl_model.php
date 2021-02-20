@@ -230,6 +230,8 @@ class _tpl_model extends CI_Model {
 		$this->config = array();
 		include_once $this->_root.'application/libraries/path.php';
 		lib_path_delete($this->_root.'files/cache');
+		$this->config('site');
+		$this->config('dashboard');
 	}
 
 	public function menu($position_id = 0)

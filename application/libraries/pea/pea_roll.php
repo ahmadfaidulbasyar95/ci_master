@@ -332,8 +332,12 @@ class lib_pea_roll extends lib_pea_edit
 							$reportOutput = array();
 							foreach ($reportData as $key => $value) {
 								foreach ($this->input as $key1 => $value1) {
-									if (isset($value[$key1]) and $value1->getInputPosition() == 'main') {
-										$value_report = $value1->getReportOutput($value[$key1], $_POST[$this->table.'_'.$this->saveButtonName.'_report']);
+									if ((isset($value[$key1]) and $value1->getInputPosition() == 'main') or $value1->type == 'multiinput') {
+										if ($value1->type == 'multiinput') {
+											$value_report = $value1->getReportOutput($value, $_POST[$this->table.'_'.$this->saveButtonName.'_report']);
+										}else{
+											$value_report = $value1->getReportOutput($value[$key1], $_POST[$this->table.'_'.$this->saveButtonName.'_report']);
+										}
 										if ($value1->displayReportFunction) {
 											$value_report = call_user_func($value1->displayReportFunction, $value_report);
 										}
@@ -447,7 +451,7 @@ class lib_pea_roll extends lib_pea_edit
 									}
 									if ($this->reportType) {
 										$this->setIncludes(['js' => ['report.min']]);
-										$this->form .= '<td style="padding-left: 15px;"><small>Export : </small>';
+										$this->form .= '<td style="padding-left: 15px; min-width: 200px;"><small>Export : </small>';
 											$this->form .= '<div class="btn-group form_pea_roll_report">';
 												foreach ($this->reportType as $value) {
 													$this->form .= '<button type="submit" name="'.$this->table.'_'.$this->saveButtonName.'_report" title="Export '.strtoupper($value).'" value="'.$value.'" class="'.$btn_default.' btn-sm">'.$this->reportTypeText[$value].'</button> ';
@@ -458,7 +462,7 @@ class lib_pea_roll extends lib_pea_edit
 									$this->form .= '<td style="text-align: center;">'.$this->getPagination().'</td>';
 								$this->form .= '</tr></tbody></table></td>';
 								if ($this->deleteTool) $this->form .= '<td><button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete" value="'.$this->init.'" class="'.$this->deleteButtonClass.'" onclick="return confirm(\''.strip_tags($this->deleteButtonText).' ?\')">'.$this->deleteButtonText.'</button></td>';
-							$this->form .= $this->formTableItemFooterBefore;
+							$this->form .= $this->formTableItemFooterAfter;
 						$this->form .= $this->formTableFooterAfter;
 					$this->form .= $this->formTableAfter;
 				$this->form .= '</form>';

@@ -192,6 +192,11 @@ class lib_pea_edit
 		$this->formFooterAfter  = $after;
 	}
 
+	public function setFormInlineXs()
+	{
+		$this->setIncludes(['css'=>'form-inline.min']);
+	}
+
 	public function setIncludes($data = array())
 	{
 		foreach (@(array)$data['js'] as $value) {
