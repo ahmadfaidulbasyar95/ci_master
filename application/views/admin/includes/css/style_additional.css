@@ -258,6 +258,12 @@ a {
 	._iframe_toggle_title {
 		width: 120px;
 	}
+	#_datetime {
+		display: none;
+	}
+	#_iframe_toggles {
+		width: calc(100% - 95px);
+	}
 }
 
 
