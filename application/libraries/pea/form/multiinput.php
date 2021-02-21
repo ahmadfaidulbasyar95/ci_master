@@ -51,14 +51,14 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 		}else die('PEA::FORM "'.$type.'" tidak tersedia');
 	}
 
-	public function getReportOutput($value_ = [], $type = '')
+	public function getReportOutput($value_ = [], $type = '', $id = 0, $index = '', $values = array())
 	{
 		$out = [];
 		foreach ($this->element as $key => $value) {
 			if (isset($value_[$key])) {
 				$v = $value->getReportOutput($value_[$key], $type);
 				if ($value->displayReportFunction) {
-					$v = call_user_func($value->displayReportFunction, $v);
+					$v = call_user_func($value->displayReportFunction, $v, $id, $index, $values);
 				}
 				$out[] = $v;
 			}
@@ -66,7 +66,7 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 		return implode((in_array($type, ['excel','json'])) ? $this->delimiter_alt : $this->delimiter, $out);
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		$form = '';
 		if ($this->init == 'roll') $form .= '<td>';
@@ -76,7 +76,7 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 		$form .= '<div class="form-inline '.$this->attr_class.'" '.$this->attr.'>';
 		$forms = array();
 		foreach ($this->element as $key => $value) {
-			$forms[] = $value->getForm($index);
+			$forms[] = $value->getForm($index, $values);
 		}
 		$form .= implode($this->delimiter, $forms);
 		$form .= '</div>';

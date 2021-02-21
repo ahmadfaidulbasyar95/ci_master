@@ -63,7 +63,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		}
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		$form = '';
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '<td>';
@@ -71,7 +71,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		if ($this->isPlainText) {
-			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getSelectedValue($index), $this->getValueID($index)) : $this->getSelectedValue($index);
+			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getSelectedValue($index), $this->getValueID($index), $index, $values) : $this->getSelectedValue($index);
 			if (is_array($value)) {
 				$value = implode($this->delimiter, $value);
 			}

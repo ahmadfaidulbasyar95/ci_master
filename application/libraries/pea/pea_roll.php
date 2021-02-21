@@ -325,6 +325,7 @@ class lib_pea_roll extends lib_pea_edit
 						}
 					}
 				}
+				$select['roll_id']   = $this->table_id.' AS `roll_id`';
 				if ($this->reportType and isset($_POST[$this->table.'_'.$this->saveButtonName.'_report'])) {
 					if (in_array($_POST[$this->table.'_'.$this->saveButtonName.'_report'], $this->reportType)) {
 						$reportData = $this->db->getAll('SELECT '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort());
@@ -334,12 +335,12 @@ class lib_pea_roll extends lib_pea_edit
 								foreach ($this->input as $key1 => $value1) {
 									if ((isset($value[$key1]) and $value1->getInputPosition() == 'main') or $value1->type == 'multiinput') {
 										if ($value1->type == 'multiinput') {
-											$value_report = $value1->getReportOutput($value, $_POST[$this->table.'_'.$this->saveButtonName.'_report']);
+											$value_report = $value1->getReportOutput($value, $_POST[$this->table.'_'.$this->saveButtonName.'_report'], $value['roll_id'], $key, $reportData);
 										}else{
 											$value_report = $value1->getReportOutput($value[$key1], $_POST[$this->table.'_'.$this->saveButtonName.'_report']);
 										}
 										if ($value1->displayReportFunction) {
-											$value_report = call_user_func($value1->displayReportFunction, $value_report);
+											$value_report = call_user_func($value1->displayReportFunction, $value_report, $value['roll_id'], $key, $reportData);
 										}
 										$reportOutput[$key][$value1->title] = $value_report;
 									}
@@ -353,7 +354,6 @@ class lib_pea_roll extends lib_pea_edit
 						}
 					}
 				}
-				$select['roll_id']   = $this->table_id.' AS `roll_id`';
 				$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
 				$this->rollFoundRows = intval($this->db->getOne('SELECT FOUND_ROWS()'));
 				foreach ($this->rollValues as $key => $value) {
@@ -407,7 +407,7 @@ class lib_pea_roll extends lib_pea_edit
 									$this->form .= $this->formTableItemBodyBefore;
 									$this->form .= '<input type="hidden" name="'.$this->table.'_'.$this->init.'_ids['.$key.']" value="'.$value['roll_id'].'">';
 									foreach ($this->input as $value1) {
-										if ($value1->getInputPosition() == 'main') $this->form .= $value1->getForm($key);
+										if ($value1->getInputPosition() == 'main') $this->form .= $value1->getForm($key, $this->rollValues);
 									}
 									if ($this->deleteTool) $this->form .= '<td>'.$this->getRollDeleteInput($key).'</td>'; 
 									$this->form .= $this->formTableItemBodyAfter;
@@ -429,23 +429,23 @@ class lib_pea_roll extends lib_pea_edit
 										$this->form .= '<td style="padding-left: 15px;">';
 											$this->form .= '<div class="dropup">';
 												$this->form .= '<button class="'.$this->displayColumnButtonClass.' dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$this->displayColumnButtonText.'</button>';
-												$this->form .= '<ul class="dropdown-menu">';
+												$this->form .= '<div class="dropdown-menu">';
 													foreach ($this->input as $key => $value) {
 														if ($value->displayColumnTool) {
 															$this->form .= '
-															<li style="padding: 0 15px 10px 15px;">
+															<div class="col-xs-6" style="padding: 2px 0 2px 10px;">
 																<div class="'.lib_bsv('checkbox', 'form-check').'">
-																	<label><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'" onchange="$(this).parents(\'.dropup\').addClass(\'open\');"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
+																	<label style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 100%;"><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'" onchange="$(this).parents(\'.dropup\').addClass(\'open\');"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
 																</div>
-															</li>';
+															</div>';
 														}
 													}
 													$this->form .= '
-													<li style="padding: 0 15px;">
+													<div class="col-xs-12" style="padding: 5px 10px 5px 10px;">
 														<button type="submit" name="'.$this->table.'_'.$this->saveButtonName.'_display_submit" title="SUBMIT" value="'.$this->init.'" class="'.$btn_default.' btn-sm" style="width: 50%;"><i class="fa fa-send"></i></button>
-														<button type="submit" name="'.$this->table.'_'.$this->saveButtonName.'_display_reset" title="RESET" value="'.$this->init.'" class="'.$btn_default.' btn-sm pull-right" style="width: calc(50% - 15px);"><i class="fa fa-times"></i></button>
-													</li>';
-												$this->form .= '</ul>';
+														<button type="submit" name="'.$this->table.'_'.$this->saveButtonName.'_display_reset" title="RESET" value="'.$this->init.'" class="'.$btn_default.' btn-sm pull-right" style="width: calc(50% - 10px);"><i class="fa fa-times"></i></button>
+													</div>';
+												$this->form .= '</div>';
 											$this->form .= '</div>';
 										$this->form .= '</td>';
 									}

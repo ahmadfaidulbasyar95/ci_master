@@ -58,17 +58,17 @@ class _tpl_model extends CI_Model {
 		$this->nav_add($this->_url, '<i class="fa fa-home"></i> Home');
 
 		if (!($this->class == 'dashboard' and in_array($this->method, ['index','main']))) {
-			$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes($this->task.($_GET ? '?'.http_build_query($_GET) : '')).'%" LIMIT 1');
+			$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes($this->task.($_GET ? '?'.http_build_query($_GET) : '')).'%" ORDER BY `url` LIMIT 1');
 			if (!$menu) {
-				$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes($this->task).'%" LIMIT 1');
+				$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes($this->task).'%" ORDER BY `url` LIMIT 1');
 			}
 			if (!$menu) {
 				$method_ = explode('_',$this->method);
 				$method_ = (count($method_) == 1) ? '' : '/'.$method_[0];
-				$menu    = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, $method_ , $this->task)).'%" LIMIT 1');
+				$menu    = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, $method_ , $this->task)).'%" ORDER BY `url` LIMIT 1');
 			}
 			if (!$menu) {
-				$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, '' , $this->task)).'%" LIMIT 1');
+				$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, '' , $this->task)).'%" ORDER BY `url` LIMIT 1');
 			}
 			if ($menu) {
 				foreach ($this->menu_parent($menu['id'], $menu['position_id']) as $value) {

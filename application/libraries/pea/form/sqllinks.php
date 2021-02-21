@@ -53,15 +53,16 @@ class lib_pea_frm_sqllinks extends lib_pea_frm_text
 		if ($getName) $this->getName = $getName;
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		$form = '';
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '<td>';
 		$form .= $this->formBefore;
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
-		$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $this->getValueID($index)) : $this->getValue($index);
+		$value = $this->getValue($index);
 		$value = '<a class="'.$this->toolModal.' '.$this->attr_class.'" href="'.$this->getLinks($index).'" '.$this->attr.'>'.$value.'</a>';
+		$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $value, $this->getValueID($index), $index, $values) : $value;
 		$form .= ($this->init == 'roll' or $this->isMultiinput) ? $value : '<p>'.$value.'</p>';
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

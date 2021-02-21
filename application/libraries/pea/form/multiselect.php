@@ -62,8 +62,8 @@ class lib_pea_frm_multiselect extends lib_pea_frm_selecttable
 		return implode((in_array($type, ['excel','json'])) ? $this->delimiter_alt : $this->delimiter, $selected);
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
-		return parent::getForm($index);
+		return parent::getForm($index, $values);
 	}
 }

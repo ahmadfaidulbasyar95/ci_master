@@ -10,12 +10,12 @@ class lib_pea_frm_orderby extends lib_pea_frm_text
 		$this->setIncludes('orderby', 'js');
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		$form = '';
 		$form .= '<td>';
 		if ($this->isPlainText) {
-			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $this->getValueID($index)) : $this->getValue($index);
+			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $this->getValueID($index), $index, $values) : $this->getValue($index);
 			$form .= $value;
 		}else{
 			$name = $this->name.'['.$index.']';

@@ -406,7 +406,7 @@ class lib_pea_edit
 					$this->form .= $this->msg;
 					if (!isset($_POST[$this->table.'_'.$this->init.'_'.$this->saveButtonName.'_delete'])) {
 						foreach ($this->input as $value) {
-							if ($value->getInputPosition() == 'main') $this->form .= $value->getForm();
+							if ($value->getInputPosition() == 'main') $this->form .= $value->getForm('', $this->editValues);
 						}
 					}
 				$this->form .= $this->formBodyAfter;

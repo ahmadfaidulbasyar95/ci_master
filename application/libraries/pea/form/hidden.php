@@ -10,11 +10,11 @@ class lib_pea_frm_hidden extends lib_pea_frm_text
 		$this->setType('hidden');
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		$form = '';
 		if ($this->isPlainText) {
-			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $this->getValueID($index)) : $this->getValue($index);
+			$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $this->getValueID($index), $index, $values) : $this->getValue($index);
 			$form .= $value;
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;

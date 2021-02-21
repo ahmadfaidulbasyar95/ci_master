@@ -112,9 +112,9 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		return parent::getReportOutput($value_);
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		$this->getOptionTable();
-		return parent::getForm($index);
+		return parent::getForm($index, $values);
 	}
 }

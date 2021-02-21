@@ -13,13 +13,13 @@ class lib_pea_frm_editlinks extends lib_pea_frm_sqllinks
 
 	public function getLinks($index = '')
 	{
-		$value = ($this->getFieldName()) ? $this->getValue($index) : $this->getValueID($index);
-		$link = $this->link;
+		$value = $this->getValue($index);
+		$link  = $this->link;
 		$link .= (strpos($link, '?') === false) ? '?'.$this->getName.'='.urlencode($value) : '&'.$this->getName.'='.urlencode($value);
 		return $link.'&return='.urlencode($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
 	}
 	
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		$form = '';
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '<td>';
@@ -27,6 +27,7 @@ class lib_pea_frm_editlinks extends lib_pea_frm_sqllinks
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '<div class="form-group">';
 		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		$value = '<a class="'.$this->toolModal.' '.$this->attr_class.'" href="'.$this->getLinks($index).'" '.$this->attr.'>'.$this->caption.'</a>';
+		$value = ($this->displayFunction) ? call_user_func($this->displayFunction, $value, $this->getValueID($index), $index, $values) : $value;
 		$form .= ($this->init == 'roll' or $this->isMultiinput) ? $value : '<p>'.$value.'</p>';
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

@@ -53,6 +53,7 @@ class User extends CI_Controller
 		$form->roll->input->name->setLinks('admin/user/form');
 		$form->roll->input->name->setModal();
 		$form->roll->input->name->setModalReload();
+		$form->roll->input->name->setDisplayColumn();
 
 		$form->roll->addInput('group_ids', 'multiselect');
 		$form->roll->input->group_ids->setTitle('Group');
@@ -410,6 +411,7 @@ class User extends CI_Controller
 		$form->roll->input->title->setLinks('admin/user/group_form');
 		$form->roll->input->title->setModal();
 		$form->roll->input->title->setModalReload();
+		$form->roll->input->title->setDisplayColumn();
 
 		$form->roll->addInput('type', 'select');
 		$form->roll->input->type->setTitle('Type');

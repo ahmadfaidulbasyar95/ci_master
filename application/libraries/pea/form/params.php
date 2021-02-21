@@ -140,11 +140,11 @@ class lib_pea_frm_params extends lib_pea_frm_text
 		}else die('PEA::FORM "'.$type.'" tidak tersedia');
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		$form = '';
 		foreach ($this->element as $key => $value) {
-			if ($value->getInputPosition() == 'main') $form .= $value->getForm($index);
+			if ($value->getInputPosition() == 'main') $form .= $value->getForm($index, $values);
 		}
 		return $form;
 	}

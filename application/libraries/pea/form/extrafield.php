@@ -20,7 +20,7 @@ class lib_pea_frm_extrafield extends lib_pea_frm_text
 		return $this->defaultValue;
 	}
 
-	public function getForm($index = '')
+	public function getForm($index = '', $values = array())
 	{
 		return '';
 	}
