@@ -102,7 +102,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 				$this->setNewValue($this->upload->data()['file_name'], $index);
 				$this->setOldValue($this->getValue($index), $index);
 			}else{
-				$this->msg = str_replace('{msg}', $this->upload->display_errors(), $this->failMsgTpl);
+				$this->msg = str_replace('{msg}', strip_tags($this->upload->display_errors()), $this->failMsgTpl);
 			}
 		}
 		$value              = $this->getNewValue($index);
