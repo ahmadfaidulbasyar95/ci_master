@@ -13,6 +13,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 	public $fileImgSizeThumb    = 0;
 	public $fileImgSizeThumbPre = 0;
 	public $imageClick          = 0;
+	public $documentViewer      = 0;
 	public $newValue            = '';
 	public $newValue_roll       = array();
 	public $oldValue            = '';
@@ -88,6 +89,13 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		$this->setIncludes('image_viewer/css/jquery.magnify.min', 'css');
 		$this->setIncludes('image_viewer/js/jquery.magnify.min', 'js');
 		$this->setIncludes('image_viewer.min', 'js');
+	}
+
+	public function setDocumentViewer()
+	{
+		$this->documentViewer = 1;
+		$this->toolModal     .= 'modal_processing modal_large';
+		$this->setIncludes('modal.min', 'js');
 	}
 
 	public function getPostValue($index = '')
@@ -183,7 +191,19 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if ($value and is_file($this->fileFolder.$value)) {
 			$link = str_replace($this->_root, $this->_url, $this->fileFolder).$value;
 			if ($this->imageClick) {
-				$value_text = '<img class="img-thumbnail" style="height: 25px;" src="'.$link.'">'.$value_text;
+				if ($this->init != 'roll') {
+					$value_text = '<img class="img-thumbnail" style="height: 25px;" src="'.$link.'">'.$value_text;
+				}else{
+					$value_text = '<img class="img-thumbnail" style="height: 25px;" src="'.$link.'">';
+				}
+			}
+			if ($this->documentViewer) {
+				if ($this->init != 'roll') {
+					$value_text = '<i class="fa fa-file-'.lib_file_icon($link).'"></i> '.$value_text;
+				}else{
+					$value_text = '<i class="fa fa-file-'.lib_file_icon($link).'"></i>';
+				}
+				$link = 'https://docs.google.com/viewer?url='.urlencode($link).'&embedded=true';
 			}
 			if ($this->init != 'roll') {
 				$value_text = '<p>'.$value_text.'</p>';

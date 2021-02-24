@@ -33,6 +33,7 @@ if ($PNAME) {
 		install_exec("mkdir application");
 		install_exec("mkdir files");
 		install_exec("ln -s ../../".$BASENAME."/files/index.html ./files/");
+		install_exec("ln -s ../../".$BASENAME."/files/.htaccess ./files/");
 		chmod('files', 0777);
 
 		install_exec("mkdir application/cache");

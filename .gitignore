@@ -9,3 +9,4 @@ application/config/database.php
 
 files/*
 !files/index.html
+!files/.htaccess

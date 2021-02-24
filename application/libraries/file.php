@@ -101,3 +101,66 @@ function lib_file_size($filepath, $decimals = 2)
 	}
 	return $output;
 }
+
+function lib_file_icon($file='')
+{
+	$icon = 'alt';
+	if ($file) {
+		$ext   = pathinfo($file, PATHINFO_EXTENSION);
+		$ext   = strtolower($ext);
+		$icons = array(
+			'bmp'  => 'image',
+			'tif'  => 'image',
+			'jpg'  => 'image',
+			'jpeg' => 'image',
+			'gif'  => 'image',
+			'png'  => 'image',
+			'ai'   => 'image',
+			'eps'  => 'image',
+			'svg'  => 'image',
+			
+			'pdf' => 'pdf',
+
+			'doc'  => 'word',
+			'docx' => 'word',
+			'rtf'  => 'word',
+			'txt'  => 'word',
+			
+			'ppt'  => 'powerpoint',
+			'pptx' => 'powerpoint',
+
+			'xls'     => 'excel',
+			'xlsx'    => 'excel',
+			'ods'     => 'excel',
+			'numbers' => 'excel',
+			'csv'     => 'excel',
+			
+			'mpg' => 'video',
+			'mov' => 'video',
+			'wmv' => 'video',
+			'rm'  => 'video',
+			'mp4' => 'video',
+			'mkv' => 'video',
+			'vob' => 'video',
+			'3gp' => 'video',
+			'vid' => 'video',
+			
+			'wav'  => 'audio',
+			'aif'  => 'audio',
+			'mp3'  => 'audio',
+			'mid'  => 'audio',
+			'midi' => 'audio',
+			'wma'  => 'audio',
+
+			'zip'  => 'archive',
+			'rar'  => 'archive',
+			'sitx' => 'archive',
+			'7z'   => 'archive',
+			'gz'   => 'archive',
+		);
+		if (isset($icons[$ext])) {
+			$icon = $icons[$ext];
+		}
+	}
+	return $icon;
+}

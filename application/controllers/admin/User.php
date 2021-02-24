@@ -106,6 +106,18 @@ class User extends CI_Controller
 		$form->roll->input->active->setTitle('Active');
 		$form->roll->input->active->setCaption('yes');
 		$form->roll->input->active->setDisplayColumn();
+
+		$form->roll->addInput('created', 'datetime');
+		$form->roll->input->created->setTitle('Created');
+		$form->roll->input->created->setDateFormat('d M Y H:i:s');
+		$form->roll->input->created->setPlainText();
+		$form->roll->input->created->setDisplayColumn();
+
+		$form->roll->addInput('updated', 'datetime');
+		$form->roll->input->updated->setTitle('Updated');
+		$form->roll->input->updated->setDateFormat('d M Y H:i:s');
+		$form->roll->input->updated->setPlainText();
+		$form->roll->input->updated->setDisplayColumn(false);
 		
 		$form->roll->setRollDeleteCondition('{roll_id} == '.$this->_tpl_model->user['id']);
 
@@ -431,6 +443,18 @@ class User extends CI_Controller
 		$form->roll->input->menu_ids->setDelimiterAlt(' , ');
 		$form->roll->input->menu_ids->setPlainText();
 		$form->roll->input->menu_ids->setDisplayColumn();
+
+		$form->roll->addInput('created', 'datetime');
+		$form->roll->input->created->setTitle('Created');
+		$form->roll->input->created->setDateFormat('d M Y H:i:s');
+		$form->roll->input->created->setPlainText();
+		$form->roll->input->created->setDisplayColumn();
+
+		$form->roll->addInput('updated', 'datetime');
+		$form->roll->input->updated->setTitle('Updated');
+		$form->roll->input->updated->setDateFormat('d M Y H:i:s');
+		$form->roll->input->updated->setPlainText();
+		$form->roll->input->updated->setDisplayColumn(false);
 		
 		$form->roll->setRollDeleteCondition('{roll_id}==1');
 		$form->roll->setSaveTool(false);
