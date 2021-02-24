@@ -15,7 +15,7 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 	public function getDateValue($index = '')
 	{
 		$value = $this->getValue($index);
-		if ($value and $value != '0000-00-00') {
+		if (intval($value)) {
 			return date($this->dateFormat, strtotime($value));
 		}else{
 			return '';
@@ -29,7 +29,7 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 
 	public function getReportOutput($value = '')
 	{
-		if ($value and $value != '0000-00-00') {
+		if (intval($value)) {
 			return date($this->dateFormat, strtotime($value));
 		}else{
 			return '';
