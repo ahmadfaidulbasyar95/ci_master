@@ -50,5 +50,8 @@
 				});
 			}
 		});
+		$('[rel="menu_icon"]').on('keyup', function(event) {
+			$(this).parents('.form-group').find('.menu_icon_preview').html('<i class="'+$(this).val()+'"></i>');
+		}).trigger('keyup');
 	}, false);
 })();

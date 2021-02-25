@@ -348,7 +348,12 @@ class lib_pea_edit
 						foreach ($select as $key => $value) {
 							if (!$this->input->$key->getPlainText()) {
 								$values[$key] = $this->input->$key->getPostValue();
-								$failMsg      = $this->input->$key->getFailMsg();
+								if (is_array($values[$key])) {
+									foreach ($values[$key] as $key1 => $value1) {
+										$values[$key1] = $value1;
+									}
+								}
+								$failMsg = $this->input->$key->getFailMsg();
 								if ($failMsg) {
 									$isValid    = 0;
 									$this->msg .= $failMsg;

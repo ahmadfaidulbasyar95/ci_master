@@ -295,7 +295,12 @@ class lib_pea_roll extends lib_pea_edit
 							if ($isValid) {
 								if (!$this->input->$key1->getPlainText()) {
 									$values[$value][$key1] = $this->input->$key1->getPostValue($key);
-									$failMsg              = $this->input->$key1->getFailMsg();
+									if (is_array($values[$value][$key1])) {
+										foreach ($values[$value][$key1] as $key2 => $value2) {
+											$values[$value][$key2] = $value2;
+										}
+									}
+									$failMsg = $this->input->$key1->getFailMsg();
 									if ($failMsg) {
 										$isValid    = 0;
 										$this->msg .= $failMsg;

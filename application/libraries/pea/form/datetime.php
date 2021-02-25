@@ -4,12 +4,34 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 include_once __DIR__.'/text.php';
 class lib_pea_frm_datetime extends lib_pea_frm_text
 {	
-	public $dateFormat = 'Y-m-d H:i:s';
+	public $dateFormat = 'd M Y H:i:s';
+	public $dateConfig = array(
+		'singleDatePicker'  => true,
+		'showDropdowns'     => true,
+		'timePicker'        => true,
+		'timePicker24Hour'  => true,
+		'timePickerSeconds' => true,
+		'locale'            => array(
+			'format' => 'DD MMM YYYY HH:mm:ss',
+		),
+	);
 
 	function __construct($opt, $name)
 	{
 		parent::__construct($opt, $name);
-		$this->setType('datetime');
+
+		$this->setIncludes('daterangepicker/daterangepicker.min', 'css');
+		$this->setIncludes('daterangepicker/moment.min', 'js');
+		$this->setIncludes('daterangepicker/daterangepicker.min', 'js');
+		$this->setIncludes('daterangepicker', 'js');
+	}
+
+	public function setDefaultValue($defaultValue = '')
+	{
+		if (!preg_match('~^[0-9]~', $defaultValue)) {
+			$defaultValue = date('Y-m-d H:i:s', strtotime($defaultValue));
+		}
+		$this->defaultValue = $defaultValue;
 	}
 
 	public function getDateValue($index = '')
@@ -22,9 +44,19 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 		}
 	}
 
-	public function setDateFormat($dateFormat = 'Y-m-d H:i:s')
+	public function setDateFormat($dateFormat = 'd M Y H:i:s')
 	{
 		$this->dateFormat = $dateFormat;
+	}
+
+	public function setDateConfig($index = '', $value = '')
+	{
+		if ($index) $this->dateConfig[$index] = $value;
+	}
+
+	public function setDateFormatInput($dateFormat = 'DD MMM YYYY HH:mm:ss')
+	{
+		$this->dateConfig['locale']['format'] = $dateFormat;
 	}
 
 	public function getReportOutput($value = '')
@@ -49,7 +81,8 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 		}else{
 			$name = (is_numeric($index)) ? $this->name.'['.$index.']' : $this->name;
 			$name = ($this->isMultiform) ? $name.'[]' : $name;
-			$form .= '<input type="'.$this->type.'" name="'.$name.'" class="form-control '.$this->attr_class.'" value="'.$this->getDateValue($index).'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.'>';
+			$form .= '<input type="hidden" name="'.$name.'" value="'.$this->getValue($index).'">';
+			$form .= '<input type="'.$this->type.'" class="form-control fm_datepicker '.$this->attr_class.'" title="'.$this->caption.'" placeholder="'.$this->caption.'" '.$this->attr.' '.$this->isRequire.' data-config=\''.json_encode($this->dateConfig).'\'>';
 		}
 		if ($this->tips) $form .= '<div class="'.lib_bsv('help-block', 'form-text text-muted').'">'.$this->tips.'</div>';
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';

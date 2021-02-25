@@ -98,6 +98,10 @@ class Menu extends CI_Controller
 		$form->roll->addInput('icon', 'sqlplaintext');
 		$form->roll->input->icon->setTitle('Icon Class');
 		$form->roll->input->icon->setDisplayColumn(0);
+		$form->roll->input->icon->setDisplayFunction(function($value='')
+		{
+			return '<i class="'.$value.'"></i> '.$value;
+		});
 
 		$form->roll->addInput('url', 'sqlplaintext');
 		$form->roll->input->url->setTitle('Real URL');
@@ -139,13 +143,11 @@ class Menu extends CI_Controller
 
 		$form->roll->addInput('created', 'datetime');
 		$form->roll->input->created->setTitle('Created');
-		$form->roll->input->created->setDateFormat('d M Y H:i:s');
 		$form->roll->input->created->setPlainText();
 		$form->roll->input->created->setDisplayColumn();
 
 		$form->roll->addInput('updated', 'datetime');
 		$form->roll->input->updated->setTitle('Updated');
-		$form->roll->input->updated->setDateFormat('d M Y H:i:s');
 		$form->roll->input->updated->setPlainText();
 		$form->roll->input->updated->setDisplayColumn(false);
 
@@ -182,6 +184,8 @@ class Menu extends CI_Controller
 
 		$form->edit->addInput('icon','text');
 		$form->edit->input->icon->setTitle('Icon Class');
+		$form->edit->input->icon->addAttr('rel="menu_icon"');
+		$form->edit->input->icon->addTip('Preview : <div class="menu_icon_preview" style="display: inline-block;"></div>');
 
 		$form->edit->addInput('url','text');
 		$form->edit->input->url->setTitle('Real URL');
@@ -271,13 +275,11 @@ class Menu extends CI_Controller
 
 		$form->roll->addInput('created', 'datetime');
 		$form->roll->input->created->setTitle('Created');
-		$form->roll->input->created->setDateFormat('d M Y H:i:s');
 		$form->roll->input->created->setPlainText();
 		$form->roll->input->created->setDisplayColumn();
 
 		$form->roll->addInput('updated', 'datetime');
 		$form->roll->input->updated->setTitle('Updated');
-		$form->roll->input->updated->setDateFormat('d M Y H:i:s');
 		$form->roll->input->updated->setPlainText();
 		$form->roll->input->updated->setDisplayColumn(false);
 		

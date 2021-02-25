@@ -1,18 +1,23 @@
 (function() {
 	window.addEventListener('load', function() { 
-		$('.fm_daterangepicker').each(function(index, el) {
-			var config = $(this).data('config');
-			if (config) {
-				var el_id = $(this).attr('id');
-				$('#'+el_id).daterangepicker(config , function(start, end, label) {
-					$('#'+el_id).prev('input').prev('input').val(start.format('YYYY-MM-DD'));
-					$('#'+el_id).prev('input').val(end.format('YYYY-MM-DD'));
+		$('.fm_datepicker').each(function(index, el) {
+			var el  = $(this);
+			var cfg = el.data('config');
+			var id  = el.attr('id');
+			if (cfg && !id) {
+				id = 'fm_datepicker_'+Math.random();
+				id = id.replace('.','');
+				el.attr('id', id);
+				id     = $('#'+id);
+				var fm = id.prev('input');
+				id.daterangepicker(cfg , function(start, end, label) {
+					fm.val(start.format('YYYY-MM-DD HH:mm:ss'));
 				});
-				if ($('#'+el_id).prev('input').prev('input').val()) {
-					var date = $('#'+el_id).prev('input').prev('input').val();
+				fm.on('change', function(event) {
+					var date = $(this).val();
 					if (parseInt(date)) {
 						date = new Date(date);
-						$('#'+el_id).data('daterangepicker').setStartDate(moment().set({
+						date = moment().set({
 							'year':       date.getFullYear(),
 							'month':      date.getMonth(),
 							'date':       date.getDate(),
@@ -20,14 +25,33 @@
 							'minute':     date.getMinutes(),
 							'second':     date.getSeconds(),
 							'milisecond': date.getMilliseconds()
-						}).format(config.locale.format));
+						}).format(cfg.locale.format);
+						id.data('daterangepicker').setStartDate(date);
+						id.data('daterangepicker').setEndDate(date);
 					}
-				}
-				if ($('#'+el_id).prev('input').val()) {
-					var date = $('#'+el_id).prev('input').val();
+				}).trigger('change');
+			}
+		});
+		$('.fm_daterangepicker').each(function(index, el) {
+			var el  = $(this);
+			var cfg = el.data('config');
+			var id  = el.attr('id');
+			if (cfg && !id) {
+				id = 'fm_datepicker_'+Math.random();
+				id = id.replace('.','');
+				el.attr('id', id);
+				id      = $('#'+id);
+				var fm  = id.prev('input');
+				var fm_ = id.prev('input').prev('input');
+				id.daterangepicker(cfg , function(start, end, label) {
+					fm.val(start.format('YYYY-MM-DD HH:mm:ss'));
+					fm_.val(end.format('YYYY-MM-DD HH:mm:ss'));
+				});
+				fm.on('change', function(event) {
+					var date = $(this).val();
 					if (parseInt(date)) {
 						date = new Date(date);
-						$('#'+el_id).data('daterangepicker').setEndDate(moment().set({
+						date = moment().set({
 							'year':       date.getFullYear(),
 							'month':      date.getMonth(),
 							'date':       date.getDate(),
@@ -35,9 +59,26 @@
 							'minute':     date.getMinutes(),
 							'second':     date.getSeconds(),
 							'milisecond': date.getMilliseconds()
-						}).format(config.locale.format));
+						}).format(cfg.locale.format);
+						id.data('daterangepicker').setStartDate(date);
 					}
-				}
+				}).trigger('change');
+				fm_.on('change', function(event) {
+					var date = $(this).val();
+					if (parseInt(date)) {
+						date = new Date(date);
+						date = moment().set({
+							'year':       date.getFullYear(),
+							'month':      date.getMonth(),
+							'date':       date.getDate(),
+							'hour':       date.getHours(),
+							'minute':     date.getMinutes(),
+							'second':     date.getSeconds(),
+							'milisecond': date.getMilliseconds()
+						}).format(cfg.locale.format);
+						id.data('daterangepicker').setEndDate(date);
+					}
+				}).trigger('change');
 			}
 		});
 	}, false);
