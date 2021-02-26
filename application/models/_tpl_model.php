@@ -43,7 +43,7 @@ class _tpl_model extends CI_Model {
 
 		$this->class  = $this->router->class;
 		$this->method = $this->router->method;
-		$this->task   = $this->router->uri->uri_string;
+		$this->task   = $this->router->directory.implode('/', $this->router->uri->rsegments);
 		
 		include_once $this->_root.'application/libraries/file.php';
 
@@ -272,10 +272,10 @@ class _tpl_model extends CI_Model {
 			$data = $this->menu($data);
 		}
 		$config_view_def = array(
-			'wrap'     => '<ul class="nav navbar-nav navbar-right">[menu]</ul>',
-			'item'     => '<li><a href="[url]">[title]</a></li>',
+			'wrap'     => '<ul class="nav navbar-nav">[menu]</ul>',
+			'item'     => '<li><a href="[url]"><i class="[icon]"></i> [title]</a></li>',
 			'item_sub' => '<li class="dropdown">
-											<a href="#" class="dropdown-toggle" data-toggle="dropdown">[title] <b class="caret"></b></a>
+											<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="[icon]"></i> [title] <b class="caret"></b></a>
 											<ul class="dropdown-menu">
 												[submenu]
 											</ul>
@@ -297,7 +297,11 @@ class _tpl_model extends CI_Model {
 					$out = $config_view['item'];
 				}
 				if (!$value['url_type']) {
-					$value['url'] = ($value['position_id']) ? $this->_url.$value['uri'].'.html' : $this->_url.$value['url'];
+					if ($value['url'] == '/') {
+						$value['url'] = $this->_url;
+					}else{
+						$value['url'] = ($value['position_id']) ? $this->_url.$value['uri'].'.html' : $this->_url.$value['url'];
+					}
 				}
 				if (!$value['icon']) {
 					$value['icon'] = $config_view['icon_def'];
@@ -476,12 +480,12 @@ class _tpl_model extends CI_Model {
 			}
 			if ($allowed) {
 				if (!in_array('all', $this->user['menu_ids'][$type])) {
-					$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->_tpl_model->task.($_GET ? '?'.http_build_query($_GET) : '')).'%"');
+					$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task.($_GET ? '?'.http_build_query($_GET) : '')).'%"');
 					if (!$menu) {
-						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->_tpl_model->task).'%"');
+						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task).'%"');
 					}
 					if (!$menu) {
-						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->_tpl_model->method, '', $this->_tpl_model->task)).'%"');
+						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, '', $this->task)).'%"');
 					}
 					if ($menu) {
 						$allowed = 0;

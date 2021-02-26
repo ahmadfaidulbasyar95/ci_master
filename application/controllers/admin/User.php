@@ -503,7 +503,7 @@ class User extends CI_Controller
 
 	function login()
 	{
-		if ($this->_tpl_model->task != $this->_tpl_model->config('dashboard', 'login_uri')) {
+		if ($this->_tpl_model->_url_current != $this->_tpl_model->_url.$this->_tpl_model->config('dashboard', 'login_uri')) {
 			show_404();
 		}
 		$this->load->model('_encrypt_model');

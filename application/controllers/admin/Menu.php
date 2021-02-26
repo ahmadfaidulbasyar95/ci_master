@@ -265,9 +265,13 @@ class Menu extends CI_Controller
 		
 		$form->edit->action();
 	
-		$form->initRoll('WHERE 1 ORDER BY `title` ASC');
+		$form->initRoll('WHERE 1 ORDER BY `id` ASC');
 
 		$form->roll->setHeader('Menu Position');
+
+		$form->roll->addInput('id', 'sqlplaintext');
+		$form->roll->input->id->setTitle('ID');
+		$form->roll->input->id->setDisplayColumn();
 
 		$form->roll->addInput('title', 'text');
 		$form->roll->input->title->setTitle('Title');
