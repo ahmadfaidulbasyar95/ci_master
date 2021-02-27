@@ -118,6 +118,7 @@ class User extends CI_Controller
 		$form->roll->input->updated->setDisplayColumn(false);
 		
 		$form->roll->setRollDeleteCondition('{roll_id} == '.$this->_tpl_model->user['id']);
+		$form->roll->setRollDeleteCondition('{roll_id} == 1');
 
 		$form->roll->addReportAll();
 		$form->roll->action();
@@ -320,27 +321,32 @@ class User extends CI_Controller
 
 			$form->edit->addInput('username', 'sqlplaintext');
 			$form->edit->input->username->setTitle('Username');
-			
-			$form->edit->addInput('password','text');
-			$form->edit->input->password->setTitle('New Password');
-			$form->edit->input->password->setType('password');
-			$form->edit->input->password->setRequire();
-			$name = $form->edit->input->password->getName();
-			if (!empty($_POST[$name])) {
-				if ($_POST[$name] != @$_POST['password_re']) {
-					$form->edit->input->password->msg = str_replace('{msg}', '<b>Password and Re-Password</b> does not Match', $form->edit->input->password->failMsgTpl);
-				}else{
-					$this->load->model('_encrypt_model');
-					$_POST[$name] = $this->_encrypt_model->encode($_POST[$name]);
+
+			if ($id == 1 and $id != $this->_tpl_model->user['id']) {
+				echo $this->_tpl_model->msg('Not Allowed', 'danger');
+				$form->edit->setSaveTool(false);
+			}else{
+				$form->edit->addInput('password','text');
+				$form->edit->input->password->setTitle('New Password');
+				$form->edit->input->password->setType('password');
+				$form->edit->input->password->setRequire();
+				$name = $form->edit->input->password->getName();
+				if (!empty($_POST[$name])) {
+					if ($_POST[$name] != @$_POST['password_re']) {
+						$form->edit->input->password->msg = str_replace('{msg}', '<b>Password and Re-Password</b> does not Match', $form->edit->input->password->failMsgTpl);
+					}else{
+						$this->load->model('_encrypt_model');
+						$_POST[$name] = $this->_encrypt_model->encode($_POST[$name]);
+					}
 				}
-			}
 
-			$form->edit->addInput('password_re', 'plaintext');
-			$form->edit->input->password_re->setTitle('Re-Password');
-			$form->edit->input->password_re->setValue('<input type="password" name="password_re" class="form-control" value="" title="Re-Password" placeholder="Re-Password" required="required">');
+				$form->edit->addInput('password_re', 'plaintext');
+				$form->edit->input->password_re->setTitle('Re-Password');
+				$form->edit->input->password_re->setValue('<input type="password" name="password_re" class="form-control" value="" title="Re-Password" placeholder="Re-Password" required="required">');
 
-			$form->edit->action();
-			$form->edit->input->password->setValue('');
+				$form->edit->action();
+				$form->edit->input->password->setValue('');
+			}			
 			echo $form->edit->getForm();
 			$this->_tpl_model->show();
 		}
@@ -369,6 +375,11 @@ class User extends CI_Controller
 					$form->edit->input->group_ids->setReferenceTable('user_group');
 					$form->edit->input->group_ids->setReferenceField('title', 'id');
 					$form->edit->input->group_ids->setRequire();
+
+					if ($id == 1) {
+						$form->edit->input->group_ids->setPlainText();
+						$form->edit->setSaveTool(false);
+					}
 					break;
 				case 'email':
 					$form->edit->setHeader('Change Email');
@@ -378,6 +389,11 @@ class User extends CI_Controller
 					$form->edit->input->email->setType('email');
 					$form->edit->input->email->setRequire();
 					$form->edit->input->email->setUniq();
+
+					if ($id == 1 and $id != $this->_tpl_model->user['id']) {
+						$form->edit->input->email->setPlainText();
+						$form->edit->setSaveTool(false);
+					}
 					break;
 
 				case 'phone':
@@ -388,6 +404,11 @@ class User extends CI_Controller
 					$form->edit->input->phone->setType('number');
 					$form->edit->input->phone->setRequire();
 					$form->edit->input->phone->setUniq();
+
+					if ($id == 1 and $id != $this->_tpl_model->user['id']) {
+						$form->edit->input->phone->setPlainText();
+						$form->edit->setSaveTool(false);
+					}
 					break;		
 				
 				default:
@@ -397,6 +418,11 @@ class User extends CI_Controller
 					$form->edit->input->username->setTitle('Username');
 					$form->edit->input->username->setRequire();
 					$form->edit->input->username->setUniq();
+
+					if ($id == 1 and $id != $this->_tpl_model->user['id']) {
+						$form->edit->input->username->setPlainText();
+						$form->edit->setSaveTool(false);
+					}
 					break;
 			}
 
@@ -408,8 +434,6 @@ class User extends CI_Controller
 
 	function group()
 	{
-		$this->_tpl_model->nav_add('', 'Group');
-
 		echo $this->_tpl_model->button('admin/user/group_form', 'Add Group', 'fa fa-plus', 'modal_reload', 'style="margin-bottom: 15px;"', 1);
 
 		$form = $this->_pea_model->newForm('user_group');

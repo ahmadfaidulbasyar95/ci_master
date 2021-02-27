@@ -485,6 +485,11 @@ class _tpl_model extends CI_Model {
 						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task).'%"');
 					}
 					if (!$menu) {
+						$method_ = explode('_',$this->method);
+						$method_ = (count($method_) == 1) ? '' : '/'.$method_[0];
+						$menu    = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, $method_ , $this->task)).'%"');
+					}
+					if (!$menu) {
 						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, '', $this->task)).'%"');
 					}
 					if ($menu) {
