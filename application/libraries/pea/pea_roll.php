@@ -63,7 +63,7 @@ class lib_pea_roll extends lib_pea_edit
 			'get_name'        => 'page',
 			'base_url'        => $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'],
 			'num_links'       => 7,
-			'per_page'        => 25,
+			'per_page'        => 20,
 			'prev_msg'        => lib_bsv('<h5 class="pull-right text-muted">Result {from} - {to} from total {total}</h5>', '<h6 class="float-left text-muted" style="margin: 5px;">Result {from} - {to} from total {total}</h6>'),
 			'full_tag_open'   => lib_bsv('<ul class="pagination pagination-sm" style="margin:0; padding-top:3px;">', '<nav class="float-left" aria-label="..."><ul class="pagination pagination-sm" style="margin:0; padding-top:3px;">'),
 			'first_tag_open'  => lib_bsv('<li>', '<li class="page-item">'),
@@ -342,7 +342,7 @@ class lib_pea_roll extends lib_pea_edit
 										if ($value1->type == 'multiinput') {
 											$value_report = $value1->getReportOutput($value, $_POST[$this->table.'_'.$this->saveButtonName.'_report'], $value['roll_id'], $key, $reportData);
 										}else{
-											$value_report = $value1->getReportOutput($value[$key1], $_POST[$this->table.'_'.$this->saveButtonName.'_report']);
+											$value_report = $value1->getReportOutput($value[$key1], $_POST[$this->table.'_'.$this->saveButtonName.'_report'], $key, $reportData);
 										}
 										if ($value1->displayReportFunction) {
 											$value_report = call_user_func($value1->displayReportFunction, $value_report, $value['roll_id'], $key, $reportData);

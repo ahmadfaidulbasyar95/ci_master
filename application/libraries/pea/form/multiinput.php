@@ -56,7 +56,7 @@ class lib_pea_frm_multiinput extends lib_pea_frm_text
 		$out = [];
 		foreach ($this->element as $key => $value) {
 			if (isset($value_[$key])) {
-				$v = $value->getReportOutput($value_[$key], $type);
+				$v = $value->getReportOutput($value_[$key], $type, $index, $values);
 				if ($value->displayReportFunction) {
 					$v = call_user_func($value->displayReportFunction, $v, $id, $index, $values);
 				}

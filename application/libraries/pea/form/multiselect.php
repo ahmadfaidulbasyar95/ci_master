@@ -44,16 +44,16 @@ class lib_pea_frm_multiselect extends lib_pea_frm_selecttable
 		return $options;
 	}
 
-	public function getOptionTable()
+	public function getOptionTable($index = '', $values = array())
 	{
 		if ($this->referenceTable) {
-			parent::getOptionTable();
+			parent::getOptionTable($index, $values);
 		}
 	}
 
-	public function getReportOutput($value_ = '', $type = '')
+	public function getReportOutput($value_ = '', $type = '', $index = '', $values = array())
 	{
-		$this->getOptionTable();
+		$this->getOptionTable($index, $values);
 		$value    = @(array)json_decode($value_, 1);
 		$selected = array();
 		foreach ($this->options as $key => $val) {

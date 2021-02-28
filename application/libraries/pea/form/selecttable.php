@@ -59,7 +59,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		}
 	}
 
-	public function getOptionTable()
+	public function getOptionTable($index = '', $values = array())
 	{
 		if (!$this->options_load) {
 			$nested = ($this->referenceNested) ? ', '.$this->referenceNested.' AS `nested`' : '';
@@ -77,6 +77,45 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 				$this->addAttr('data-nested="'.$this->referenceNested.'"');
 				$this->addClass('selecttable_dependent');
 			}else{
+				if ($this->isPlainText) {
+					$ids = [];
+					if (is_numeric($index)) {
+						if ($this->isMultiselect) {
+							foreach ($values as $value) {
+								$value = json_decode($value[$this->fieldNameDb]);
+								if ($value) {
+									foreach ($value as $v) {
+										$ids[$v] = 1;
+									}
+								}
+							}
+						}else{
+							foreach ($values as $value) {
+								$ids[$value[$this->fieldNameDb]] = 1;
+							}
+						}
+					}else{
+						if ($this->isMultiselect) {
+							$value = json_decode($values[$this->fieldNameDb]);
+							if ($value) {
+								foreach ($value as $v) {
+									$ids[$v] = 1;
+								}
+							}
+						}else{
+							$ids[$values[$this->fieldNameDb]] = 1;
+						}
+					}
+					if ($ids) {
+						$ids = array_keys($ids);
+						$ids = '"'.implode('","', $ids).'"';
+						if ($this->referenceCondition) {
+							$this->referenceCondition .= ' AND '.$this->referenceFieldValue.' IN('.$ids.')';
+						}else{
+							$this->referenceCondition .= ' WHERE '.$this->referenceFieldValue.' IN('.$ids.')';
+						}
+					}
+				}
 				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition);
 				if ($this->referenceNested) {
 					$option = $this->getOptionNested($option);
@@ -106,15 +145,21 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		return $option_;
 	}
 
-	public function getReportOutput($value_ = '')
+	public function getSearchSql()
 	{
 		$this->getOptionTable();
+		return parent::getSearchSql();
+	}
+
+	public function getReportOutput($value_ = '', $type = '', $index = '', $values = array())
+	{
+		$this->getOptionTable($index, $values);
 		return parent::getReportOutput($value_);
 	}
 
 	public function getForm($index = '', $values = array())
 	{
-		$this->getOptionTable();
+		$this->getOptionTable($index, $values);
 		return parent::getForm($index, $values);
 	}
 }
