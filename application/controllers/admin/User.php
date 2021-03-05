@@ -46,7 +46,7 @@ class User extends CI_Controller
 		echo $this->_tpl_model->button('admin/user/form', 'Add User', 'fa fa-plus', 'modal_reload', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"', 1);
 		echo $this->_tpl_model->button('admin/user/group?return='.urlencode($this->_tpl_model->_url_current), 'Group', 'fa fa-pencil', '', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"');
 
-		$form->initRoll($add_sql.' ORDER BY `name` ASC');
+		$form->initRoll($add_sql.' ORDER BY `id` DESC');
 
 		$form->roll->addInput('name', 'sqllinks');
 		$form->roll->input->name->setTitle('Name');
@@ -120,6 +120,14 @@ class User extends CI_Controller
 		$form->roll->setRollDeleteCondition('{roll_id} == '.$this->_tpl_model->user['id']);
 		$form->roll->setRollDeleteCondition('{roll_id} == 1');
 
+		$form->roll->onSave(function($id, $f)
+		{
+			if ($id == 1) {
+				if (!$f->db->getOne('SELECT `active` FROM `user` WHERE `id`=1')) {
+					$f->db->update('user', array('active' => 1), 1);
+				}
+			}
+		});
 		$form->roll->addReportAll();
 		$form->roll->action();
 		echo $form->roll->getForm();
@@ -160,6 +168,9 @@ class User extends CI_Controller
 			$form->edit->input->group_ids->setReferenceTable('user_group');
 			$form->edit->input->group_ids->setReferenceField('title', 'id');
 			$form->edit->input->group_ids->setRequire();
+			if ($this->_tpl_model->user['id'] != 1) {
+				$form->edit->input->group_ids->setReferenceCondition('id != 1');
+			}
 					
 			$form->edit->addInput('username','text');
 			$form->edit->input->username->setTitle('Username');
@@ -238,6 +249,7 @@ class User extends CI_Controller
 		$form->edit->addInput('birth_date', 'date');
 		$form->edit->input->birth_date->setTitle('Birthdate');
 		$form->edit->input->birth_date->setRequire();
+		$form->edit->input->birth_date->setMaxDate('-7 YEARS');
 
 		$form->edit->addInput('location_input', 'multiinput');
 		$form->edit->input->location_input->setTitle('Location');
@@ -280,11 +292,37 @@ class User extends CI_Controller
 		$form->edit->addInput('address', 'text');
 		$form->edit->input->address->setTitle('Address');
 		$form->edit->input->address->setRequire();
-		$form->edit->input->address->addTip('Jl. Jendral Sudirman No.123 RT.05/06');
+		$form->edit->input->address->addTip('Jln. Jendral Sudirman No.123 RT.05 RW.06');
 
 		$form->edit->addInput('active', 'checkbox');
 		$form->edit->input->active->setTitle('Active');
 		$form->edit->input->active->setCaption('yes');
+		if ($id == 1) {
+			$form->edit->input->active->setPlainText();
+			if ($this->_tpl_model->user['id'] != 1) {
+				$form->edit->input->name->setPlainText();
+				$form->edit->input->image->setPlainText();
+				$form->edit->input->gender->setPlainText();
+				$form->edit->input->birth_date->setPlainText();
+				$form->edit->input->location_input->element->province_id->setPlainText();
+				$form->edit->input->location_input->element->city_id->setPlainText();
+				$form->edit->input->location_input->element->district_id->setPlainText();
+				$form->edit->input->location_input->element->village_id->setPlainText();
+				$form->edit->input->address->setPlainText();
+
+				$form->edit->input->group_ids->setTip('');
+				$form->edit->input->username->setTip('');
+				$form->edit->input->email->setTip('');
+				$form->edit->input->phone->setTip('');
+
+				$form->edit->input->password->setInputPosition('hidden');
+				
+				$form->edit->setSaveTool(false);
+			}
+		}
+		if ($this->_tpl_model->user['id'] != 1) {
+			$form->edit->input->group_ids->setTip('');
+		}
 		
 		$form->edit->onSave(function($id, $f)
 		{
@@ -376,7 +414,7 @@ class User extends CI_Controller
 					$form->edit->input->group_ids->setReferenceField('title', 'id');
 					$form->edit->input->group_ids->setRequire();
 
-					if ($id == 1) {
+					if ($id == 1 or $this->_tpl_model->user['id'] != 1) {
 						$form->edit->input->group_ids->setPlainText();
 						$form->edit->setSaveTool(false);
 					}
@@ -459,6 +497,7 @@ class User extends CI_Controller
 		$form->roll->input->menu_ids->setReferenceField('title','id');
 		$form->roll->input->menu_ids->setReferenceCondition('`protect`=1');
 		$form->roll->input->menu_ids->setReferenceNested('par_id');
+		$form->roll->input->menu_ids->setReferenceOrderBy('orderby');
 		$form->roll->input->menu_ids->addAttr('size="10"');
 		$form->roll->input->menu_ids->addOption('All Menu', 'all');
 		$form->roll->input->menu_ids->setDelimiter('<br>');
@@ -509,8 +548,9 @@ class User extends CI_Controller
 		$form->edit->input->menu_ids->setReferenceTable('menu');
 		$form->edit->input->menu_ids->setReferenceField('title','id');
 		$form->edit->input->menu_ids->setReferenceCondition('`protect`=1');
-		$form->edit->input->menu_ids->setDependent($form->edit->input->type->getName(), 'type');
 		$form->edit->input->menu_ids->setReferenceNested('par_id');
+		$form->edit->input->menu_ids->setReferenceOrderBy('orderby');
+		$form->edit->input->menu_ids->setDependent($form->edit->input->type->getName(), 'type');
 		$form->edit->input->menu_ids->addAttr('size="10"');
 		$form->edit->input->menu_ids->addOption('All Menu', 'all');
 

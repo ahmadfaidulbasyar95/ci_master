@@ -58,6 +58,7 @@ class User extends CI_Controller
 					$form->edit->input->password->msg = str_replace('{msg}', '<b>Password dan Re-Password</b> tidak sama', $form->edit->input->password->failMsgTpl);
 				}else{
 					$this->load->model('_encrypt_model');
+					$_POST['pwd'] = $_POST[$name];
 					$_POST[$name] = $this->_encrypt_model->encode($_POST[$name]);
 				}
 			}
@@ -113,6 +114,7 @@ class User extends CI_Controller
 		$form->edit->addInput('birth_date', 'date');
 		$form->edit->input->birth_date->setTitle('Tanggal Lahir');
 		$form->edit->input->birth_date->setRequire();
+		$form->edit->input->birth_date->setMaxDate('-7 YEARS');
 
 		$form->edit->addInput('location_input', 'multiinput');
 		$form->edit->input->location_input->setTitle('Lokasi');
@@ -155,7 +157,7 @@ class User extends CI_Controller
 		$form->edit->addInput('address', 'text');
 		$form->edit->input->address->setTitle('Alamat');
 		$form->edit->input->address->setRequire();
-		$form->edit->input->address->addTip('Jl. Jendral Sudirman No.123 RT.05/06');
+		$form->edit->input->address->addTip('Jln. Jendral Sudirman No.123 RT.05 RW.06');
 		
 		$form->edit->onSave(function($id, $f)
 		{
@@ -172,8 +174,26 @@ class User extends CI_Controller
 					$data_update['group_ids'] = json_encode(array((string)$group_id));
 				}
 				$f->db->update('user', $data_update, $id);
+				if (isset($_POST['pwd'])) {
+					if ($this->_tpl_model->user_login($data['username'], $_POST['pwd'])) {
+						if (empty($_SESSION['user_return'])) {
+							$url = $this->_tpl_model->_url.$this->_tpl_model->config('user','home_uri');
+						}else{
+							$url = $_SESSION['user_return'];
+							unset($_SESSION['user_return']);
+							if (isset($_SESSION['user_post'])) {
+								$_SESSION['user_post_load'] = $_SESSION['user_post'];
+								unset($_SESSION['user_post']);
+							}
+						}
+						redirect($url);
+					}
+				}
 			}
 		});
+		if (!$id) {
+			$form->edit->setSaveButton('<i class="far fa-paper-plane"></i> Submit');
+		}
 		$form->edit->action();
 		echo $form->edit->getForm();
 		$this->_tpl_model->show();
@@ -341,6 +361,6 @@ class User extends CI_Controller
 	function logout()
 	{
 		$this->_tpl_model->user_logout();
-		redirect($this->_tpl_model->_url);
+		redirect($this->_tpl_model->_url.'user/login');
 	}
 }

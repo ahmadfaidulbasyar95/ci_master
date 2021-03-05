@@ -290,26 +290,33 @@ class _tpl_model extends CI_Model {
 		$output = '';
 		if (isset($data[$par_id])) {
 			foreach ($data[$par_id] as $value) {
-				if (isset($data[$value['id']])) {
-					$out              = $config_view['item_sub'];
-					$value['submenu'] = $this->menu_show_item($value['id'], $data, $config_view);
+				if ($this->user) {
+					$menu_ids = ($value['position_id']) ? $this->user['menu_ids'][0] : $this->user['menu_ids'][1];
 				}else{
-					$out = $config_view['item'];
+					$menu_ids = array();
 				}
-				if (!$value['url_type']) {
-					if ($value['url'] == '/') {
-						$value['url'] = $this->_url;
+				if (!$value['protect'] or ($value['protect'] and (in_array('all', $menu_ids) or in_array($value['id'], $menu_ids)))) {
+					if (isset($data[$value['id']])) {
+						$out              = $config_view['item_sub'];
+						$value['submenu'] = $this->menu_show_item($value['id'], $data, $config_view);
 					}else{
-						$value['url'] = ($value['position_id']) ? $this->_url.$value['uri'].'.html' : $this->_url.$value['url'];
+						$out = $config_view['item'];
 					}
+					if (!$value['url_type']) {
+						if ($value['url'] == '/') {
+							$value['url'] = $this->_url;
+						}else{
+							$value['url'] = ($value['position_id']) ? $this->_url.$value['uri'].'.html' : $this->_url.$value['url'];
+						}
+					}
+					if (!$value['icon']) {
+						$value['icon'] = $config_view['icon_def'];
+					}
+					foreach ($value as $key1 => $value1) {
+						$out = str_replace('['.$key1.']', $value1, $out);
+					}
+					$output .= $out;
 				}
-				if (!$value['icon']) {
-					$value['icon'] = $config_view['icon_def'];
-				}
-				foreach ($value as $key1 => $value1) {
-					$out = str_replace('['.$key1.']', $value1, $out);
-				}
-				$output .= $out;
 			}
 		}
 		return $output;
@@ -479,7 +486,7 @@ class _tpl_model extends CI_Model {
 				}
 			}
 			if ($allowed) {
-				if (!in_array('all', $this->user['menu_ids'][$type])) {
+				if (!in_array('all', $this->user['menu_ids'][$type]) and $this->task != 'admin/dashboard/index') {
 					$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task.($_GET ? '?'.http_build_query($_GET) : '')).'%"');
 					if (!$menu) {
 						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task).'%"');

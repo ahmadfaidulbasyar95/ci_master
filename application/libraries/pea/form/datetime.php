@@ -59,6 +59,20 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 		$this->dateConfig['locale']['format'] = $dateFormat;
 	}
 
+	public function setMinDate($date='')
+	{
+		$this->setDefaultValue($date);
+		$this->setDateConfig('minDate', date($this->dateFormat, strtotime($date)));
+	}
+
+	public function setMaxDate($date='')
+	{
+		if (!$this->defaultValue) {
+			$this->setDefaultValue($date);
+		}
+		$this->setDateConfig('maxDate', date($this->dateFormat, strtotime($date)));
+	}
+
 	public function getReportOutput($value = '')
 	{
 		if (intval($value)) {

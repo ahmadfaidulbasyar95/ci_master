@@ -319,8 +319,10 @@ class lib_pea_roll extends lib_pea_edit
 								$this->input->$key1->onSaveSuccess($key);
 							}
 						}
-						foreach ($values as $key => $value) {
-							if ($this->onSaveFunction) call_user_func($this->onSaveFunction, $key, $this);
+						if ($this->onSaveFunction) {
+							foreach ($values as $key => $value) {
+								call_user_func($this->onSaveFunction, $key, $this);
+							}
 						}
 					}else{
 						foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {

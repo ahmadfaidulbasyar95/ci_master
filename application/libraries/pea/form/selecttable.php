@@ -9,6 +9,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	public $referenceFieldValue = '';
 	public $referenceCondition  = '';
 	public $referenceNested     = '';
+	public $referenceOrderBy    = '';
 	public $options_load        = 0;
 	public $dependent           = array();
 
@@ -48,6 +49,11 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		if ($referenceNested) $this->referenceNested = $referenceNested;
 	}
 
+	public function setReferenceOrderBy($referenceOrderBy = '')
+	{
+		if ($referenceOrderBy) $this->referenceOrderBy = ' ORDER BY '.$referenceOrderBy;
+	}
+
 	public function setDependent($name = '', $field = '')
 	{
 		if ($name and $field) {
@@ -64,12 +70,12 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		if (!$this->options_load) {
 			$nested = ($this->referenceNested) ? ', '.$this->referenceNested.' AS `nested`' : '';
 			if ($this->dependent and !$this->isPlainText) {
-				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition;
 				if ($this->referenceCondition) {
-					$token .= ' AND '.$this->dependent['field'].'="[v]"';
+					$this->referenceCondition .= ' AND '.$this->dependent['field'].'="[v]"';
 				}else{
-					$token .= ' WHERE '.$this->dependent['field'].'="[v]"';
+					$this->referenceCondition .= ' WHERE '.$this->dependent['field'].'="[v]"';
 				}
+				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceOrderBy;
 				$this->db->load->model('_encrypt_model');
 				$token = $this->db->_encrypt_model->encodeToken($token, 60);
 				$this->addAttr('data-token="'.$token.'"');
@@ -116,7 +122,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 						}
 					}
 				}
-				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition);
+				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceOrderBy);
 				if ($this->referenceNested) {
 					$option = $this->getOptionNested($option);
 				}
