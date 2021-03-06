@@ -96,7 +96,11 @@ CKEDITOR.editorConfig = function( config ) {
 			,	'SpecialChar'
 			,	'PageBreak'
 			,	'Iframe'
+			,	'pre'
+			,	'InsertPre'
 			,	'replaceTagName'
+			,	'socialfeed'
+			,	'powrdropdown'
 			]
 		},{
 			name: 'styles', items: [
@@ -104,6 +108,7 @@ CKEDITOR.editorConfig = function( config ) {
 			,	'Format'
 			,	'Font'
 			,	'FontSize'
+			,	'lineheight'
 			]
 		},{
 			name: 'colors', items: [
@@ -122,7 +127,9 @@ CKEDITOR.editorConfig = function( config ) {
 		}
 	];
 	
-	config.extraPlugins = 'replaceTagNameByBsquochoai';
+	config.extraPlugins = ['replaceTagNameByBsquochoai','codemirror','powrsocialfeed','insertpre','pre','lineheight'];
+
+	config.line_height = '1;1.5;2;2.5;3;3.5;4;4.5;5;5.5;6;6.5;7;7.5;8;8.5;9;9.5;10;10.5';
 
 	config.enterMode      = CKEDITOR.ENTER_BR;
 	config.shiftEnterMode = CKEDITOR.ENTER_P;

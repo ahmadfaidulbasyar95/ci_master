@@ -32,7 +32,7 @@ class Dashboard extends CI_Controller
 
 	function config()
 	{
-		include_once $this->_tpl_model->_root.'application/libraries/tabs.php';
+		$this->_tpl_model->lib('tabs');
 		$form = $this->_pea_model->newForm('config');
 
 		$form->initEdit('WHERE `name`="site"', 'name', 1);		
@@ -61,6 +61,20 @@ class Dashboard extends CI_Controller
 		$form->edit->input->value->addInput('home_uri', 'text');
 		$form->edit->input->value->element->home_uri->setTitle('Homepage URI');
 		$form->edit->input->value->element->home_uri->setRequire();
+
+		$this->_tpl_model->lib('path');
+		$template_path = $this->_tpl_model->_root.'application/views';
+		$template_list = [];
+		foreach (lib_path_list($template_path) as $value) {
+			if ($value != 'admin' and !strpos($value, '.')) {
+				if (is_file($template_path.'/'.$value.'/index.php') and is_file($template_path.'/'.$value.'/blank.php')) {
+					$template_list[ucwords($value)] = $value;
+				}
+			}
+		}
+		$form->edit->input->value->addInput('template', 'select');
+		$form->edit->input->value->element->template->setTitle('Template');
+		$form->edit->input->value->element->template->addOptions($template_list);
 
 		$form->edit->input->value->addInput('icon', 'file');
 		$form->edit->input->value->element->icon->setTitle('Icon');

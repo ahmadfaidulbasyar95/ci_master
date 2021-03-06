@@ -1,7 +1,16 @@
 (function() {
 	window.addEventListener('load', function() { 
-		$('.textarea_html_editor').each(function(index, el) {
-			CKEDITOR.replace($(this).attr('id'));
-		});
+		$.ajax({
+			url: _URL+'_Pea/ckeditor',
+			type: 'GET',
+			dataType: 'json',
+			data: {},
+		})
+		.done(function(out) {
+			CKEDITOR.config.contentsCss = out.css;
+			$('.textarea_html_editor').each(function(index, el) {
+				CKEDITOR.replace($(this).attr('id'));
+			});
+		});		
 	}, false);
 })();

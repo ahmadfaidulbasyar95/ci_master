@@ -37,6 +37,11 @@ class _tpl_model extends CI_Model {
 		$this->load->model('_db_model');
 		$this->load->library('session');
 
+		$GLOBALS['tpl_includes'] = array(
+			'js'  => array(),
+			'css' => array(),
+		);
+
 		$this->_url         = base_url();
 		$this->_url_current = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 		$this->_root        = FCPATH;
@@ -86,7 +91,7 @@ class _tpl_model extends CI_Model {
 	public function setTemplate($tpl = '', $bootstrap = 3)
 	{
 		if (empty($tpl)) {
-			$tpl = 'default';
+			$tpl = $this->config('site', 'template');
 		}
 		$p = 'application/views/'.$tpl.'/';
 		if (is_file($this->_root.$p.'index.php')) {
@@ -176,14 +181,32 @@ class _tpl_model extends CI_Model {
 	{
 		$file = $this->validateFile($file);
 		if ($file) {
-			echo '<link rel="stylesheet" href="'.$file.'">';
+			if (!in_array($file, $GLOBALS['tpl_includes']['css'])) {
+				$GLOBALS['tpl_includes']['css'][] = $file;
+				echo '<link rel="stylesheet" href="'.$file.'">';
+			}
 		}
 	}
 	public function js($file = '')
 	{
 		$file = $this->validateFile($file);
 		if ($file) {
-			echo '<script src="'.$file.'"></script>';
+			if (!in_array($file, $GLOBALS['tpl_includes']['js'])) {
+				$GLOBALS['tpl_includes']['js'][] = $file;
+				echo '<script src="'.$file.'"></script>';
+			}
+		}
+	}
+
+	public function lib($value='')
+	{
+		$p = $this->_root.'application/libraries/';
+		if (is_file($p.$value.'.php')) {
+			include_once $p.$value.'.php';
+		}elseif (is_file($p.$value.'/'.$value.'.php')) {
+			include_once $p.$value.'/'.$value.'.php';
+		}else{
+			die('libraries "'.$value.'" not found');
 		}
 	}
 

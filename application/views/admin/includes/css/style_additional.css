@@ -276,3 +276,7 @@ a {
 .form_pea_roll .checkbox {
 	margin: 0;
 }
+
+.table-striped > tbody > tr:nth-of-type(2n+1) {
+	background-color: #f9f9f98f;
+}

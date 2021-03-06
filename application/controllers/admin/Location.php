@@ -19,7 +19,7 @@ class Location extends CI_Controller
 	function index()
 	{
 		$id = @intval($_GET['id']);
-		include_once $this->_tpl_model->_root.'application/libraries/tabs.php';
+		$this->_tpl_model->lib('tabs');
 		
 		$_GET['id']     = 0;
 		$_GET['par_id'] = $id;

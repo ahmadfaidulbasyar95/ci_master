@@ -19,7 +19,7 @@ class Menu extends CI_Controller
 	function index()
 	{
 		$id = @intval($_GET['id']);
-		include_once $this->_tpl_model->_root.'application/libraries/tabs.php';
+		$this->_tpl_model->lib('tabs');
 
 		$form = $this->_pea_model->newForm('menu');
 		$form->initSearch();
@@ -97,7 +97,7 @@ class Menu extends CI_Controller
 
 		$form->roll->addInput('icon', 'sqlplaintext');
 		$form->roll->input->icon->setTitle('Icon Class');
-		$form->roll->input->icon->setDisplayColumn(0);
+		$form->roll->input->icon->setDisplayColumn();
 		$form->roll->input->icon->setDisplayFunction(function($value='')
 		{
 			return '<i class="'.$value.'"></i> '.$value;
