@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $tpl->setLayout('blank');
 ?>
-<div id="_desktop" style="background-image: url('<?php echo $tpl->_url.'files/uploads/'.$tpl->config('dashboard', 'login_background'); ?>'); display: table; width: 100%;">
+<div id="_desktop" style="background-image: url('<?php echo $tpl->_url.'files/uploads/'.$tpl->config('user', 'login_background'); ?>'); display: table; width: 100%;">
 	<div style="display: table-cell; vertical-align: middle;">
 		<div class="container" style="max-width: 500px;">
 			<div class="row">

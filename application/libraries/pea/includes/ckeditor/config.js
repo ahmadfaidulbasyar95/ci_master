@@ -96,6 +96,7 @@ CKEDITOR.editorConfig = function( config ) {
 			,	'SpecialChar'
 			,	'PageBreak'
 			,	'Iframe'
+			,	'replaceTagName'
 			]
 		},{
 			name: 'styles', items: [
@@ -120,4 +121,12 @@ CKEDITOR.editorConfig = function( config ) {
 			]
 		}
 	];
+	
+	config.extraPlugins = 'replaceTagNameByBsquochoai';
+
+	config.enterMode      = CKEDITOR.ENTER_BR;
+	config.shiftEnterMode = CKEDITOR.ENTER_P;
+
+	config.allowedContent       = true;
+	CKEDITOR.dtd.$removeEmpty.i = 0;
 };

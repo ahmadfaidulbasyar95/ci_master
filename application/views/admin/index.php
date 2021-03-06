@@ -20,6 +20,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		?>
 	</head>
 	<body>
+		<style type="text/css">
+			body::after {
+				content: "";
+				background-image: url(<?php echo $tpl->_url.'files/uploads/'.$tpl->config('dashboard', 'desktop_background'); ?>);
+				background-size: cover;
+				background-position: center;
+				opacity: 0.05;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				position: absolute;
+				z-index: -1; 
+			}
+		</style>
 		<div>
 			<?php echo $tpl->nav_show(); ?>
 		</div>

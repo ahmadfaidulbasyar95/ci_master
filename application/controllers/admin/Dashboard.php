@@ -47,6 +47,7 @@ class Dashboard extends CI_Controller
 
 		$form->edit->input->value->addInput('meta_description', 'textarea');
 		$form->edit->input->value->element->meta_description->setTitle('Meta Description');
+		$form->edit->input->value->element->meta_description->setHtmlEditor();
 		$form->edit->input->value->element->meta_description->setRequire();
 
 		$form->edit->input->value->addInput('meta_keyword', 'text');
@@ -118,6 +119,11 @@ class Dashboard extends CI_Controller
 		$form->edit->input->value->element->img_def->setTitle('Default Image');
 		$form->edit->input->value->element->img_def->setImageClick();
 		$form->edit->input->value->element->img_def->setRequire();
+
+		$form->edit->input->value->addInput('login_background', 'file');
+		$form->edit->input->value->element->login_background->setTitle('Login Background');
+		$form->edit->input->value->element->login_background->setImageClick();
+		$form->edit->input->value->element->login_background->setRequire();
 
 		$form->edit->input->value->addInput('home_uri', 'text');
 		$form->edit->input->value->element->home_uri->setTitle('Homepage URI');
