@@ -89,6 +89,7 @@ if ($PNAME) {
 		install_exec("ln -s ../../../".$BASENAME."/application/models/_encrypt_model.php ./application/models/");
 		install_exec("ln -s ../../../".$BASENAME."/application/models/_pea_model.php ./application/models/");
 		install_exec("ln -s ../../../".$BASENAME."/application/models/_tpl_model.php ./application/models/");
+		install_exec("ln -s ../../../".$BASENAME."/application/models/_notif_model.php ./application/models/");
 		
 		install_exec("mkdir application/third_party");
 		install_exec("ln -s ../../../".$BASENAME."/application/third_party/index.html ./application/third_party/");

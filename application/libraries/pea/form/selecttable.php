@@ -10,6 +10,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	public $referenceCondition  = '';
 	public $referenceNested     = '';
 	public $referenceOrderBy    = '';
+	public $referenceGroupBy    = '';
 	public $options_load        = 0;
 	public $dependent           = array();
 
@@ -49,6 +50,11 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		if ($referenceNested) $this->referenceNested = $referenceNested;
 	}
 
+	public function setReferenceGroupBy($referenceGroupBy = '')
+	{
+		if ($referenceGroupBy) $this->referenceGroupBy = ' GROUP BY '.$referenceGroupBy;
+	}
+
 	public function setReferenceOrderBy($referenceOrderBy = '')
 	{
 		if ($referenceOrderBy) $this->referenceOrderBy = ' ORDER BY '.$referenceOrderBy;
@@ -75,7 +81,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 				}else{
 					$this->referenceCondition .= ' WHERE '.$this->dependent['field'].'="[v]"';
 				}
-				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceOrderBy;
+				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceGroupBy.$this->referenceOrderBy;
 				$this->db->load->model('_encrypt_model');
 				$token = $this->db->_encrypt_model->encodeToken($token, 60);
 				$this->addAttr('data-token="'.$token.'"');
@@ -122,7 +128,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 						}
 					}
 				}
-				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceOrderBy);
+				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceGroupBy.$this->referenceOrderBy);
 				if ($this->referenceNested) {
 					$option = $this->getOptionNested($option);
 				}
