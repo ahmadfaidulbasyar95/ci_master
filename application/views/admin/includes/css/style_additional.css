@@ -121,7 +121,8 @@
 }
 #_menu_list a > i {
 	background: #847a7a;
-	padding: 5px;
+	padding: 5px 0;
+	text-align: center;
 	width: 26px;
 	height: 26px;
 	margin-right: 7px;

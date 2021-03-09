@@ -68,6 +68,7 @@ if ($PNAME) {
 		
 		install_exec("mkdir application/libraries");
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/index.html ./application/libraries/");
+		install_exec("ln -s ../../../".$BASENAME."/application/libraries/chart ./application/libraries/");
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/excel ./application/libraries/");
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/pdf ./application/libraries/");
 		install_exec("ln -s ../../../".$BASENAME."/application/libraries/pea ./application/libraries/");
