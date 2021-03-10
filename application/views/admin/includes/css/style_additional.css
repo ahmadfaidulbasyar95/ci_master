@@ -180,6 +180,9 @@
 ._iframe_title i {
 	margin-right: 5px;
 }
+._iframe_title br {
+	display: none;
+}
 ._iframe_refresh ,
 ._iframe_minimize ,
 ._iframe_maximize ,
@@ -212,7 +215,7 @@
 #_iframe_toggles {
 	display: -webkit-inline-box;
 	overflow: auto;
-	width: calc(100% - 210px);
+	width: calc(100% - 230px);
 	white-space: nowrap;
 }
 #_iframe_toggles .ui-state-highlight {
@@ -246,6 +249,38 @@
 	background: #403e3ea6;
 }
 
+#_notif {
+	display: inline-block;
+}
+#_notif #notif {
+	background-color: transparent;
+	border: 0;
+	margin-bottom: 5px;
+}
+#_notif a {
+	background-color: #000000c9;
+	color: white;
+	margin-bottom: 2px;
+	border-radius: 5px;
+}
+#_notif .active > a {
+	background-color: #17222fe6;
+}
+#_notif a:focus,
+#_notif a:hover {
+	background-color: #1a2f17e6;
+}
+#notif_badge {
+	position: absolute;
+	margin-top: -5px;
+	margin-left: -5px;
+	border-radius: 10px;
+}
+#notif {
+	max-height: 70vh;
+	overflow: auto;
+}
+
 .ellipsis {
 	white-space: nowrap;
 	overflow: hidden;
@@ -263,7 +298,7 @@ a {
 		display: none;
 	}
 	#_iframe_toggles {
-		width: calc(100% - 95px);
+		width: calc(100% - 120px);
 	}
 }
 

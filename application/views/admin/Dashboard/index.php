@@ -1,5 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+$tpl->load->model('_notif_model');
+$tpl->_notif_model->load(1); 
 ?>
 <div id="_desktop" class="menu_close" style="background-image: url('<?php echo $tpl->_url.'files/uploads/'.$tpl->config('dashboard', 'desktop_background'); ?>');">
 	<?php 
@@ -42,6 +44,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
 <div id="_taskbar">
 	<a id="_start" href="#"><i class="fa fa-bars fa-fw"></i> <span>Start</span></a>
+	<div id="_notif" class="dropup menu_close">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="far fa-fw fa-bell"></i><span class="badge" style="background-color: red;display: none;" id="notif_badge">9+</span></a>
+		<ul class="dropdown-menu" id="notif"></ul>
+	</div>
 	<div id="_iframe_toggles">
 		<a class="_iframe_toggles" href="#" data-id="{id}" style="display: none;">
 			<span class="_iframe_toggle_title">{title}</span>

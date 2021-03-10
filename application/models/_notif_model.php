@@ -10,18 +10,103 @@ class _notif_model extends CI_Model {
 		$this->load->model('_db_model');
 	}
 
-	function load()
+	function load($type = 0)
 	{
+		?>
+		<script type="text/javascript">
+			(function() {
+				window.addEventListener('load', function() { 
+					var _notif       = $('#notif');
+					var _notif_badge = $('#notif_badge');
+					var _notif_show  = [];
+					function _notif_load() {
+						var type = '<?php echo $type; ?>';
+						$.ajax({
+							url: _URL+'_Pea/notif',
+							type: 'POST',
+							dataType: 'json',
+							data: {
+								type: type
+							},
+						})
+						.done(function(out) {
+							var attr       = ('<?php echo $type; ?>' == 1) ? ' target="_iframe"' : '';
+							var _notif_add = '';
+							if (out.unread.length) {
+								$.each(out.unread, function(index, val) {
+									if ($.inArray(val.id, _notif_show) == -1) {
+										_notif_show.push(val.id);
+										_notif_add += '<li class="active"><a href="'+_URL+'_Pea/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'</a></li>';
+									}
+								});
+								_notif_badge.html((out.unread.length > 9) ? '9+' : out.unread.length).show();
+							}else{
+								_notif_badge.html('').hide();
+							}
+							$.each(out.read, function(index, val) {
+								if ($.inArray(val.id, _notif_show) == -1) {
+									_notif_show.push(val.id);
+									_notif_add += '<li><a href="'+_URL+'_Pea/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'</a></li>';
+								}
+							});
+							_notif.prepend(_notif_add);
+							setTimeout(function() {
+								_notif_load();
+							}, 3000);
+						});
+					}
+					if (_notif.length) {
+						_notif_load();
+						_notif.on('click', 'a', function(event) {
+							$(this).parent('li').removeClass('active');
+						});
+					}
+				}, false);
+			})();
+		</script>
+		<?php
 	}
 
-	function send($user_id = '', $title = '', $info = '', $url = '')
+	function send($user_id = 0, $group_id = 0, $title = '', $info = '', $url = '')
 	{
-		if ($user_id and $title and $info and $url) {
+		if (is_array($user_id)) {
+			foreach ($user_id as $id) {
+				$this->send($id, $group_id, $title, $info, $url);
+			}
+		}elseif (is_array($group_id)) {
+			foreach ($group_id as $id) {
+				$this->send($user_id, $id, $title, $info, $url);
+			}
+		}elseif ($title and $info and $url) {
 			$this->_db_model->insert('user_notif', array(
-				'user_id' => $user_id,
-				'title'   => $title,
-				'info'    => $info,
-				'url'     => $url,
+				'user_id'  => $user_id,
+				'group_id' => $group_id,
+				'title'    => $title,
+				'info'     => $info,
+				'url'      => $url,
+				'type'     => 0,
+			));
+		}
+	}
+
+	function sendAdmin($user_id = 0, $group_id = 0, $title = '', $info = '', $url = '')
+	{
+		if (is_array($user_id)) {
+			foreach ($user_id as $id) {
+				$this->sendAdmin($id, $group_id, $title, $info, $url);
+			}
+		}elseif (is_array($group_id)) {
+			foreach ($group_id as $id) {
+				$this->sendAdmin($user_id, $id, $title, $info, $url);
+			}
+		}elseif ($title and $info and $url) {
+			$this->_db_model->insert('user_notif', array(
+				'user_id'  => $user_id,
+				'group_id' => $group_id,
+				'title'    => $title,
+				'info'     => $info,
+				'url'      => $url,
+				'type'     => 1,
 			));
 		}
 	}
