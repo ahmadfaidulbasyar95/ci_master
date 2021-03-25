@@ -173,7 +173,7 @@ class Menu extends CI_Controller
 		$par_id      = @intval($_GET['par_id']);
 		$form        = $this->_pea_model->newForm('menu');
 
-		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
+		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id.' AND `position_id`='.$position_id : '');
 		
 		$form->edit->setHeader(!empty($id) ? 'Edit Menu' : 'Add Menu');
 		
