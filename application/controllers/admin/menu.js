@@ -51,7 +51,8 @@
 			}
 		});
 		$('[rel="menu_icon"]').on('keyup', function(event) {
-			$(this).parents('.form-group').find('.menu_icon_preview').html('<i class="'+$(this).val()+'"></i>');
+			var v = $(this).val();
+			$(this).parents('.form-group').find('.menu_icon_preview').html('<i class="'+v+'" style="font-size: 17px;"></i> <i class="'+v+'" style="font-size: 25px;"></i> <i class="'+v+'" style="font-size: 35px;"></i>');
 		}).trigger('keyup');
 	}, false);
 })();

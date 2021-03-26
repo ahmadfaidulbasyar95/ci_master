@@ -10,7 +10,7 @@ class User extends CI_Controller
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
 
-		if (!in_array($this->_tpl_model->method, ['login','logout','register'])) {
+		if (!in_array($this->_tpl_model->method, ['login','logout','register','detail'])) {
 			$this->_tpl_model->user_login_validate();
 		}
 	}
@@ -362,5 +362,53 @@ class User extends CI_Controller
 	{
 		$this->_tpl_model->user_logout();
 		redirect($this->_tpl_model->_url.'user/login');
+	}
+
+	function detail()
+	{
+		$id = @intval($_GET['id']);
+		$this->_tpl_model->setLayout('blank');
+		if ($id) {
+			$form = $this->_pea_model->newForm('user');
+			$form->initEdit('WHERE `id`='.$id);
+
+			$form->edit->setHeader('User Detail');
+			$form->edit->setModalResponsive();
+
+			$form->edit->addInput('name', 'sqlplaintext');
+			$form->edit->input->name->setTitle('Name');
+
+			$form->edit->addInput('email', 'sqlplaintext');
+			$form->edit->input->email->setTitle('Email');
+
+			$form->edit->addInput('phone', 'sqlplaintext');
+			$form->edit->input->phone->setTitle('Phone');
+
+			$form->edit->addInput('image', 'file');
+			$form->edit->input->image->setTitle('Image');
+			$form->edit->input->image->setFolder('files/user/');
+			$form->edit->input->image->setImageClick();
+			$form->edit->input->image->setPlainText(true);
+
+			$form->edit->addInput('gender', 'select');
+			$form->edit->input->gender->setTitle('Gender');
+			$form->edit->input->gender->addOption('Male', 1);
+			$form->edit->input->gender->addOption('Female', 2);
+			$form->edit->input->gender->setPlainText();
+
+			$form->edit->addInput('birth_date', 'date');
+			$form->edit->input->birth_date->setTitle('Birthdate');
+			$form->edit->input->birth_date->setDateFormat('d M Y');
+			$form->edit->input->birth_date->setPlainText();
+
+			$form->edit->addInput('location_detail', 'sqlplaintext');
+			$form->edit->input->location_detail->setTitle('Address');
+			$form->edit->input->location_detail->setFieldName('CONCAT(`address`," ",`village_title`,", ",`district_title`,", ",`city_title`,", ",`province_title`)');
+			
+			$form->edit->setSaveTool(false);
+			$form->edit->action();
+			echo $form->edit->getForm();
+		}	
+		$this->_tpl_model->show();
 	}
 }

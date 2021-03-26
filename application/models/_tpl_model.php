@@ -509,7 +509,7 @@ class _tpl_model extends CI_Model {
 				}
 			}
 			if ($allowed) {
-				if (!in_array('all', $this->user['menu_ids'][$type]) and $this->task != 'admin/dashboard/index') {
+				if (!in_array('all', $this->user['menu_ids'][$type]) and !in_array($this->task, ['admin/dashboard/index','admin/user/profile'])) {
 					$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task.($_GET ? '?'.http_build_query($_GET) : '')).'%"');
 					if (!$menu) {
 						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task).'%"');
