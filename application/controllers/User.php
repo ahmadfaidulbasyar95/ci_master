@@ -81,19 +81,33 @@ class User extends CI_Controller
 		}else{
 			$form->edit->addInput('username', 'sqlplaintext');
 			$form->edit->input->username->setTitle('Username');
-			$form->edit->input->username->addTip($this->_tpl_model->button('user/usr?return='.urlencode($this->_tpl_model->_url_current), 'Ubah', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+			$form->edit->input->username->addTip($this->_tpl_model->button('user/usr', 'Ubah', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
 
 			$form->edit->addInput('password', 'plaintext');
 			$form->edit->input->password->setTitle('Password');
-			$form->edit->input->password->setValue($this->_tpl_model->button('user/pwd?return='.urlencode($this->_tpl_model->_url_current), 'Ubah', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+			$form->edit->input->password->setValue($this->_tpl_model->button('user/pwd', 'Ubah', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
 
 			$form->edit->addInput('email', 'sqlplaintext');
 			$form->edit->input->email->setTitle('Email');
-			$form->edit->input->email->addTip($this->_tpl_model->button('user/usr?act=email&return='.urlencode($this->_tpl_model->_url_current), 'Ubah', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+			$form->edit->input->email->addTip($this->_tpl_model->button('user/usr?act=email', 'Ubah', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
 
 			$form->edit->addInput('phone', 'sqlplaintext');
 			$form->edit->input->phone->setTitle('No HP');
-			$form->edit->input->phone->addTip($this->_tpl_model->button('user/usr?act=phone&return='.urlencode($this->_tpl_model->_url_current), 'Ubah', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+			$form->edit->input->phone->addTip($this->_tpl_model->button('user/usr?act=phone', 'Ubah', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+
+			$telegram_conf = $this->_tpl_model->config('notif_telegram');
+			if (!empty($telegram_conf['active'])) {
+				$form->edit->addInput('telegram_data', 'sqlplaintext');
+				$form->edit->input->telegram_data->setTitle('Telegram');
+				$form->edit->input->telegram_data->setDisplayFunction(function($value='')
+				{
+					$value = json_decode($value, 1);
+					if ($value) {
+						return '@'.$value['username'].' '.$value['first_name'].' '.$value['last_name'];
+					}
+				});
+				$form->edit->input->telegram_data->addTip($this->_tpl_model->button('user/usr?act=telegram', 'Sambungkan', 'fa fa-link', 'btn-sm modal_reload', '', 1));
+			}
 		}
 
 		$form->edit->addInput('image', 'file');
@@ -201,8 +215,7 @@ class User extends CI_Controller
 
 	function pwd()
 	{
-		$id             = @intval($this->_tpl_model->user['id']);
-		$_GET['return'] = '';
+		$id = @intval($this->_tpl_model->user['id']);
 		$this->_tpl_model->setLayout('blank');
 		if ($id) {
 			$form = $this->_pea_model->newForm('user');
@@ -255,8 +268,7 @@ class User extends CI_Controller
 
 	function usr()
 	{
-		$id             = @intval($this->_tpl_model->user['id']);
-		$_GET['return'] = '';
+		$id = @intval($this->_tpl_model->user['id']);
 		$this->_tpl_model->setLayout('blank');
 		if ($id) {
 			$form = $this->_pea_model->newForm('user');
@@ -288,6 +300,39 @@ class User extends CI_Controller
 					$form->edit->input->phone->setUniq();
 
 					$input = 'phone';
+					break;		
+
+				case 'telegram':
+					$form->edit->setHeader('Sambungkan Akun Telegram');
+					
+					$form->edit->addInput('telegram_id','hidden');
+					$form->edit->input->telegram_id->addAttr('id="telegram_id"');
+					
+					$form->edit->addInput('telegram_data','hidden');
+					$form->edit->input->telegram_data->addAttr('id="telegram_data"');
+
+					$telegram_conf = $this->_tpl_model->config('notif_telegram');
+					
+					if ($id == $this->_tpl_model->user['id'] and !empty($telegram_conf['active'])) {
+						$telegram_conf['data'] = @(array)json_decode($telegram_conf['data']);
+
+						if (!empty($telegram_conf['data']['username'])) {
+							$this->_tpl_model->js('controllers/admin/user_usr_telegram.js');
+							$code = time().mt_rand();
+
+							$form->edit->addInput('telegram_input','plaintext');
+							$form->edit->input->telegram_input->setTitle('Akun Telegram');
+							$form->edit->input->telegram_input->setValue('<input id="telegram_input" type="text" class="form-control" value="" title="Akun Telegram" placeholder="Akun Telegram" data-code="'.$code.'" data-url="https://api.telegram.org/bot'.$telegram_conf['token'].'/getUpdates" readonly>');
+
+							$form->edit->addInput('telegram_instructions','plaintext');
+							$form->edit->input->telegram_instructions->setTitle('Petunjuk');
+							$form->edit->input->telegram_instructions->setValue('<ol><li>Klik <a href="https://t.me/'.$telegram_conf['data']['username'].'?start='.$code.'" target="_BLANK">Disini</a> untuk membuka Akun Telegram Kami.</li><li>Klik <b>Start</b> pada kotak pesan.</li><li>Tunggu sebentar dan lihat Akun Telegram Anda akan muncul diatas.</li><li>Lalu Simpan !</li></ol>');
+						}
+					}else{
+						$form->edit->setSaveTool(false);
+					}
+
+					$input = 'telegram_data';
 					break;		
 				
 				default:

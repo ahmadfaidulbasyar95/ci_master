@@ -212,23 +212,50 @@ class User extends CI_Controller
 			$form->edit->input->group_ids->setReferenceTable('user_group');
 			$form->edit->input->group_ids->setReferenceField('title', 'id');
 			$form->edit->input->group_ids->setPlainText();
-			$form->edit->input->group_ids->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=group_ids&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
 
 			$form->edit->addInput('username', 'sqlplaintext');
 			$form->edit->input->username->setTitle('Username');
-			$form->edit->input->username->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
 
 			$form->edit->addInput('password', 'plaintext');
 			$form->edit->input->password->setTitle('Password');
-			$form->edit->input->password->setValue($this->_tpl_model->button('admin/user/pwd?id='.$id.'&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
 
 			$form->edit->addInput('email', 'sqlplaintext');
 			$form->edit->input->email->setTitle('Email');
-			$form->edit->input->email->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=email&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
 
 			$form->edit->addInput('phone', 'sqlplaintext');
 			$form->edit->input->phone->setTitle('Phone');
-			$form->edit->input->phone->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=phone&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+
+			if ($this->_tpl_model->method == 'profile') {
+				$form->edit->input->group_ids->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=group_ids', 'Change', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+				$form->edit->input->username->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'', 'Change', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+				$form->edit->input->password->setValue($this->_tpl_model->button('admin/user/pwd?id='.$id.'', 'Change', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+				$form->edit->input->email->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=email', 'Change', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+				$form->edit->input->phone->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=phone', 'Change', 'fa fa-repeat', 'btn-sm modal_reload', '', 1));
+			}else{
+				$form->edit->input->group_ids->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=group_ids&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+				$form->edit->input->username->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+				$form->edit->input->password->setValue($this->_tpl_model->button('admin/user/pwd?id='.$id.'&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+				$form->edit->input->email->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=email&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+				$form->edit->input->phone->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=phone&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
+			}
+
+			$telegram_conf = $this->_tpl_model->config('notif_telegram');
+			if (!empty($telegram_conf['active'])) {
+				$form->edit->addInput('telegram_data', 'sqlplaintext');
+				$form->edit->input->telegram_data->setTitle('Telegram');
+				$form->edit->input->telegram_data->setDisplayFunction(function($value='')
+				{
+					$value = json_decode($value, 1);
+					if ($value) {
+						return '@'.$value['username'].' '.$value['first_name'].' '.$value['last_name'];
+					}
+				});
+				if ($this->_tpl_model->method == 'profile') {
+					$form->edit->input->telegram_data->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=telegram', 'Connect', 'fa fa-link', 'btn-sm modal_reload', '', 1));
+				}else{
+					$form->edit->input->telegram_data->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=telegram&return='.urlencode($this->_tpl_model->_url_current), 'Connect', 'fa fa-link', 'btn-sm'));
+				}
+			}
 		}
 
 		$form->edit->addInput('image', 'file');
@@ -445,6 +472,37 @@ class User extends CI_Controller
 
 					if ($id == 1 and $id != $this->_tpl_model->user['id']) {
 						$form->edit->input->phone->setPlainText();
+						$form->edit->setSaveTool(false);
+					}
+					break;		
+
+				case 'telegram':
+					$form->edit->setHeader('Connect Telegram Account');
+					
+					$form->edit->addInput('telegram_id','hidden');
+					$form->edit->input->telegram_id->addAttr('id="telegram_id"');
+					
+					$form->edit->addInput('telegram_data','hidden');
+					$form->edit->input->telegram_data->addAttr('id="telegram_data"');
+
+					$telegram_conf = $this->_tpl_model->config('notif_telegram');
+					
+					if ($id == $this->_tpl_model->user['id'] and !empty($telegram_conf['active'])) {
+						$telegram_conf['data'] = @(array)json_decode($telegram_conf['data']);
+
+						if (!empty($telegram_conf['data']['username'])) {
+							$this->_tpl_model->js('controllers/admin/user_usr_telegram.js');
+							$code = time().mt_rand();
+
+							$form->edit->addInput('telegram_input','plaintext');
+							$form->edit->input->telegram_input->setTitle('Telegram Account');
+							$form->edit->input->telegram_input->setValue('<input id="telegram_input" type="text" class="form-control" value="" title="Telegram Account" placeholder="Telegram Account" data-code="'.$code.'" data-url="https://api.telegram.org/bot'.$telegram_conf['token'].'/getUpdates" readonly>');
+
+							$form->edit->addInput('telegram_instructions','plaintext');
+							$form->edit->input->telegram_instructions->setTitle('Instructions');
+							$form->edit->input->telegram_instructions->setValue('<ol><li>Click <a href="https://t.me/'.$telegram_conf['data']['username'].'?start='.$code.'" target="_BLANK">Here</a> to open Our Telegram Account.</li><li>Click <b>Start</b> on the message box.</li><li>Wait a second and see Your Telegram Account appear on the top.</li><li>Then Save it !</li></ol>');
+						}
+					}else{
 						$form->edit->setSaveTool(false);
 					}
 					break;		
