@@ -45,7 +45,7 @@ class lib_pea_roll extends lib_pea_edit
 		$this->setSuccessMsg('Success Save Data'); 
 		$this->setDeleteTool(1); 
 		
-		$this->tableWrap('<div class="table-responsive" style="width: 100%;"><table class="table table-striped table-bordered table-hover">','</table></div>');
+		$this->tableWrap('<div class="table-responsive" style="width: 100%;"><table class="pea_roll_table table table-striped table-bordered table-hover">','</table></div>');
 		$this->tableHeaderWrap('<thead>','</thead>');
 		$this->tableBodyWrap('<tbody>','</tbody>');
 		$this->tableFooterWrap('<tfoot>','</tfoot>');
@@ -433,8 +433,9 @@ class lib_pea_roll extends lib_pea_edit
 										if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';
 									$this->form .= '</td>';
 									if ($this->displayColumnTool) {
+										$this->setIncludes(['js' => ['display_column.min']]);
 										$this->form .= '<td style="padding-left: 15px;">';
-											$this->form .= '<div class="dropup">';
+											$this->form .= '<div class="pea_roll_display dropup">';
 												$this->form .= '<button class="'.$this->displayColumnButtonClass.' dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$this->displayColumnButtonText.'</button>';
 												$this->form .= '<div class="dropdown-menu">';
 													foreach ($this->input as $key => $value) {
@@ -442,7 +443,7 @@ class lib_pea_roll extends lib_pea_edit
 															$this->form .= '
 															<div class="col-xs-6" style="padding: 2px 0 2px 10px;">
 																<div class="'.lib_bsv('checkbox', 'form-check').'">
-																	<label style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 100%;"><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'" onchange="$(this).parents(\'.dropup\').addClass(\'open\');"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
+																	<label style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 100%;"><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
 																</div>
 															</div>';
 														}
