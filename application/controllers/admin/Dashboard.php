@@ -10,6 +10,8 @@ class Dashboard extends CI_Controller
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
 
+		$this->_tpl_model->menu_unprotect('index');
+
 		$this->_tpl_model->user_login_validate(1);
 
 		$this->_tpl_model->setTemplate('admin');

@@ -10,6 +10,10 @@ class User extends CI_Controller
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
 
+		$this->_tpl_model->menu_unprotect('profile');
+		$this->_tpl_model->menu_unprotect('usr');
+		$this->_tpl_model->menu_unprotect('pwd');
+
 		if (!in_array($this->_tpl_model->method, ['login','logout'])) {
 			$this->_tpl_model->user_login_validate(1);
 		}
@@ -33,6 +37,9 @@ class User extends CI_Controller
 		{
 			return '`group_ids` LIKE "%\"'.$value.'\"%"';
 		});
+		if ($this->_tpl_model->user['id'] != 1) {
+			$form->search->input->group_ids->setReferenceCondition('id != 1');
+		}
 
 		$form->search->addInput('keyword', 'keyword');
 		$form->search->input->keyword->setTitle('Search');
@@ -44,7 +51,10 @@ class User extends CI_Controller
 		echo $form->search->getForm();
 
 		echo $this->_tpl_model->button('admin/user/form', 'Add User', 'fa fa-plus', 'modal_reload', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"', 1);
-		echo $this->_tpl_model->button('admin/user/group?return='.urlencode($this->_tpl_model->_url_current), 'Group', 'fa fa-pencil', '', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"');
+		
+		if ($this->_tpl_model->user['id'] == 1) {
+			echo $this->_tpl_model->button('admin/user/group?return='.urlencode($this->_tpl_model->_url_current), 'Group', 'fa fa-pencil', '', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"');
+		}
 
 		$form->initRoll($add_sql.' ORDER BY `id` DESC');
 
@@ -336,11 +346,13 @@ class User extends CI_Controller
 				$form->edit->input->location_input->element->district_id->setPlainText();
 				$form->edit->input->location_input->element->village_id->setPlainText();
 				$form->edit->input->address->setPlainText();
+				$form->edit->input->address->setTip('');
 
 				$form->edit->input->group_ids->setTip('');
 				$form->edit->input->username->setTip('');
 				$form->edit->input->email->setTip('');
 				$form->edit->input->phone->setTip('');
+				$form->edit->input->telegram_data->setTip('');
 
 				$form->edit->input->password->setInputPosition('hidden');
 				

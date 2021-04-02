@@ -21,6 +21,7 @@ class _tpl_model extends CI_Model {
 	public $config          = array();
 	public $nav_list        = array();
 	public $menu            = array();
+	public $menu_unprotect  = array();
 	public $user            = array();
 	public $user_msg        = '';
 	public $user_group_type = array(
@@ -344,6 +345,12 @@ class _tpl_model extends CI_Model {
 		}
 		return $output;
 	}
+	public function menu_unprotect($method='')
+	{
+		if ($method) {
+			$this->menu_unprotect[] = $method;
+		}
+	}
 
 	public function meta()
 	{
@@ -509,7 +516,7 @@ class _tpl_model extends CI_Model {
 				}
 			}
 			if ($allowed) {
-				if (!in_array('all', $this->user['menu_ids'][$type]) and !in_array($this->task, ['admin/dashboard/index','admin/user/profile','admin/user/usr','admin/user/pwd'])) {
+				if (!in_array('all', $this->user['menu_ids'][$type]) and !in_array($this->method, $this->menu_unprotect)) {
 					$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task.($_GET ? '?'.http_build_query($_GET) : '')).'%"');
 					if (!$menu) {
 						$menu = $this->_db_model->getCol('SELECT `id` FROM `menu` WHERE `type`='.$type.' AND `protect`=1 AND `active`=1 AND `url` LIKE "'.addslashes($this->task).'%"');
