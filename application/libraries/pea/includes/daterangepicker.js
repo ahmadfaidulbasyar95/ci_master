@@ -10,8 +10,9 @@
 				el.attr('id', id);
 				id     = $('#'+id);
 				var fm = id.prev('input');
-				id.daterangepicker(cfg , function(start, end, label) {
-					fm.val(start.format('YYYY-MM-DD HH:mm:ss'));
+				id.daterangepicker(cfg);
+				id.on('hide.daterangepicker', function(event, picker) {
+					fm.val(picker.startDate.format('YYYY-MM-DD HH:mm:ss'));
 				});
 				fm.on('change', function(event) {
 					var date = $(this).val();
@@ -28,6 +29,8 @@
 						}).format(cfg.locale.format);
 						id.data('daterangepicker').setStartDate(date);
 						id.data('daterangepicker').setEndDate(date);
+					}else{
+						id.val('');
 					}
 				}).trigger('change');
 			}
@@ -43,9 +46,10 @@
 				id      = $('#'+id);
 				var fm  = id.prev('input');
 				var fm_ = id.prev('input').prev('input');
-				id.daterangepicker(cfg , function(start, end, label) {
-					fm.val(start.format('YYYY-MM-DD HH:mm:ss'));
-					fm_.val(end.format('YYYY-MM-DD HH:mm:ss'));
+				id.daterangepicker(cfg);
+				id.on('hide.daterangepicker', function(event, picker) {
+					fm.val(picker.startDate.format('YYYY-MM-DD HH:mm:ss'));
+					fm_.val(picker.endDate.format('YYYY-MM-DD HH:mm:ss'));
 				});
 				fm.on('change', function(event) {
 					var date = $(this).val();
@@ -61,6 +65,8 @@
 							'milisecond': date.getMilliseconds()
 						}).format(cfg.locale.format);
 						id.data('daterangepicker').setStartDate(date);
+					}else{
+						id.val('');
 					}
 				}).trigger('change');
 				fm_.on('change', function(event) {
@@ -77,9 +83,17 @@
 							'milisecond': date.getMilliseconds()
 						}).format(cfg.locale.format);
 						id.data('daterangepicker').setEndDate(date);
+					}else{
+						id.val('');
 					}
 				}).trigger('change');
 			}
+		});
+		$('.fm_datepicker').on('cancel.daterangepicker', function(event, picker) {
+			$('#'+picker.element[0].id).val('').prev('input').val('');
+		});
+		$('.fm_daterangepicker').on('cancel.daterangepicker', function(event, picker) {
+			$('#'+picker.element[0].id).val('').prev('input').val('').prev('input').val('');
 		});
 	}, false);
 })();

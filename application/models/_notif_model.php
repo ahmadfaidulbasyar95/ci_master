@@ -35,8 +35,9 @@ class _notif_model extends CI_Model {
 							if (out.unread.length) {
 								$.each(out.unread, function(index, val) {
 									if ($.inArray(val.id, _notif_show) == -1) {
+										var d = new Date(val.created);
 										_notif_show.push(val.id);
-										_notif_add += '<li class="active"><a href="'+_URL+'_Pea/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'</a></li>';
+										_notif_add += '<li class="active"><a href="'+_URL+'_Pea/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'<br><small><i>'+d.toDateString()+' '+d.toLocaleTimeString()+'</i></small></a></li>';
 									}
 								});
 								_notif_badge.html((out.unread.length > 9) ? '9+' : out.unread.length).show();
@@ -45,14 +46,15 @@ class _notif_model extends CI_Model {
 							}
 							$.each(out.read, function(index, val) {
 								if ($.inArray(val.id, _notif_show) == -1) {
+									var d = new Date(val.created);
 									_notif_show.push(val.id);
-									_notif_add += '<li><a href="'+_URL+'_Pea/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'</a></li>';
+									_notif_add += '<li><a href="'+_URL+'_Pea/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'<br><small><i>'+d.toDateString()+' '+d.toLocaleTimeString()+'</i></small></a></li>';
 								}
 							});
 							_notif.prepend(_notif_add);
 							setTimeout(function() {
 								_notif_load();
-							}, 3000);
+							}, 5000);
 						});
 					}
 					if (_notif.length) {

@@ -46,7 +46,11 @@ $tpl->_notif_model->load(1);
 	<a id="_start" href="#"><i class="fa fa-bars fa-fw"></i> <span>Start</span></a>
 	<div id="_notif" class="dropup menu_close">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="far fa-fw fa-bell"></i><span class="badge" style="background-color: red;display: none;" id="notif_badge">9+</span></a>
-		<ul class="dropdown-menu" id="notif"></ul>
+		<ul class="dropdown-menu" id="notif">
+			<li>
+				<a href="<?php echo $tpl->_url.'admin/user/notif'; ?>" class="text-center" target="_iframe" data-title="Notification"><b>Show All</b></a>
+			</li>
+		</ul>
 	</div>
 	<div id="_iframe_toggles">
 		<a class="_iframe_toggles" href="#" data-id="{id}" style="display: none;">

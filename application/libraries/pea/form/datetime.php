@@ -12,7 +12,8 @@ class lib_pea_frm_datetime extends lib_pea_frm_text
 		'timePicker24Hour'  => true,
 		'timePickerSeconds' => true,
 		'locale'            => array(
-			'format' => 'DD MMM YYYY HH:mm:ss',
+			'format'      => 'DD MMM YYYY HH:mm:ss',
+			'cancelLabel' => 'Clear',
 		),
 	);
 

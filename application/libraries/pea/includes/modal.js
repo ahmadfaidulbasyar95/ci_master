@@ -18,7 +18,7 @@
 					$('#modal-modal_processing').removeClass('modal_reload');
 				}
 				$('#modal-modal_processing').modal('show');
-				$('iframe','#modal-modal_processing').attr('src', $(this).attr('href'));
+				$('iframe','#modal-modal_processing').css('height', '80vh').attr('src', $(this).attr('href'));
 			});
 			$("#modal-modal_processing").on("hidden.bs.modal", function () {
 				if ($(this).hasClass('modal_reload')) {

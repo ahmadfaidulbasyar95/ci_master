@@ -28,6 +28,9 @@ class lib_pea_frm_datetimeinterval extends lib_pea_frm_datetime
 
 	public function getValueInterval($value = '')
 	{
+		if (is_array($value)) {
+			return array_values($value);
+		}
 		return explode('|', $value);
 	}
 
@@ -63,6 +66,17 @@ class lib_pea_frm_datetimeinterval extends lib_pea_frm_datetime
 			}
 		}
 		return implode(' - ', $value);
+	}
+
+	public function getSearchSql()
+	{
+		$value = $this->getValue();
+		$value = $this->getValueInterval($value);
+		if (empty($value[0]) or empty($value[1])) {
+			return '';
+		}else{
+			return ($this->searchFunction) ? call_user_func($this->searchFunction, $value) : '`'.$this->fieldNameDb.'` >= "'.addslashes($value[0]).'" AND `'.$this->fieldNameDb.'` <= "'.addslashes($value[1]).'"';
+		}
 	}
 
 	public function getForm($index = '', $values = array())

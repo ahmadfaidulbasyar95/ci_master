@@ -456,4 +456,61 @@ class User extends CI_Controller
 		}	
 		$this->_tpl_model->show();
 	}
+
+	function notif()
+	{
+		$this->_tpl_model->nav_add($this->_tpl_model->_url_current, 'Notification', 1);
+
+		$form = $this->_pea_model->newForm('user_notif');
+
+		$form->initSearch();
+
+		$form->search->addInput('created', 'dateinterval');
+		$form->search->input->created->setTitle('Date & Time');
+		
+		$form->search->addInput('keyword','keyword');
+		$form->search->input->keyword->setTitle('Search');
+		$form->search->input->keyword->addSearchField('title,info');
+
+		$form->search->addInput('status', 'select');
+		$form->search->input->status->setTitle('Status');
+		$form->search->input->status->addOption('-- Status --');
+		$form->search->input->status->addOption('Unread', '0');
+		$form->search->input->status->addOption('Read', '1');
+		
+		$add_sql = $form->search->action();
+		$keyword = $form->search->keyword();
+		
+		echo $form->search->getForm();
+	
+		$form->initRoll($add_sql.' AND (`user_id`='.$this->_tpl_model->user['id'].' OR `group_id` IN('.implode($this->_tpl_model->user['group_ids']).') OR (`user_id`=0 AND `group_id`=0)) AND `type`=0 ORDER BY `id` DESC');
+
+		$form->roll->addInput('created', 'datetime');
+		$form->roll->input->created->setTitle('Date & Time');
+		$form->roll->input->created->setPlainText();
+
+		$form->roll->addInput('title', 'sqlplaintext');
+		$form->roll->input->title->setTitle('Title');
+		$form->roll->input->title->setDisplayFunction(function($value='', $id=0)
+		{
+			return '<a href="'.$this->_tpl_model->_url.'_Pea/notif_detail?id='.$id.'&type=0">'.$value.'</a>';
+		});
+
+		$form->roll->addInput('info', 'sqlplaintext');
+		$form->roll->input->info->setTitle('Info');
+
+		$form->roll->addInput('status', 'select');
+		$form->roll->input->status->setTitle('Status');
+		$form->roll->input->status->addOption('Unread', '0');
+		$form->roll->input->status->addOption('Read', '1');
+		$form->roll->input->status->setPlainText();
+
+		$form->roll->setSaveTool(false);
+		$form->roll->setDeleteTool(false);
+		$form->roll->addReportAll();
+		$form->roll->action();
+		echo $form->roll->getForm();
+
+		$this->_tpl_model->show();
+	}
 }

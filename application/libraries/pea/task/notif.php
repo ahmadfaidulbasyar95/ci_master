@@ -11,8 +11,8 @@ if (isset($_POST['type'])) {
 		$user    = $_SESSION['user_login'][$type];
 		$add_sql = ' WHERE (`user_id`='.$user['id'].' OR `group_id` IN('.implode($user['group_ids']).') OR (`user_id`=0 AND `group_id`=0)) AND `type`='.$type;
 		$output  = array(
-			'unread' => $this->_db_model->getAll('SELECT `id`,`title`,`info` FROM `user_notif`'.$add_sql.' AND `status`=0 ORDER BY `id` DESC'),
-			'read'   => $this->_db_model->getAll('SELECT `id`,`title`,`info` FROM `user_notif`'.$add_sql.' AND `status`=1 ORDER BY `id` DESC LIMIT 10'),
+			'unread' => $this->_db_model->getAll('SELECT `id`,`title`,`info`,`created` FROM `user_notif`'.$add_sql.' AND `status`=0 ORDER BY `id` DESC'),
+			'read'   => $this->_db_model->getAll('SELECT `id`,`title`,`info`,`created` FROM `user_notif`'.$add_sql.' AND `status`=1 ORDER BY `id` DESC LIMIT 10'),
 		);
 		
 		include_once __DIR__.'/../../output.php';
