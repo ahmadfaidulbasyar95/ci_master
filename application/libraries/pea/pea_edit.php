@@ -43,6 +43,7 @@ class lib_pea_edit
 	public $failMsg                    = array(
 		'require' => '<b>{title}</b> Must not empty',
 		'uniq'    => '<b>{title}</b> Already used',
+		'format'  => '<b>{title}</b> Invalid format',
 	);
 	public $successMsgTpl    = '
 <div class="alert alert-success" role="alert">

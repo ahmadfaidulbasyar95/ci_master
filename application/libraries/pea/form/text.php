@@ -29,6 +29,8 @@ class lib_pea_frm_text
 	public $defaultValue          = '';
 	public $type                  = 'text';
 	public $isRequire             = '';
+	public $format                = '';
+	public $formats               = ['email', 'url', 'phone', 'tel', 'number'];
 	public $tips                  = '';
 	public $isPlainText           = 0;
 	public $displayFunction       = '';
@@ -136,6 +138,7 @@ class lib_pea_frm_text
 				$this->msg = str_replace('{msg}', str_replace('{title}', $this->title, @$this->failMsg['require']), $this->failMsgTpl);
 			}
 		}
+		$value  = $this->getFormat($value);
 		$isUniq = $this->getUniq();
 		if ($isUniq and !$this->msg and $value) {
 			$vId = $this->getValueID($index);
@@ -156,6 +159,7 @@ class lib_pea_frm_text
 	public function setType($type = '')
 	{
 		$this->type = $type;
+		$this->setFormat($type);
 	}
 
 	public function setAttr($attr = '')
@@ -183,6 +187,49 @@ class lib_pea_frm_text
 	public function getRequire()
 	{
 		return ($this->isRequire) ? 1 : 0;
+	}
+
+	public function setFormat($format = '')
+	{
+		$this->format = (in_array($format, $this->formats)) ? $format : '';
+	}
+
+	public function getFormat($value='')
+	{
+		$valid = 1;
+		if ($value and $this->format) {
+			switch ($this->format) {
+				case 'email':
+					$valid = filter_var($value, FILTER_VALIDATE_EMAIL);
+					break;
+
+				case 'url':
+					$valid = filter_var($value, FILTER_VALIDATE_URL);
+					break;
+
+				case 'phone':
+				case 'tel':
+					$value = preg_replace('~^0~', '62', $value);
+					$valid = is_numeric($value);
+					if ($valid) {
+						$a = strlen($value);
+						if ($a < 7 or $a > 14) {
+							$valid = false;
+						}
+					}
+					break;
+
+				case 'number':
+					$valid = is_numeric($value);
+					break;
+			}
+		}
+		if ($valid) {
+			return $value;
+		}else{
+			$this->msg = str_replace('{msg}', str_replace('{title}', $this->title, @$this->failMsg['format']), $this->failMsgTpl);
+			return false;
+		}
 	}
 
 	public function setUniq($isUniq = 1)

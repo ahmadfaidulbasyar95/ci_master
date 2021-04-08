@@ -214,7 +214,7 @@ class User extends CI_Controller
 			
 			$form->edit->addInput('phone','text');
 			$form->edit->input->phone->setTitle('Phone');
-			$form->edit->input->phone->setType('number');
+			$form->edit->input->phone->setType('tel');
 			$form->edit->input->phone->setRequire();
 			$form->edit->input->phone->setUniq();
 		}else{
@@ -479,7 +479,7 @@ class User extends CI_Controller
 					
 					$form->edit->addInput('phone','text');
 					$form->edit->input->phone->setTitle('Phone');
-					$form->edit->input->phone->setType('number');
+					$form->edit->input->phone->setType('tel');
 					$form->edit->input->phone->setRequire();
 					$form->edit->input->phone->setUniq();
 
