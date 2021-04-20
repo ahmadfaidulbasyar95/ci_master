@@ -120,9 +120,12 @@ function install_exec($EX='')
 	if ($IS_WINDOWS) {
 		$EX = str_replace('/','\\',$EX);
 		$EX = str_replace('cp ','copy ',$EX);
-		$EX = str_replace('ln -s ','mklink /d ',$EX);
-		if (preg_match('~\\\\([a-zA-Z_]+)?\.[a-zA-Z]+\s~s', $EX)) {
-			$EX = str_replace('mklink /d ','mklink ',$EX);
+		if (preg_match('~^ln\s-s~s', $EX)) {
+			$EX = preg_replace('~ln\s-s\s(.*?)\s(.*?)$~','ln -s $2 $1', $EX);
+			$EX = str_replace('ln -s ','mklink /d ',$EX);
+			if (preg_match('~\\\\([a-zA-Z_]+)?\.[a-zA-Z]+$~s', $EX)) {
+				$EX = str_replace('mklink /d ','mklink ',$EX);
+			}
 		}
 	}
 	echo $EX."\n";
