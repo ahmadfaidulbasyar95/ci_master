@@ -1,5 +1,10 @@
 #!/usr/bin/php
 <?php
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	$IS_WINDOWS = 1;
+}else {
+	$IS_WINDOWS = 0;
+}
 echo "Your Project Name [ENTER]: ";
 $handle = fopen ("php://stdin","r");
 $PNAME  = trim(fgets($handle));
@@ -111,6 +116,15 @@ echo "\n";
 
 function install_exec($EX='')
 {
+	global $IS_WINDOWS;
+	if ($IS_WINDOWS) {
+		$EX = str_replace('/','\\',$EX);
+		$EX = str_replace('cp ','copy ',$EX);
+		$EX = str_replace('ln -s ','mklink /d ',$EX);
+		if (preg_match('~\\\\([a-zA-Z_]+)?\.[a-zA-Z]+\s~s', $EX)) {
+			$EX = str_replace('mklink /d ','mklink ',$EX);
+		}
+	}
 	echo $EX."\n";
 	echo shell_exec($EX);
 }
