@@ -53,4 +53,4 @@ $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-include_once str_replace('/config/','/config_custom/',__FILE__);
+include_once str_replace(DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR,DIRECTORY_SEPARATOR.'config_custom'.DIRECTORY_SEPARATOR,__FILE__);

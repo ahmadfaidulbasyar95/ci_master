@@ -522,4 +522,4 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
-include_once str_replace('/config/','/config_custom/',__FILE__);
+include_once str_replace(DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR,DIRECTORY_SEPARATOR.'config_custom'.DIRECTORY_SEPARATOR,__FILE__);
