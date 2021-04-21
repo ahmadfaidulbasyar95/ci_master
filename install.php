@@ -108,6 +108,8 @@ if ($PNAME) {
 		
 		install_exec("ln -s ../../$BASENAME/application/.htaccess ./application/");
 		install_exec("ln -s ../../$BASENAME/application/index.html ./application/");
+
+		echo "\nProject Installation Completed\n";
 	}
 }else{
 	echo "Project Installation Canceled\n";
@@ -128,6 +130,6 @@ function install_exec($EX='')
 			}
 		}
 	}
-	echo $EX."\n";
+	echo "\n".$EX."\n";
 	echo shell_exec($EX);
 }
