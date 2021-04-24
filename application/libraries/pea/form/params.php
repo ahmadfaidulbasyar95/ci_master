@@ -12,20 +12,6 @@ class lib_pea_frm_params extends lib_pea_frm_text
 		$this->element = new stdClass();
 	}
 
-	public function setFailMsg($failMsg = '', $index = '')
-	{
-		foreach ($this->element as $value) {
-			$value->setFailMsg($failMsg, $index);
-		}
-	}
-
-	public function setIncludes($file = '', $type = '')
-	{
-		foreach ($this->element as $value) {
-			$value->setIncludes($file, $type);
-		}
-	}
-
 	public function getIncludes()
 	{
 		foreach ($this->element as $key => $value) {
@@ -35,8 +21,8 @@ class lib_pea_frm_params extends lib_pea_frm_text
 				}
 			}
 		}
-		$includes_js  = array();
-		$includes_css = array();
+		$includes_js  = $this->includes_js;
+		$includes_css = $this->includes_css;
 		foreach ($this->element as $value) {
 			$includes = $value->getIncludes();
 			foreach ($includes['js'] as $value1) {
@@ -142,10 +128,17 @@ class lib_pea_frm_params extends lib_pea_frm_text
 
 	public function getForm($index = '', $values = array())
 	{
-		$form = '';
+		if ($this->title and $this->init == 'edit') {
+			$this->formWrap(lib_bsv('<div class="panel panel-default '.$this->attr_class.'" '.$this->attr.'><div class="panel-heading">'.$this->title.'</div><div class="panel-body">', '<div class="card '.$this->attr_class.'" '.$this->attr.'><div class="card-header">'.$this->title.'</div><div class="card-body">'),'</div></div>');
+		}
+		if ($this->init == 'roll') {
+			$this->formWrap('<td><table><tbody><tr>','</tr></tbody></table></td>');
+		}
+		$form = $this->formBefore;
 		foreach ($this->element as $key => $value) {
 			if ($value->getInputPosition() == 'main') $form .= $value->getForm($index, $values);
 		}
+		$form .= $this->formAfter;
 		return $form;
 	}
 }
