@@ -78,7 +78,7 @@ class lib_pea_frm_params extends lib_pea_frm_text
 	{
 		$values  = array();
 		foreach ($this->element as $key => $value) {
-			$values[$key] = $value->getValue();
+			$values[$key] = $value->getValue($index);
 		}		
 		return json_encode($values);
 	}
@@ -95,11 +95,13 @@ class lib_pea_frm_params extends lib_pea_frm_text
 		$values  = array();
 		foreach ($select as $key => $value) {
 			if (!$this->element->$key->getPlainText()) {
-				$values[$key] = $this->element->$key->getPostValue();
+				$values[$key] = $this->element->$key->getPostValue($index);
 				$failMsg      = $this->element->$key->getFailMsg();
 				if ($failMsg) {
 					$this->msg .= $failMsg;
 				}
+			}else{
+				$values[$key] = $this->element->$key->getValue($index);
 			} 
 		}
 		return json_encode($values);

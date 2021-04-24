@@ -20,7 +20,7 @@ $tpl->_notif_model->load(1);
 				<a class="_iframe_maximize" href="#"><i class="fa fa-fw fa-window-restore"></i></a>
 				<a class="_iframe_close" href="#"><i class="fa fa-fw fa-window-close-o"></i></a>
 			</div>
-			<iframe class="_iframe_body" src="{url}"></iframe>
+			<iframe class="_iframe_body" src="{url}" allowfullscreen="allowfullscreen" webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
 			<div class="_iframe_body_clicker"></div>
 		</div>
 	</div>
