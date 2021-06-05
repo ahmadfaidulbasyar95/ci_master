@@ -7,7 +7,9 @@ $tpl->setLayout('blank');
 		<div class="container" style="max-width: 500px;">
 			<div class="row">
 				<div class="col-xs-12">
-					<img src="<?php echo $tpl->_url.'files/uploads/'.$tpl->config('site','logo'); ?>" class="img-responsive" alt="Image" style="padding: 20px 20% 20% 20%;-webkit-filter: drop-shadow(0 0px 15px white);">
+					<a href="<?php echo $tpl->_url; ?>">
+						<img src="<?php echo $tpl->_url.'files/uploads/'.$tpl->config('site','logo'); ?>" class="img-responsive" alt="Image" style="padding: 20px 20% 20% 20%;-webkit-filter: drop-shadow(0 0px 15px white);">
+					</a>
 				</div>
 			</div>
 			<form action="" method="POST" role="form" style="background: #000000a3;padding: 15px;">
