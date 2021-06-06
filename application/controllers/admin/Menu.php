@@ -21,6 +21,23 @@ class Menu extends CI_Controller
 		$id = @intval($_GET['id']);
 		$this->_tpl_model->lib('tabs');
 
+		if ($id) {
+			$par_id_search = $id;
+			$nav_adds      = array();
+			while ($par_id_search) {
+				$par_data = $this->_tpl_model->_db_model->getRow('SELECT `par_id`,`title` FROM `menu` WHERE `id`='.$par_id_search);
+				if ($par_data) {
+					$nav_adds[]    = array($par_id_search,$par_data['title']);
+					$par_id_search = $par_data['par_id'];
+				}else{
+					$par_id_search = 0;
+				}
+			}
+			foreach (array_reverse($nav_adds) as $value) {
+				$this->_tpl_model->nav_add('admin/menu?id='.$value[0], $value[1]);
+			}
+		}
+
 		$form = $this->_pea_model->newForm('menu');
 		$form->initSearch();
 
@@ -158,7 +175,7 @@ class Menu extends CI_Controller
 				foreach ($child as $value) {
 					menu_on_delete($value, $f);
 				}
-				$f->db->exec('DELETE FROM `menu` WHERE `id` IN('.implode(',', $child).')');
+				$f->db->exec('DELETE FROM `menu` WHERE `par_id`='.$id);
 			}
 		}
 		$form->roll->onDelete('menu_on_delete');
