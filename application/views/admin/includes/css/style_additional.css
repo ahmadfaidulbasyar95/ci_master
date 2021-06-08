@@ -320,3 +320,7 @@ a {
 .highcharts-credits {
 	display: none;
 }
+#modal-modal_processing .close:hover {
+ background: red !important;
+ color: white;
+}
