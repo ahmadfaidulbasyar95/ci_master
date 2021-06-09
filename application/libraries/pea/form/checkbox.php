@@ -18,6 +18,9 @@ class lib_pea_frm_checkbox extends lib_pea_frm_text
 
 	public function getRollTitle($sortConfig = array(), $active = '', $is_desc = '')
 	{
+		if ($this->isPlainText) {
+			return parent::getRollTitle($sortConfig, $active, $is_desc);
+		}
 		return '
 <div class="'.lib_bsv('checkbox', 'form-check').' checkall" style="float: left;margin: 0;">
 	<label>

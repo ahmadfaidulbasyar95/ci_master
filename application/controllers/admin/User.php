@@ -14,6 +14,8 @@ class User extends CI_Controller
 		$this->_tpl_model->menu_unprotect('usr');
 		$this->_tpl_model->menu_unprotect('pwd');
 		$this->_tpl_model->menu_unprotect('notif');
+		$this->_tpl_model->menu_unprotect('address');
+		$this->_tpl_model->menu_unprotect('address_form');
 
 		if (!in_array($this->_tpl_model->method, ['login','logout'])) {
 			$this->_tpl_model->user_login_validate(1);
@@ -44,7 +46,7 @@ class User extends CI_Controller
 
 		$form->search->addInput('keyword', 'keyword');
 		$form->search->input->keyword->setTitle('Search');
-		$form->search->input->keyword->addSearchField('name,username,email,phone,province_title,city_title,district_title,village_title,address');
+		$form->search->input->keyword->addSearchField('name,username,email,phone,province_title,city_title,district_title,village_title,address,zip_code');
 				
 		$add_sql = $form->search->action();
 		$keyword = $form->search->keyword();
@@ -110,7 +112,7 @@ class User extends CI_Controller
 
 		$form->roll->addInput('location_detail', 'sqlplaintext');
 		$form->roll->input->location_detail->setTitle('Address');
-		$form->roll->input->location_detail->setFieldName('CONCAT(`address`," ",`village_title`,", ",`district_title`,", ",`city_title`,", ",`province_title`)');
+		$form->roll->input->location_detail->setFieldName('CONCAT(`address`," ",`village_title`,", ",`district_title`,", ",`city_title`,", ",`province_title`,", ",`zip_code`)');
 		$form->roll->input->location_detail->setDisplayColumn();
 
 		$form->roll->addInput('active', 'checkbox');
@@ -326,11 +328,19 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->village_id->setDependent( $form->edit->input->location_input->element->district_id->getName(), 'par_id' );
 		$form->edit->input->location_input->element->village_id->addOption( '-- Select Village --', '' );
 		$form->edit->input->location_input->element->village_id->setRequire();
+			
+		$form->edit->addInput('zip_code','text');
+		$form->edit->input->zip_code->setTitle('Zip Code');
+		$form->edit->input->zip_code->setType('number');
+		$form->edit->input->zip_code->setRequire();
 
 		$form->edit->addInput('address', 'text');
 		$form->edit->input->address->setTitle('Address');
 		$form->edit->input->address->setRequire();
 		$form->edit->input->address->addTip('Jln. Jendral Sudirman No.123 RT.05 RW.06');
+		if ($this->_tpl_model->method == 'profile') {
+			$form->edit->input->address->addTip('<br>'.$this->_tpl_model->button('admin/user/address', 'Manage Address List', 'far fa-address-book', 'modal_reload modal_large', '', 1));
+		}
 
 		$form->edit->addInput('active', 'checkbox');
 		$form->edit->input->active->setTitle('Active');
@@ -374,6 +384,26 @@ class User extends CI_Controller
 					'district_title' => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['district_id']),
 					'village_title'  => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['village_id']),
 				);
+				$data_address                = $data_update;
+				$data_address['province_id'] = $data['province_id'];
+				$data_address['city_id']     = $data['city_id'];
+				$data_address['district_id'] = $data['district_id'];
+				$data_address['village_id']  = $data['village_id'];
+				$data_address['zip_code']    = $data['zip_code'];
+				$data_address['address']     = $data['address'];
+				$data_address['email']       = $data['email'];
+				$data_address['phone']       = $data['phone'];
+				$data_address['title']       = 'Utama';
+
+				$address_id = $f->db->getOne('SELECT `id` FROM `user_address` WHERE `user_id`='.$id.' AND `main`=1');
+				if ($address_id) {
+					$f->db->update('user_address', $data_address, $address_id);
+				}else{
+					$data_address['user_id'] = $id;
+					$data_address['main']    = 1;
+					$f->db->insert('user_address', $data_address);
+				}
+
 				$f->db->update('user', $data_update, $id);
 			}
 		});
@@ -732,6 +762,196 @@ class User extends CI_Controller
 		echo $form->roll->getForm();
 
 		echo '</div>';
+		$this->_tpl_model->show();
+	}
+
+	function address()
+	{
+		$_GET['return'] = '';
+		$this->_tpl_model->setLayout('blank');
+
+		$form = $this->_pea_model->newForm('user_address');
+
+		$form->initSearch();
+
+		$form->search->addInput('keyword', 'keyword');
+		$form->search->input->keyword->setTitle('Search');
+		$form->search->input->keyword->addSearchField('title,email,phone,province_title,city_title,district_title,village_title,address,zip_code');
+		
+		$form->search->addExtraField('user_id', $this->_tpl_model->user['id']);
+
+		$add_sql = $form->search->action();
+		$keyword = $form->search->keyword();
+		
+		$form->initRoll($add_sql.' ORDER BY `id` DESC');
+
+		$form->roll->setHeader('Manage Address List');
+		$form->roll->bodyWrap($form->roll->formBodyBefore.$form->search->getForm().$this->_tpl_model->button('admin/user/address_form', 'Add Address', 'fa fa-plus', 'modal_reload', 'style="margin-right: 10px; margin-bottom: 15px;"', 1), $form->roll->formBodyAfter);
+
+		$form->roll->addInput('title', 'sqllinks');
+		$form->roll->input->title->setTitle('Title');
+		$form->roll->input->title->setLinks('admin/user/address_form');
+		$form->roll->input->title->setModal();
+		$form->roll->input->title->setModalReload();
+		$form->roll->input->title->setDisplayColumn();
+
+		$form->roll->addInput('email', 'sqlplaintext');
+		$form->roll->input->email->setTitle('Email');
+		$form->roll->input->email->setDisplayColumn();
+
+		$form->roll->addInput('phone', 'sqlplaintext');
+		$form->roll->input->phone->setTitle('Phone');
+		$form->roll->input->phone->setDisplayColumn();
+
+		$form->roll->addInput('location_detail', 'sqlplaintext');
+		$form->roll->input->location_detail->setTitle('Address');
+		$form->roll->input->location_detail->setFieldName('CONCAT(`address`," ",`village_title`,", ",`district_title`,", ",`city_title`,", ",`province_title`,", ",`zip_code`)');
+		$form->roll->input->location_detail->setDisplayColumn();
+
+		$form->roll->addInput('main', 'checkbox');
+		$form->roll->input->main->setTitle('Main Address');
+		$form->roll->input->main->setCaption('yes');
+		$form->roll->input->main->setDisplayColumn();
+		$form->roll->input->main->setPlainText();
+
+		$form->roll->addInput('created', 'datetime');
+		$form->roll->input->created->setTitle('Created');
+		$form->roll->input->created->setPlainText();
+		$form->roll->input->created->setDisplayColumn();
+
+		$form->roll->addInput('updated', 'datetime');
+		$form->roll->input->updated->setTitle('Updated');
+		$form->roll->input->updated->setPlainText();
+		$form->roll->input->updated->setDisplayColumn(false);
+		
+		$form->roll->setRollDeleteCondition('{main} == 1');
+
+		$form->roll->setSaveTool(false);
+		$form->roll->addReportAll();
+		$form->roll->action();
+		echo $form->roll->getForm();
+		$this->_tpl_model->show();
+	}
+	function address_form()
+	{
+		$id   = @intval($_GET['id']);
+		$form = $this->_pea_model->newForm('user_address');
+
+		$this->_tpl_model->js('controllers/admin/user_address.js');
+
+		$_GET['return'] = '';
+		$this->_tpl_model->setLayout('blank');
+
+		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
+		
+		$form->edit->setHeader(!empty($id) ? 'Edit Address' : 'Add Address');
+		$form->edit->setModalResponsive();
+		
+		$form->edit->addInput('title','text');
+		$form->edit->input->title->setTitle('Title');
+		$form->edit->input->title->setRequire();
+
+		$form->edit->addInput('email','text');
+		$form->edit->input->email->setTitle('Email');
+		$form->edit->input->email->setType('email');
+		$form->edit->input->email->setRequire();
+		$form->edit->input->email->addAttr('id="i_email"');
+		
+		$form->edit->addInput('phone','text');
+		$form->edit->input->phone->setTitle('Phone');
+		$form->edit->input->phone->setType('tel');
+		$form->edit->input->phone->setRequire();
+		$form->edit->input->phone->addAttr('id="i_phone"');
+
+		$form->edit->addInput('location_input', 'multiinput');
+		$form->edit->input->location_input->setTitle('Location');
+
+		$form->edit->input->location_input->addInput('province_id', 'selecttable');
+		$form->edit->input->location_input->element->province_id->setTitle('Province');
+		$form->edit->input->location_input->element->province_id->setReferenceTable('location');
+		$form->edit->input->location_input->element->province_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_input->element->province_id->setReferenceCondition( '`type_id`=1' );
+		$form->edit->input->location_input->element->province_id->addOption( '-- Select Province --', '' );
+		$form->edit->input->location_input->element->province_id->setRequire();
+
+		$form->edit->input->location_input->addInput('city_id', 'selecttable');
+		$form->edit->input->location_input->element->city_id->setTitle('City');
+		$form->edit->input->location_input->element->city_id->setReferenceTable('location');
+		$form->edit->input->location_input->element->city_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_input->element->city_id->setReferenceCondition( '`type_id`=2' );
+		$form->edit->input->location_input->element->city_id->setDependent( $form->edit->input->location_input->element->province_id->getName(), 'par_id' );
+		$form->edit->input->location_input->element->city_id->addOption( '-- Select City --', '' );
+		$form->edit->input->location_input->element->city_id->setRequire();
+
+		$form->edit->input->location_input->addInput('district_id', 'selecttable');
+		$form->edit->input->location_input->element->district_id->setTitle('District');
+		$form->edit->input->location_input->element->district_id->setReferenceTable('location');
+		$form->edit->input->location_input->element->district_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_input->element->district_id->setReferenceCondition( '`type_id`=3' );
+		$form->edit->input->location_input->element->district_id->setDependent( $form->edit->input->location_input->element->city_id->getName(), 'par_id' );
+		$form->edit->input->location_input->element->district_id->addOption( '-- Select District --', '' );
+		$form->edit->input->location_input->element->district_id->setRequire();
+
+		$form->edit->input->location_input->addInput('village_id', 'selecttable');
+		$form->edit->input->location_input->element->village_id->setTitle('Village');
+		$form->edit->input->location_input->element->village_id->setReferenceTable('location');
+		$form->edit->input->location_input->element->village_id->setReferenceField( 'title', 'id' );
+		$form->edit->input->location_input->element->village_id->setReferenceCondition( '`type_id`=4' );
+		$form->edit->input->location_input->element->village_id->setDependent( $form->edit->input->location_input->element->district_id->getName(), 'par_id' );
+		$form->edit->input->location_input->element->village_id->addOption( '-- Select Village --', '' );
+		$form->edit->input->location_input->element->village_id->setRequire();
+			
+		$form->edit->addInput('zip_code','text');
+		$form->edit->input->zip_code->setTitle('Zip Code');
+		$form->edit->input->zip_code->setType('number');
+		$form->edit->input->zip_code->setRequire();
+
+		$form->edit->addInput('address', 'text');
+		$form->edit->input->address->setTitle('Address');
+		$form->edit->input->address->setRequire();
+		$form->edit->input->address->addTip('Jln. Jendral Sudirman No.123 RT.05 RW.06');
+
+		$form->edit->addInput('main', 'checkbox');
+		$form->edit->input->main->setTitle('Main Address');
+		$form->edit->input->main->setCaption('yes');
+		$form->edit->input->main->setDefaultValue(0);
+		$form->edit->input->main->addAttr('id="i_main"');
+
+		$form->edit->addExtraField('user_id', $this->_tpl_model->user['id']);
+		
+		$form->edit->onSave(function($id, $f)
+		{
+			$data = $f->db->getRow('SELECT * FROM `user_address` WHERE `id`='.$id);
+			if ($data) {
+				$data_update = array(
+					'province_title' => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['province_id']),
+					'city_title'     => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['city_id']),
+					'district_title' => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['district_id']),
+					'village_title'  => $f->db->getOne('SELECT `title` FROM `location` WHERE `id`='.$data['village_id']),
+				);
+				if ($data['main']) {
+					$user_update                = $data_update;
+					$user_update['province_id'] = $data['province_id'];
+					$user_update['city_id']     = $data['city_id'];
+					$user_update['district_id'] = $data['district_id'];
+					$user_update['village_id']  = $data['village_id'];
+					$user_update['zip_code']    = $data['zip_code'];
+					$user_update['address']     = $data['address'];
+					
+					$f->db->update('user', $user_update, $data['user_id']);
+
+					$data_user = $f->db->getRow('SELECT `email`,`phone` FROM `user` WHERE `id`='.$data['user_id']);
+
+					$data_update['email'] = $data_user['email'];
+					$data_update['phone'] = $data_user['phone'];
+
+					$f->db->update('user_address', ['main' => 0], '`user_id`='.$data['user_id'].' AND `id`!='.$id);
+				}
+				$f->db->update('user_address', $data_update, $id);
+			}
+		});
+		$form->edit->action();
+		echo $form->edit->getForm();
 		$this->_tpl_model->show();
 	}
 }
