@@ -668,7 +668,7 @@ class User extends CI_Controller
 
 	function login()
 	{
-		if ($this->_tpl_model->_url_current != $this->_tpl_model->_url.$this->_tpl_model->config('dashboard', 'login_uri')) {
+		if ($this->_tpl_model->_url_current != $this->_tpl_model->_url.$this->_tpl_model->config('dashboard', 'login_uri') and !isset($_GET['acc'])) {
 			show_404();
 		}
 		$this->load->model('_encrypt_model');
@@ -694,6 +694,15 @@ class User extends CI_Controller
 				$input['msg'] = $this->_tpl_model->msg('Token Expired', 'danger');
 			}
 		}
+		
+		if (isset($_GET['acc'])) {
+			if ($this->_tpl_model->user_login_with($_GET['acc'], 1)) {
+				redirect($this->_tpl_model->_url.'admin/dashboard');
+			}else{
+				$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
+			}
+		}
+
 		$input['token'] = $this->_encrypt_model->encodeToken($input['usr'].'|'.$input['pwd'], 2);
 
 		$this->_tpl_model->setLayout('blank');

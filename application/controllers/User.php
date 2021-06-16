@@ -423,6 +423,25 @@ class User extends CI_Controller
 				$input['msg'] = $this->_tpl_model->msg('Token Expired', 'danger');
 			}
 		}
+		
+		if (isset($_GET['acc'])) {
+			if ($this->_tpl_model->user_login_with($_GET['acc'])) {
+				if (empty($_SESSION['user_return'])) {
+					$url = $this->_tpl_model->_url.$this->_tpl_model->config('user','home_uri');
+				}else{
+					$url = $_SESSION['user_return'];
+					unset($_SESSION['user_return']);
+					if (isset($_SESSION['user_post'])) {
+						$_SESSION['user_post_load'] = $_SESSION['user_post'];
+						unset($_SESSION['user_post']);
+					}
+				}
+				redirect($url);
+			}else{
+				$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
+			}
+		}
+		
 		$input['token'] = $this->_encrypt_model->encodeToken($input['usr'].'|'.$input['pwd'], 2);
 
 		$this->_tpl_model->view('User/login', ['input' => $input]);

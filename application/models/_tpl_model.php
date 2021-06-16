@@ -553,6 +553,33 @@ class _tpl_model extends CI_Model {
 			return $this->user;
 		}
 	}
+	public function user_login_with($provider='', $type = 0)
+	{
+		$email = '';
+		switch ($provider) {
+			case 'google':
+				if (isset($_SESSION['user_login_google'])) {
+					$email = $_SESSION['user_login_google']['email'];
+					unset($_SESSION['user_login_google']);
+				}else{
+					redirect($this->_url.'_T/login_google?return='.urlencode($this->_url_current));
+				}
+				break;
+			
+			default:
+				show_error('Login Provider Unavailable', 401, '401 Unauthorized');
+				break;
+		}
+		if ($email) {
+			$dt = $this->_db_model->getRow('SELECT `username`,`password` FROM `user` WHERE `email`="'.addslashes($email).'"');
+			if ($dt) {
+				$this->load->model('_encrypt_model');
+				return $this->user_login($dt['username'], $this->_encrypt_model->decode($dt['password']), $type);
+			}else{
+				return $this->user_login('', '', $type);
+			}
+		}
+	}
 	public function user_logout($type = 0)
 	{
 		if (isset($_SESSION['user_login'][$type])) {

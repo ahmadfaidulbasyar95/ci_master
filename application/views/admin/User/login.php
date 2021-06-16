@@ -20,6 +20,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				</div>
 				<input type="hidden" name="token" value="<?php echo $input['token']; ?>">
 				<button type="submit" class="btn btn-info btn-block">Submit</button>
+				<div class="form-group" style="text-align: center;">
+					<h4 style="color: white;">Or</h4>
+					<a class="btn btn-default btn-block" href="<?php echo $tpl->_url.$tpl->config('dashboard', 'login_uri').'?acc=google'; ?>">Sign In With <i class="fa fa-google"></i>oogle</a>
+				</div>
 			</form>
 		</div>
 	</div>
