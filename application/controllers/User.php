@@ -518,7 +518,7 @@ class User extends CI_Controller
 		$form->roll->input->title->setTitle('Title');
 		$form->roll->input->title->setDisplayFunction(function($value='', $id=0)
 		{
-			return '<a href="'.$this->_tpl_model->_url.'_Pea/notif_detail?id='.$id.'&type=0">'.$value.'</a>';
+			return '<a href="'.$this->_tpl_model->_url.'_T/notif_detail?id='.$id.'&type=0">'.$value.'</a>';
 		});
 
 		$form->roll->addInput('info', 'sqlplaintext');

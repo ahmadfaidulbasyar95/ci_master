@@ -1,7 +1,7 @@
 (function() {
 	window.addEventListener('load', function() { 
 		$.ajax({
-			url: _URL+'_Pea/ckeditor',
+			url: _URL+'_T/ckeditor',
 			type: 'GET',
 			dataType: 'json',
 			data: {},

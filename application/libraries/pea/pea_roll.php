@@ -357,7 +357,7 @@ class lib_pea_roll extends lib_pea_edit
 							$reportPath = $this->_root.'files/cache/report/';
 							$reportFile = time().'_'.mt_rand(10000000,999999999);
 							lib_file_write($reportPath.$reportFile.'.json', json_encode($reportOutput));
-							redirect($this->url.'_Pea/report/'.$_POST[$this->table.'_'.$this->saveButtonName.'_report'].'/'.$reportFile);
+							redirect($this->url.'_T/report/'.$_POST[$this->table.'_'.$this->saveButtonName.'_report'].'/'.$reportFile);
 						}
 					}
 				}

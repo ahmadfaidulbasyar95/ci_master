@@ -53,7 +53,7 @@ if ($PNAME) {
 		
 		install_exec("mkdir application/controllers");
 		install_exec("ln -s ../../../$BASENAME/application/controllers/index.html ./application/controllers/");
-		install_exec("ln -s ../../../$BASENAME/application/controllers/_Pea.php ./application/controllers/");
+		install_exec("ln -s ../../../$BASENAME/application/controllers/_T.php ./application/controllers/");
 		install_exec("ln -s ../../../$BASENAME/application/controllers/User.php ./application/controllers/");
 		install_exec("ln -s ../../../$BASENAME/application/controllers/Welcome.php ./application/controllers/");
 		install_exec("ln -s ../../../$BASENAME/application/controllers/admin ./application/controllers/");

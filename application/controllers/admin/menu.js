@@ -22,7 +22,7 @@
 			if (u.length) {
 				if (v) {
 					$.ajax({
-						url: _URL+'_Pea/menu',
+						url: _URL+'_T/menu',
 						type: 'POST',
 						dataType: 'html',
 						data: {v: v, id: u.data('id')},
@@ -40,7 +40,7 @@
 			var v = e.val();
 			if (v) {
 				$.ajax({
-					url: _URL+'_Pea/menu',
+					url: _URL+'_T/menu',
 					type: 'POST',
 					dataType: 'html',
 					data: {v: v, id: e.data('id')},

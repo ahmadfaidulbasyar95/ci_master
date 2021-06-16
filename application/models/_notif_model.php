@@ -22,7 +22,7 @@ class _notif_model extends CI_Model {
 					function _notif_load() {
 						var type = '<?php echo $type; ?>';
 						$.ajax({
-							url: _URL+'_Pea/notif',
+							url: _URL+'_T/notif',
 							type: 'POST',
 							dataType: 'json',
 							data: {
@@ -37,7 +37,7 @@ class _notif_model extends CI_Model {
 									if ($.inArray(val.id, _notif_show) == -1) {
 										var d = new Date(val.created);
 										_notif_show.push(val.id);
-										_notif_add += '<li class="active"><a href="'+_URL+'_Pea/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'<br><small><i>'+d.toDateString()+' '+d.toLocaleTimeString()+'</i></small></a></li>';
+										_notif_add += '<li class="active"><a href="'+_URL+'_T/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'<br><small><i>'+d.toDateString()+' '+d.toLocaleTimeString()+'</i></small></a></li>';
 									}
 								});
 								_notif_badge.html((out.unread.length > 9) ? '9+' : out.unread.length).show();
@@ -48,7 +48,7 @@ class _notif_model extends CI_Model {
 								if ($.inArray(val.id, _notif_show) == -1) {
 									var d = new Date(val.created);
 									_notif_show.push(val.id);
-									_notif_add += '<li><a href="'+_URL+'_Pea/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'<br><small><i>'+d.toDateString()+' '+d.toLocaleTimeString()+'</i></small></a></li>';
+									_notif_add += '<li><a href="'+_URL+'_T/notif_detail?id='+val.id+'&type='+type+'"'+attr+'><b>'+val.title+'</b><br>'+val.info+'<br><small><i>'+d.toDateString()+' '+d.toLocaleTimeString()+'</i></small></a></li>';
 								}
 							});
 							_notif.prepend(_notif_add);

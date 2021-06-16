@@ -31,7 +31,7 @@
 					var v = $(this).val(); 
 					if (v) {
 						$.ajax({
-							url: _URL+'_Pea/getdata',
+							url: _URL+'_T/getdata',
 							type: 'POST',
 							dataType: 'json',
 							data: {token: token, v: v},
