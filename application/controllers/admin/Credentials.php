@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Notif extends CI_Controller 
+class Credentials extends CI_Controller 
 {
 
 	function __construct()
@@ -16,11 +16,11 @@ class Notif extends CI_Controller
 		$this->_tpl_model->nav_add('admin/dashboard/main', '<i class="fa fa-home"></i> Home', '0');
 	}
 
-	function telegram_config()
+	function telegram()
 	{
 		$form = $this->_pea_model->newForm('config');
 
-		$form->initEdit('WHERE `name`="notif_telegram"', 'name', 1);		
+		$form->initEdit('WHERE `name`="telegram"', 'name', 1);		
 		$form->edit->setHeader('Telegram Configuration');
 
 		$form->edit->addInput('value', 'params');
@@ -45,7 +45,30 @@ class Notif extends CI_Controller
 			$this->_tpl_model->clean_cache();
 		}
 
-		$this->_tpl_model->js('controllers/admin/notif_telegram_config.js');
+		$this->_tpl_model->js('controllers/admin/credentials_telegram.js');
+		$this->_tpl_model->show();
+	}
+
+	function google()
+	{
+		$form = $this->_pea_model->newForm('config');
+
+		$form->initEdit('WHERE `name`="google"', 'name', 1);		
+		$form->edit->setHeader('Google Configuration');
+
+		$form->edit->addInput('value', 'params');
+		$form->edit->input->value->setTitle('');
+
+		$form->edit->input->value->addInput('client_id', 'text');
+		$form->edit->input->value->element->client_id->setTitle('Client ID');
+
+		$form->edit->action();
+		echo $form->edit->getForm();
+
+		if ($_POST) {
+			$this->_tpl_model->clean_cache();
+		}
+
 		$this->_tpl_model->show();
 	}
 

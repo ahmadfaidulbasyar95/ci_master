@@ -20,7 +20,7 @@ if ($data) {
 	if ($data_send) {
 		$this->load->model('_tpl_model');
 
-		$telegram_conf = $this->_tpl_model->config('notif_telegram');
+		$telegram_conf = $this->_tpl_model->config('telegram');
 		
 		$ch = curl_init('https://api.telegram.org/bot'.$telegram_conf['token'].'/sendMessage');
 		curl_setopt($ch, CURLOPT_HEADER, false);

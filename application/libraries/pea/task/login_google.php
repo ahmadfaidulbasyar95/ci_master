@@ -18,6 +18,9 @@ if (isset($_GET['code'])) {
 		redirect($return);
 	}
 }else{
+	$this->load->model('_tpl_model');
+	$google_conf = $this->_tpl_model->config('google');
+
 	if (isset($_GET['return'])) {
 		$_SESSION['user_login_google_return'] = $_GET['return'];
 	}
@@ -36,7 +39,7 @@ if (isset($_GET['code'])) {
 				if (result.id_token == undefined) {
 					gapi.load('auth2', function() {
 						auth2 = gapi.auth2.init({
-							client_id: '2692769944-qs2v2o9tga5i66797jh01p8f7gauujno.apps.googleusercontent.com',
+							client_id: '<?php echo $google_conf['client_id']; ?>',
 							ux_mode: 'redirect',
 							redirect_uri: '<?php echo $this->_pea_model->_url; ?>_T/login_google'
 						});

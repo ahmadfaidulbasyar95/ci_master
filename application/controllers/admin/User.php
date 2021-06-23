@@ -252,7 +252,7 @@ class User extends CI_Controller
 				$form->edit->input->phone->addTip($this->_tpl_model->button('admin/user/usr?id='.$id.'&act=phone&return='.urlencode($this->_tpl_model->_url_current), 'Change', 'fa fa-repeat', 'btn-sm'));
 			}
 
-			$telegram_conf = $this->_tpl_model->config('notif_telegram');
+			$telegram_conf = $this->_tpl_model->config('telegram');
 			if (!empty($telegram_conf['active'])) {
 				$form->edit->addInput('telegram_data', 'sqlplaintext');
 				$form->edit->input->telegram_data->setTitle('Telegram');
@@ -528,7 +528,7 @@ class User extends CI_Controller
 					$form->edit->addInput('telegram_data','hidden');
 					$form->edit->input->telegram_data->addAttr('id="telegram_data"');
 
-					$telegram_conf = $this->_tpl_model->config('notif_telegram');
+					$telegram_conf = $this->_tpl_model->config('telegram');
 					
 					if ($id == $this->_tpl_model->user['id'] and !empty($telegram_conf['active'])) {
 						$telegram_conf['data'] = @(array)json_decode($telegram_conf['data']);
