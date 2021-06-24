@@ -43,7 +43,7 @@ $tpl->_notif_model->load(1);
 	?>
 </div>
 <div id="_taskbar">
-	<a id="_start" href="#"><i class="fa fa-bars fa-fw"></i> <span>Start</span></a>
+	<a id="_start" href="#"><i class="fas fa-ellipsis-v fa-fw"></i> <span>Start</span></a>
 	<div id="_notif" class="dropup menu_close">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="far fa-fw fa-bell"></i><span class="badge" style="background-color: red;display: none;" id="notif_badge">9+</span></a>
 		<ul class="dropdown-menu" id="notif">
