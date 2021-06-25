@@ -179,6 +179,12 @@ class Credentials extends CI_Controller
 		$form->roll->setSaveTool(false);
 		$form->roll->action();
 		echo $form->roll->getForm();
+
+		if ($_POST) {
+			$tpls = $this->_db_model->getAssoc('SELECT `name`,`from_name`,`from_email`,`mailtype`,`subject`,`message` FROM `config_email`');
+			lib_file_write($this->_pea_model->_root.'files/uploads/email_template', json_encode($tpls));
+		}
+
 		$this->_tpl_model->show();
 	}
 	function email_template_form()
@@ -231,6 +237,12 @@ class Credentials extends CI_Controller
 		$form->edit->action();
 		$this->_tpl_model->js('controllers/admin/credentials_email_template_form.js');
 		echo $form->edit->getForm();
+
+		if ($_POST) {
+			$tpls = $this->_db_model->getAssoc('SELECT `name`,`from_name`,`from_email`,`mailtype`,`subject`,`message` FROM `config_email`');
+			lib_file_write($this->_pea_model->_root.'files/uploads/email_template', json_encode($tpls));
+		}
+
 		$this->_tpl_model->show();
 	}
 

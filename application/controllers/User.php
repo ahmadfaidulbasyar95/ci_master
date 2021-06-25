@@ -10,7 +10,7 @@ class User extends CI_Controller
 		$this->load->model('_pea_model');
 		$this->load->model('_tpl_model');
 
-		if (!in_array($this->_tpl_model->method, ['login','logout','register','detail'])) {
+		if (!in_array($this->_tpl_model->method, ['login','logout','register','forget','detail'])) {
 			$this->_tpl_model->user_login_validate();
 		}
 	}
@@ -451,6 +451,13 @@ class User extends CI_Controller
 	{
 		$this->_tpl_model->user_logout();
 		redirect($this->_tpl_model->_url.'user/login');
+	}
+	function forget()
+	{
+		$this->load->model('_notif_model');
+		$this->_notif_model->sendEmail('forget_password', 'ahmadfaidulbasyar95@gmail.com', array(
+			'code' => 657898
+		));
 	}
 
 	function detail()

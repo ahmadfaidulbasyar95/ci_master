@@ -112,4 +112,17 @@ class _notif_model extends CI_Model {
 			));
 		}
 	}
+
+	function sendEmail($tpl_id = '', $to = '', $data = array())
+	{
+		include_once __DIR__.'/../libraries/file.php';
+
+		$path = $this->_pea_model->_root.'files/notif_email/';
+
+		lib_file_write($path.time().'_'.mt_rand(1,999), json_encode(array(
+			'tpl_id' => $tpl_id,
+			'to'     => $to,
+			'data'   => $data,
+		)));
+	}
 }
