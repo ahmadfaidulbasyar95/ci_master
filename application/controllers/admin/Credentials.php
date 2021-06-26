@@ -106,6 +106,7 @@ class Credentials extends CI_Controller
 
 		$form->edit->input->value->addInput('smtp_pass', 'text');
 		$form->edit->input->value->element->smtp_pass->setTitle('SMTP Password');
+		$form->edit->input->value->element->smtp_pass->setType('password');
 
 		$form->edit->input->value->addInput('smtp_port', 'text');
 		$form->edit->input->value->element->smtp_port->setTitle('SMTP Port');
@@ -232,7 +233,15 @@ class Credentials extends CI_Controller
 		$form->edit->input->message->setTitle('Message');
 		$form->edit->input->message->setRequire();
 		$form->edit->input->message->setHtmlEditor();
-		$form->edit->input->message->addAttr('rel="s_message"');
+		$form->edit->input->message->addAttr('rel="s_message" rows="20"');
+
+		$mailtype = $form->edit->input->mailtype->getName();
+		$message  = $form->edit->input->message->getName();
+		if (!empty($_POST[$mailtype])) {
+			if ($_POST[$mailtype] == 1) {
+				$_POST[$message] = $_POST['__'.$message];
+			}
+		}
 
 		$form->edit->action();
 		$this->_tpl_model->js('controllers/admin/credentials_email_template_form.js');

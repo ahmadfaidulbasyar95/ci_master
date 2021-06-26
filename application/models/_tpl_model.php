@@ -553,7 +553,7 @@ class _tpl_model extends CI_Model {
 			return $this->user;
 		}
 	}
-	public function user_login_with($provider='', $type = 0)
+	public function user_login_with($provider = '', $type = 0)
 	{
 		$email = '';
 		switch ($provider) {
@@ -577,6 +577,38 @@ class _tpl_model extends CI_Model {
 				return $this->user_login($dt['username'], $this->_encrypt_model->decode($dt['password']), $type);
 			}else{
 				return $this->user_login('', '', $type);
+			}
+		}
+	}
+	public function user_forget_pwd($provider = '', $input = '', $code = '')
+	{
+		if (isset($_SESSION['user_forget_pwd'])) {
+			if ($code) {
+				if ($code == $_SESSION['user_forget_pwd']) {
+					
+				}else{
+					$this->user_msg('Invalid code');
+				}
+			}
+		}else{
+			if ($input) {
+				switch ($provider) {
+					case 'email':
+						if (filter_var($input, FILTER_VALIDATE_EMAIL)) {
+							$_SESSION['user_forget_pwd'] = mt_rand(100000,999999);
+							$this->load->model('_notif_model');
+							$this->_notif_model->sendEmail('forget_password', $input, array(
+								'code' => $_SESSION['user_forget_pwd']
+							));
+						}else{
+							$this->user_msg('Please insert a valid email address');
+						}
+						break;
+					
+					default:
+						show_error('Forget Password Provider Unavailable', 401, '401 Unauthorized');
+						break;
+				}
 			}
 		}
 	}

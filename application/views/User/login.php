@@ -12,7 +12,7 @@ $tpl->setLayout('blank');
 					</a>
 				</div>
 			</div>
-			<form action="" method="POST" role="form" style="background: #000000a3;padding: 15px;">
+			<form action="<?php echo $tpl->_url.'user/login'; ?>" method="POST" role="form" style="background: #000000a3;padding: 15px;">
 				<legend style="color: white;">Masuk</legend>
 				<?php echo $input['msg']; ?>
 				<div class="form-group">
@@ -22,10 +22,13 @@ $tpl->setLayout('blank');
 					<input name="<?php echo $input['pwd']; ?>" type="password" class="form-control" placeholder="Password" required="required">
 				</div>
 				<div class="form-group">
+					<p><a href="<?php echo $tpl->_url.'user/forget'; ?>" style="color: white;"><b>Lupa password ?</b></a></p>
+				</div>
+				<div class="form-group">
 					<input type="hidden" name="token" value="<?php echo $input['token']; ?>">
 					<button type="submit" class="btn btn-info btn-block">Submit</button>
 				</div>
-				<p style="color: white">Belum punya akun ? daftar <a href="<?php echo $tpl->_url.'user/register'; ?>" class="text-warning"><b>disini</b></a></p>
+				<p style="color: white">Belum punya akun ? <a href="<?php echo $tpl->_url.'user/register'; ?>" style="color: white"><b>daftar disini</b></a></p>
 				<div class="form-group" style="text-align: center;">
 					<h4 style="color: white;">Atau</h4>
 					<a class="btn btn-default btn-block" href="<?php echo $tpl->_url.'user/login?acc=google'; ?>">Masuk dengan <i class="fa fa-google"></i>oogle</a>

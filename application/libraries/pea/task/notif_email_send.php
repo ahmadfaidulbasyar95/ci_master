@@ -19,25 +19,22 @@ if ($data) {
 	}
 	if ($data_send) {
 		$this->load->model('_tpl_model');
+		$this->load->library('email');
 
 		$email_conf = $this->_tpl_model->config('email');
 		$email_tpls = json_decode(file_get_contents($this->_pea_model->_root.'files/uploads/email_template'), 1);
 		
-		$this->load->library('email');
+		$email_conf_load = array(
+			'protocol' => $email_conf['protocol'],
+			'newline'  => "\r\n"
+		);
 		if ($email_conf['protocol'] == 'smtp') {
-			$email_conf_load = array(
-				'protocol'     => $email_conf['protocol'],
-				'smtp_host'    => $email_conf['smtp_host'],
-				'smtp_user'    => $email_conf['smtp_user'],
-				'smtp_pass'    => $email_conf['smtp_pass'],
-				'smtp_port'    => $email_conf['smtp_port'],
-				'smtp_timeout' => $email_conf['smtp_timeout'],
-				'smtp_crypto'  => $email_conf['smtp_crypto'],
-			);
-		}else{
-			$email_conf_load = array(
-				'protocol' => $email_conf['protocol'],
-			);
+			$email_conf_load['smtp_host']    = $email_conf['smtp_host'];
+			$email_conf_load['smtp_user']    = $email_conf['smtp_user'];
+			$email_conf_load['smtp_pass']    = $email_conf['smtp_pass'];
+			$email_conf_load['smtp_port']    = $email_conf['smtp_port'];
+			$email_conf_load['smtp_timeout'] = $email_conf['smtp_timeout'];
+			$email_conf_load['smtp_crypto']  = $email_conf['smtp_crypto'];
 		}
 
 		foreach ($data_send as $value) {
@@ -59,10 +56,8 @@ if ($data) {
 				$this->email->message($value_message);
 
 				$this->email->send();
-				pr($this->email);
+				// echo $this->email->print_debugger();
 			}
 		}
-		
-		pr($data_send, $email_conf, $email_tpls);
 	}
 }

@@ -454,10 +454,13 @@ class User extends CI_Controller
 	}
 	function forget()
 	{
-		$this->load->model('_notif_model');
-		$this->_notif_model->sendEmail('forget_password', 'ahmadfaidulbasyar95@gmail.com', array(
-			'code' => 657898
-		));
+		$input = array(
+			'msg' => '',
+			'acc' => '',
+		);
+
+		$this->_tpl_model->view('User/forget', ['input' => $input]);
+		$this->_tpl_model->show();
 	}
 
 	function detail()
