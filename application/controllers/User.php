@@ -456,8 +456,32 @@ class User extends CI_Controller
 	{
 		$input = array(
 			'msg' => '',
-			'acc' => '',
+			'act' => 'search',
 		);
+
+		$input['dt'] = $this->_tpl_model->user_forget_pwd(@$_POST['search'],@$_POST['acc'],@$_POST['code']);
+		if ($input['dt']) {
+			if (isset($_SESSION['user_forget_pwd'])) {
+				if (isset($_GET['reset'])) {
+					unset($_SESSION['user_forget_pwd']);
+					if (isset($_SESSION['user_forget_pwd_success'])) {
+						unset($_SESSION['user_forget_pwd_success']);
+					}
+					redirect($this->_tpl_model->_url.'user/forget');
+				}
+				if (isset($_SESSION['user_forget_pwd_success'])) {
+					$input['act'] = 'success';
+				}else{
+					$input['act'] = 'validate';
+				}
+			}else{
+				$input['act'] = 'send';
+			}
+		}
+		$input['msg'] = $this->_tpl_model->user_msg();
+		if ($input['msg']) {
+			$input['msg'] = $this->_tpl_model->msg($input['msg'], 'danger');
+		}
 
 		$this->_tpl_model->view('User/forget', ['input' => $input]);
 		$this->_tpl_model->show();

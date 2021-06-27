@@ -580,34 +580,63 @@ class _tpl_model extends CI_Model {
 			}
 		}
 	}
-	public function user_forget_pwd($provider = '', $input = '', $code = '')
+	public function user_forget_pwd($search = '', $provider = '', $code = '')
 	{
 		if (isset($_SESSION['user_forget_pwd'])) {
-			if ($code) {
-				if ($code == $_SESSION['user_forget_pwd']) {
-					
+			if ($code and !isset($_SESSION['user_forget_pwd_success'])) {
+				if ($code == $_SESSION['user_forget_pwd']['code']) {
+					switch ($_SESSION['user_forget_pwd']['provider']) {
+						case 'email':
+							$this->load->model('_encrypt_model');
+							$password = substr($this->_encrypt_model->encode($code), 0, 12);
+							$this->load->model('_notif_model');
+							$this->_notif_model->sendEmail('forget_password_success', $_SESSION['user_forget_pwd']['dt']['email'], array(
+								'password' => $password
+							));
+							$this->_db_model->update('user', array('password' => $this->_encrypt_model->encode($password)), $_SESSION['user_forget_pwd']['dt']['id']);
+							$_SESSION['user_forget_pwd_success'] = 1;
+							break;
+						
+						default:
+							show_error('Forget Password Provider Unavailable', 401, '401 Unauthorized');
+							break;
+					}
 				}else{
 					$this->user_msg('Invalid code');
 				}
 			}
+			return $_SESSION['user_forget_pwd']['dt'];
 		}else{
-			if ($input) {
-				switch ($provider) {
-					case 'email':
-						if (filter_var($input, FILTER_VALIDATE_EMAIL)) {
-							$_SESSION['user_forget_pwd'] = mt_rand(100000,999999);
-							$this->load->model('_notif_model');
-							$this->_notif_model->sendEmail('forget_password', $input, array(
-								'code' => $_SESSION['user_forget_pwd']
-							));
-						}else{
-							$this->user_msg('Please insert a valid email address');
+			if ($search) {
+				$dt = $this->_db_model->getRow('SELECT `id`,`name`,`image`,`email`,`phone` FROM `user` WHERE `username`="'.addslashes($search).'" OR `email`="'.addslashes($search).'" OR `phone`="'.addslashes($search).'"');
+				if ($dt) {
+					$dt['search'] = $search;
+					$dt['image']  = $this->validateFile($this->_root.'files/user/thumb/'.$dt['image']);
+					if (!$dt['image']) {
+						$dt['image'] = $this->_url.'files/uploads/'.$this->config('user', 'img_def');
+					}
+					if ($provider) {
+						switch ($provider) {
+							case 'email':
+								$_SESSION['user_forget_pwd'] = array(
+									'dt'       => $dt,
+									'code'     => mt_rand(100000,999999),
+									'provider' => 'email',
+								);
+								$this->load->model('_notif_model');
+								$this->_notif_model->sendEmail('forget_password', $dt['email'], array(
+									'code' => $_SESSION['user_forget_pwd']['code']
+								));
+								break;
+							
+							default:
+								show_error('Forget Password Provider Unavailable', 401, '401 Unauthorized');
+								break;
 						}
-						break;
-					
-					default:
-						show_error('Forget Password Provider Unavailable', 401, '401 Unauthorized');
-						break;
+					}
+					return $dt;
+				}else{
+					$this->user_msg('Account not found');
 				}
 			}
 		}
