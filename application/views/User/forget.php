@@ -29,6 +29,7 @@ $tpl->setLayout('blank');
 						break;
 
 					case 'send':
+						$tpl->lib('mask');
 						?>
 						<div class="form-group text-center">
 							<div>
@@ -40,14 +41,14 @@ $tpl->setLayout('blank');
 							<label style="color: white;">Kirim Kode Ke</label>
 							<div class="radio">
 								<label style="color: white;">
-									<input type="radio" name="acc" required="required" value="email"> <?php echo $input['dt']['email']; ?>
+									<input type="radio" name="acc" required="required" value="email"> <?php echo lib_mask_email($input['dt']['email']); ?>
 								</label>
 							</div>
 						</div>
 						<div class="form-group">
 							<div class="radio">
 								<label style="color: white;">
-									<input type="radio" name="acc" required="required" value="phone"> <?php echo $input['dt']['phone']; ?>
+									<input type="radio" name="acc" required="required" value="phone"> +<?php echo lib_mask($input['dt']['phone'], 4, 2); ?>
 								</label>
 							</div>
 						</div>
