@@ -3,11 +3,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class _notif_model extends CI_Model {
 
+	public $_root    = '';
+
 	function __construct()
 	{
 		parent::__construct();
 
 		$this->load->model('_db_model');
+
+		$this->_root = FCPATH;
 	}
 
 	function load($type = 0)
@@ -113,16 +117,16 @@ class _notif_model extends CI_Model {
 		}
 	}
 
-	function sendEmail($tpl_id = '', $to = '', $data = array())
+	function sendEmail($tpl_name = '', $to = '', $data = array())
 	{
 		include_once __DIR__.'/../libraries/file.php';
 
-		$path = $this->_pea_model->_root.'files/notif_email/';
+		$path = $this->_root.'files/notif_email/'.date('YmdHis').'-';
 
-		lib_file_write($path.time().'_'.mt_rand(1,999), json_encode(array(
-			'tpl_id' => $tpl_id,
-			'to'     => $to,
-			'data'   => $data,
+		lib_file_write($path.mt_rand(1,999), json_encode(array(
+			'tpl_name' => $tpl_name,
+			'to'       => $to,
+			'data'     => $data,
 		)));
 	}
 }

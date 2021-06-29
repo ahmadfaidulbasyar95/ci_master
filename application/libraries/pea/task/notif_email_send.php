@@ -8,7 +8,7 @@ $data = lib_path_list($path);
 
 if ($data) {
 	$data_send = array();
-	for ($i=0; $i < 20; $i++) { 
+	for ($i=0; $i < 15; $i++) { 
 		if (isset($data[$i])) {
 			$data_file = json_decode(file_get_contents($path.$data[$i]), 1);
 			if ($data_file) {
@@ -38,8 +38,8 @@ if ($data) {
 		}
 
 		foreach ($data_send as $value) {
-			if (isset($email_tpls[$value['tpl_id']])) {
-				$value_tpl                   = $email_tpls[$value['tpl_id']];
+			if (isset($email_tpls[$value['tpl_name']])) {
+				$value_tpl                   = $email_tpls[$value['tpl_name']];
 				$email_conf_load['mailtype'] = ($value_tpl['mailtype'] == 1) ? 'text' : 'html';
 				
 				$this->email->initialize($email_conf_load);
