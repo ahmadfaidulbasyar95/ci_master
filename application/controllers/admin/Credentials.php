@@ -139,7 +139,7 @@ class Credentials extends CI_Controller
 		$form->initRoll('WHERE 1 ORDER BY `id` DESC');
 
 		$form->roll->addInput('name', 'sqllinks');
-		$form->roll->input->name->setTitle('ID');
+		$form->roll->input->name->setTitle('Name');
 		$form->roll->input->name->setLinks('admin/credentials/email_template_form');
 		$form->roll->input->name->setModal();
 		$form->roll->input->name->setModalReload();
@@ -202,7 +202,7 @@ class Credentials extends CI_Controller
 		$form->edit->setModalResponsive();
 
 		$form->edit->addInput('name', 'text');
-		$form->edit->input->name->setTitle('ID');
+		$form->edit->input->name->setTitle('Name');
 		$form->edit->input->name->setUniq();
 		$form->edit->input->name->setRequire();
 		$name = $form->edit->input->name->getName();
@@ -250,6 +250,80 @@ class Credentials extends CI_Controller
 		if ($_POST) {
 			$tpls = $this->_db_model->getAssoc('SELECT `name`,`from_name`,`from_email`,`mailtype`,`subject`,`message` FROM `config_email`');
 			lib_file_write($this->_pea_model->_root.'files/uploads/email_template', json_encode($tpls));
+		}
+
+		$this->_tpl_model->show();
+	}
+
+	function media_template()
+	{
+		echo $this->_tpl_model->button('admin/credentials/media_template_form', 'Add Media Template', 'fa fa-plus', 'modal_reload modal_large', 'style="margin-bottom: 15px;"', 1);
+
+		$form = $this->_pea_model->newForm('config_media');
+	
+		$form->initRoll('WHERE 1 ORDER BY `id` DESC');
+
+		$form->roll->addInput('name', 'sqllinks');
+		$form->roll->input->name->setTitle('Name');
+		$form->roll->input->name->setLinks('admin/credentials/media_template_form');
+		$form->roll->input->name->setModal();
+		$form->roll->input->name->setModalReload();
+		$form->roll->input->name->setModalLarge();
+
+		$form->roll->addInput('created', 'datetime');
+		$form->roll->input->created->setTitle('Created');
+		$form->roll->input->created->setPlainText();
+		$form->roll->input->created->setDisplayColumn();
+
+		$form->roll->addInput('updated', 'datetime');
+		$form->roll->input->updated->setTitle('Updated');
+		$form->roll->input->updated->setPlainText();
+		$form->roll->input->updated->setDisplayColumn(false);
+
+		$form->roll->setSaveTool(false);
+		$form->roll->action();
+		echo $form->roll->getForm();
+
+		if ($_POST) {
+			$tpls = $this->_db_model->getAssoc('SELECT `name`,`message` FROM `config_media`');
+			lib_file_write($this->_pea_model->_root.'files/uploads/media_template', json_encode($tpls));
+		}
+
+		$this->_tpl_model->show();
+	}
+	function media_template_form()
+	{
+		$id   = @intval($_GET['id']);
+		$form = $this->_pea_model->newForm('config_media');
+
+		$_GET['return'] = '';
+		$this->_tpl_model->setLayout('blank');
+		
+		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
+
+		$form->edit->setHeader(!empty($id) ? 'Edit Media Template' : 'Add Media Template');
+		$form->edit->setModalResponsive();
+
+		$form->edit->addInput('name', 'text');
+		$form->edit->input->name->setTitle('Name');
+		$form->edit->input->name->setUniq();
+		$form->edit->input->name->setRequire();
+		$name = $form->edit->input->name->getName();
+		if (!empty($_POST[$name])) {
+			$_POST[$name] = preg_replace('~[^a-z0-9]~', '_', strtolower($_POST[$name]));
+		}
+
+		$form->edit->addInput('message', 'textarea');
+		$form->edit->input->message->setTitle('Message');
+		$form->edit->input->message->setRequire();
+		$form->edit->input->message->addAttr('rows="20"');
+
+		$form->edit->action();
+		echo $form->edit->getForm();
+
+		if ($_POST) {
+			$tpls = $this->_db_model->getAssoc('SELECT `name`,`message` FROM `config_media`');
+			lib_file_write($this->_pea_model->_root.'files/uploads/media_template', json_encode($tpls));
 		}
 
 		$this->_tpl_model->show();

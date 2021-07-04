@@ -18,6 +18,22 @@ if ($data) {
 		}
 	}
 	if ($data_send) {
+		$media_tpls = json_decode(file_get_contents($this->_pea_model->_root.'files/uploads/media_template'), 1);
+
+		$data_out = array();
+		foreach ($data_send as $value) {
+			if (isset($media_tpls[$value['tpl_name']])) {
+				$value_message = $media_tpls[$value['tpl_name']]['message'];
+				foreach ($value['data'] as $key1 => $value1) {
+					$value_message = str_replace('['.$key1.']', $value1, $value_message);
+				}
+				$data_out[] = array(
+					'chat_id' => $value['to'],
+					'text'    => $value_message
+				);
+			}
+		}
+
 		$this->load->model('_tpl_model');
 
 		$telegram_conf = $this->_tpl_model->config('telegram');
@@ -28,7 +44,7 @@ if ($data) {
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		
-		foreach ($data_send as $value) {
+		foreach ($data_out as $value) {
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $value);
 			$result = curl_exec($ch);
 		}
