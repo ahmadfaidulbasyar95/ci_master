@@ -596,6 +596,17 @@ class _tpl_model extends CI_Model {
 							$this->_db_model->update('user', array('password' => $this->_encrypt_model->encode($password)), $_SESSION['user_forget_pwd']['dt']['id']);
 							$_SESSION['user_forget_pwd_success'] = 1;
 							break;
+
+						case 'phone':
+							$this->load->model('_encrypt_model');
+							$password = substr($this->_encrypt_model->encode($code), 0, 12);
+							$this->load->model('_notif_model');
+							$this->_notif_model->sendWA('forget_password_success', $_SESSION['user_forget_pwd']['dt']['phone'], array(
+								'password' => $password
+							));
+							$this->_db_model->update('user', array('password' => $this->_encrypt_model->encode($password)), $_SESSION['user_forget_pwd']['dt']['id']);
+							$_SESSION['user_forget_pwd_success'] = 1;
+							break;
 						
 						default:
 							show_error('Forget Password Provider Unavailable', 401, '401 Unauthorized');
@@ -625,6 +636,18 @@ class _tpl_model extends CI_Model {
 								);
 								$this->load->model('_notif_model');
 								$this->_notif_model->sendEmail('forget_password', $dt['email'], array(
+									'code' => $_SESSION['user_forget_pwd']['code']
+								));
+								break;
+
+							case 'phone':
+								$_SESSION['user_forget_pwd'] = array(
+									'dt'       => $dt,
+									'code'     => mt_rand(100000,999999),
+									'provider' => 'phone',
+								);
+								$this->load->model('_notif_model');
+								$this->_notif_model->sendWA('forget_password', $dt['phone'], array(
 									'code' => $_SESSION['user_forget_pwd']['code']
 								));
 								break;

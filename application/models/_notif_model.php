@@ -129,4 +129,17 @@ class _notif_model extends CI_Model {
 			'data'     => $data,
 		)));
 	}
+
+	function sendWA($tpl_name = '', $to = '', $data = array())
+	{
+		include_once __DIR__.'/../libraries/file.php';
+
+		$path = $this->_root.'files/notif_wa/'.date('YmdHis').'-';
+
+		lib_file_write($path.mt_rand(1,999), json_encode(array(
+			'tpl_name' => $tpl_name,
+			'to'       => $to,
+			'data'     => $data,
+		)));
+	}
 }
