@@ -445,7 +445,7 @@ class _tpl_model extends CI_Model {
 			return $this->user_msg;
 		}
 	}
-	public function user_login($usr = '',$pwd = '', $type = 0)
+	public function user_login($usr = '',$pwd = '', $type = 0, $remember = 0)
 	{
 		if ($usr and $pwd) {
 			$data = $this->_db_model->getRow('SELECT * FROM `user` WHERE `username`="'.addslashes($usr).'"');
@@ -479,11 +479,37 @@ class _tpl_model extends CI_Model {
 				$pwd_current = $this->_encrypt_model->decode($data['password']);
 				if ($pwd == $pwd_current) {
 					$_SESSION['user_login'][$type] = $data;
+					if ($remember) {
+						$exp = intval($this->config('user', 'login_remember'))*60;
+						setcookie('ULBWQPHGF'.$type.'VCN', $this->_encrypt_model->encodeToken($usr.'||'.$pwd, $exp), time() + $exp * 60, '/');
+					}else{
+						setcookie('ULBWQPHGF'.$type.'VCN', '', time() - 3600, '/');
+					}
 					return true;
 				}
 			}
 		}
 		$this->user_msg('Invalid Username or Password');
+		return false;
+	}
+	public function user_login_remember($type = 0)
+	{
+		if (isset($_COOKIE['ULBWQPHGF'.$type.'VCN'])) {
+			if (isset($_SESSION['user_login_remember_false-'.$type])) {
+				unset($_SESSION['user_login_remember_false-'.$type]);
+			}else{
+				$this->load->model('_encrypt_model');
+				$dt = $this->_encrypt_model->decodeToken($_COOKIE['ULBWQPHGF'.$type.'VCN']);
+				if ($dt) {
+					$dt  = explode('||', $dt);
+					$ret = $this->user_login($dt[0], $dt[1], $type, 1);
+					if ($ret) {
+						return $ret;
+					}
+				}
+			}
+			setcookie('ULBWQPHGF'.$type.'VCN', '', time() - 3600, '/');
+		}
 		return false;
 	}
 	public function user_pwd_validate($pwd = '', $type = 0)
@@ -501,7 +527,11 @@ class _tpl_model extends CI_Model {
 	{
 		if (empty($_SESSION['user_login'][$type])) {
 			if ($type == 1) {
-				show_error('Please Sign In', 401, '401 Unauthorized');
+				if (isset($_COOKIE['ULBWQPHGF'.$type.'VCN'])) {
+					redirect($this->_url.$this->config('dashboard', 'login_uri'));
+				}else{
+					show_error('Please Sign In', 401, '401 Unauthorized');
+				}
 			}else{
 				$_SESSION['user_return'] = $this->_url_current;
 				$_SESSION['user_post']   = $_POST;
@@ -668,6 +698,9 @@ class _tpl_model extends CI_Model {
 	{
 		if (isset($_SESSION['user_login'][$type])) {
 			unset($_SESSION['user_login'][$type]);
+			if (isset($_COOKIE['ULBWQPHGF'.$type.'VCN'])) {
+				$_SESSION['user_login_remember_false-'.$type] = 1;
+			}
 		}
 	}
 

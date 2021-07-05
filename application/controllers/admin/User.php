@@ -683,7 +683,7 @@ class User extends CI_Controller
 				$token = explode('|', $token);
 				if (count($token) == 2) {
 					if (!empty($_POST[$token[0]]) and !empty($_POST[$token[1]])) {
-						if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]], 1)) {
+						if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]], 1, isset($_POST['remember']))) {
 							redirect($this->_tpl_model->_url.'admin/dashboard');
 						}else{
 							$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
@@ -701,6 +701,10 @@ class User extends CI_Controller
 			}else{
 				$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
 			}
+		}
+
+		if ($this->_tpl_model->user_login_remember(1)) {
+			redirect($this->_tpl_model->_url.'admin/dashboard');
 		}
 
 		$input['token'] = $this->_encrypt_model->encodeToken($input['usr'].'|'.$input['pwd'], 2);

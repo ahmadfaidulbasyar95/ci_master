@@ -141,6 +141,11 @@ class Dashboard extends CI_Controller
 		$form->edit->input->value->element->login_background->setImageClick();
 		$form->edit->input->value->element->login_background->setRequire();
 
+		$form->edit->input->value->addInput('login_remember', 'text');
+		$form->edit->input->value->element->login_remember->setTitle('Login Remember Time (hours)');
+		$form->edit->input->value->element->login_remember->setType('number');
+		$form->edit->input->value->element->login_remember->setRequire();
+
 		$form->edit->input->value->addInput('home_uri', 'text');
 		$form->edit->input->value->element->home_uri->setTitle('Homepage URI');
 		$form->edit->input->value->element->home_uri->setRequire();

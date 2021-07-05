@@ -396,24 +396,15 @@ class User extends CI_Controller
 			'pwd' => mt_rand(500000000001,900000000000),
 			'msg' => '',
 		);
+		$is_ok = 0;
 		if (!empty($_POST['token'])) {
 			$token = $this->_encrypt_model->decodeToken($_POST['token']);
 			if ($token) {
 				$token = explode('|', $token);
 				if (count($token) == 2) {
 					if (!empty($_POST[$token[0]]) and !empty($_POST[$token[1]])) {
-						if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]])) {
-							if (empty($_SESSION['user_return'])) {
-								$url = $this->_tpl_model->_url.$this->_tpl_model->config('user','home_uri');
-							}else{
-								$url = $_SESSION['user_return'];
-								unset($_SESSION['user_return']);
-								if (isset($_SESSION['user_post'])) {
-									$_SESSION['user_post_load'] = $_SESSION['user_post'];
-									unset($_SESSION['user_post']);
-								}
-							}
-							redirect($url);
+						if ($this->_tpl_model->user_login($_POST[$token[0]], $_POST[$token[1]], 0, isset($_POST['remember']))) {
+							$is_ok = 1;
 						}else{
 							$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
 						}
@@ -426,20 +417,28 @@ class User extends CI_Controller
 		
 		if (isset($_GET['acc'])) {
 			if ($this->_tpl_model->user_login_with($_GET['acc'])) {
-				if (empty($_SESSION['user_return'])) {
-					$url = $this->_tpl_model->_url.$this->_tpl_model->config('user','home_uri');
-				}else{
-					$url = $_SESSION['user_return'];
-					unset($_SESSION['user_return']);
-					if (isset($_SESSION['user_post'])) {
-						$_SESSION['user_post_load'] = $_SESSION['user_post'];
-						unset($_SESSION['user_post']);
-					}
-				}
-				redirect($url);
+				$is_ok = 1;
 			}else{
 				$input['msg'] = $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
 			}
+		}
+
+		if ($this->_tpl_model->user_login_remember()) {
+			$is_ok = 1;
+		}
+
+		if ($is_ok) {
+			if (empty($_SESSION['user_return'])) {
+				$url = $this->_tpl_model->_url.$this->_tpl_model->config('user','home_uri');
+			}else{
+				$url = $_SESSION['user_return'];
+				unset($_SESSION['user_return']);
+				if (isset($_SESSION['user_post'])) {
+					$_SESSION['user_post_load'] = $_SESSION['user_post'];
+					unset($_SESSION['user_post']);
+				}
+			}
+			redirect($url);
 		}
 		
 		$input['token'] = $this->_encrypt_model->encodeToken($input['usr'].'|'.$input['pwd'], 2);

@@ -18,6 +18,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				<div class="form-group">
 					<input name="<?php echo $input['pwd']; ?>" type="password" class="form-control" placeholder="Password" required="required">
 				</div>
+				<div class="form-group">
+					<div class="checkbox">
+						<label style="color: white;">
+							<input type="checkbox" name="remember" value="1">
+							Remember me !
+						</label>
+					</div>
+				</div>
 				<input type="hidden" name="token" value="<?php echo $input['token']; ?>">
 				<button type="submit" class="btn btn-info btn-block">Submit</button>
 				<div class="form-group" style="text-align: center;">

@@ -22,7 +22,15 @@ $tpl->setLayout('blank');
 					<input name="<?php echo $input['pwd']; ?>" type="password" class="form-control" placeholder="Password" required="required">
 				</div>
 				<div class="form-group">
-					<p><a href="<?php echo $tpl->_url.'user/forget'; ?>" style="color: white;"><b>Lupa password ?</b></a></p>
+					<div class="checkbox" style="display: inline-block;margin: 0;">
+						<label style="color: white;">
+							<input type="checkbox" name="remember" value="1">
+							Ingat saya !
+						</label>
+					</div>
+					<p class="pull-right">
+						<a href="<?php echo $tpl->_url.'user/forget'; ?>" style="color: white;"><b>Lupa password ?</b></a>
+					</p>
 				</div>
 				<div class="form-group">
 					<input type="hidden" name="token" value="<?php echo $input['token']; ?>">
