@@ -77,6 +77,7 @@ if ($PNAME) {
 		install_exec("ln -s ../../../$BASENAME/application/libraries/excel ./application/libraries/");
 		install_exec("ln -s ../../../$BASENAME/application/libraries/pdf ./application/libraries/");
 		install_exec("ln -s ../../../$BASENAME/application/libraries/pea ./application/libraries/");
+		install_exec("ln -s ../../../$BASENAME/application/libraries/qr ./application/libraries/");
 		install_exec("ln -s ../../../$BASENAME/application/libraries/output.php ./application/libraries/");
 		install_exec("ln -s ../../../$BASENAME/application/libraries/pagination.php ./application/libraries/");
 		install_exec("ln -s ../../../$BASENAME/application/libraries/path.php ./application/libraries/");
