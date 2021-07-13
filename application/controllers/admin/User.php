@@ -104,6 +104,10 @@ class User extends CI_Controller
 		$form->roll->input->gender->setPlainText();
 		$form->roll->input->gender->setDisplayColumn();
 
+		$form->roll->addInput('birth_place', 'sqlplaintext');
+		$form->roll->input->birth_place->setTitle('Birthplace');
+		$form->roll->input->birth_place->setDisplayColumn();
+
 		$form->roll->addInput('birth_date', 'date');
 		$form->roll->input->birth_date->setTitle('Birthdate');
 		$form->roll->input->birth_date->setDateFormat('d M Y');
@@ -285,6 +289,10 @@ class User extends CI_Controller
 		$form->edit->input->gender->addOption('Male', 1);
 		$form->edit->input->gender->addOption('Female', 2);
 		$form->edit->input->gender->setRequire();
+
+		$form->edit->addInput('birth_place', 'text');
+		$form->edit->input->birth_place->setTitle('Birthplace');
+		$form->edit->input->birth_place->setRequire();
 
 		$form->edit->addInput('birth_date', 'date');
 		$form->edit->input->birth_date->setTitle('Birthdate');

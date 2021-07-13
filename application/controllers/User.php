@@ -125,6 +125,10 @@ class User extends CI_Controller
 		$form->edit->input->gender->addOption('Perempuan', 2);
 		$form->edit->input->gender->setRequire();
 
+		$form->edit->addInput('birth_place', 'text');
+		$form->edit->input->birth_place->setTitle('Tempat Lahir');
+		$form->edit->input->birth_place->setRequire();
+
 		$form->edit->addInput('birth_date', 'date');
 		$form->edit->input->birth_date->setTitle('Tanggal Lahir');
 		$form->edit->input->birth_date->setRequire();
