@@ -130,7 +130,7 @@ class lib_pea_frm_params extends lib_pea_frm_text
 
 	public function getForm($index = '', $values = array())
 	{
-		if ($this->title and $this->init == 'edit') {
+		if ($this->title and in_array($this->init, ['add','edit'])) {
 			$this->formWrap(lib_bsv('<div class="panel panel-default '.$this->attr_class.'" '.$this->attr.'><div class="panel-heading">'.$this->title.'</div><div class="panel-body">', '<div class="card '.$this->attr_class.'" '.$this->attr.'><div class="card-header">'.$this->title.'</div><div class="card-body">'),'</div></div>');
 		}
 		if ($this->init == 'roll') {

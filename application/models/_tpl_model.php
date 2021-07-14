@@ -406,7 +406,8 @@ class _tpl_model extends CI_Model {
 	public function nav_add($link = '', $text = '', $index = 'AUTO')
 	{
 		if (!$text) {
-			$text = $this->meta['title'];
+			$text = $link;
+			$link = '';
 		}
 		if ($link) {
 			if (!filter_var($link, FILTER_VALIDATE_URL)) {
