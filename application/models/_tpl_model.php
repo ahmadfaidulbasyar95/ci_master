@@ -77,6 +77,7 @@ class _tpl_model extends CI_Model {
 				$menu = $this->_db_model->getRow('SELECT `id`,`position_id`,`title` FROM `menu` WHERE `active`=1 AND `url` LIKE "'.addslashes(str_replace('/'.$this->method, '' , $this->task)).'%" ORDER BY `url` LIMIT 1');
 			}
 			if ($menu) {
+				$this->meta_title($menu['title'].' | '.@$c['meta_title']);
 				foreach ($this->menu_parent($menu['id'], $menu['position_id']) as $value) {
 					if (!$value['url_type']) {
 						$value['url'] = ($value['position_id']) ? $this->_url.$value['uri'].'.html' : $this->_url.$value['url'];
@@ -703,6 +704,22 @@ class _tpl_model extends CI_Model {
 				$_SESSION['user_login_remember_false-'.$type] = 1;
 			}
 		}
+	}
+	public function user_device()
+	{
+		$this->load->library('user_agent');
+
+		if ($this->agent->is_browser()) {
+			$agent = $this->agent->browser().' '.$this->agent->version();
+		}elseif ($this->agent->is_robot()) {
+			$agent = $this->agent->robot();
+		}elseif ($this->agent->is_mobile()) {
+			$agent = $this->agent->mobile();
+		}else{
+			$agent = 'Unidentified User Agent';
+		}
+
+		return $this->agent->platform().' '.$agent;
 	}
 
 	public function button($link = '', $text = '', $icon = 'fa fa-send', $cls = '', $attr = '', $use_modal = 0)
