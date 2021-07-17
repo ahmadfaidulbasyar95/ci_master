@@ -125,7 +125,7 @@ class _notif_model extends CI_Model {
 
 		lib_file_write($path.mt_rand(1,999), json_encode(array(
 			'tpl_name' => $tpl_name,
-			'to'       => $to,
+			'to'       => $to, // email
 			'data'     => $data,
 		)));
 	}
@@ -138,7 +138,20 @@ class _notif_model extends CI_Model {
 
 		lib_file_write($path.mt_rand(1,999), json_encode(array(
 			'tpl_name' => $tpl_name,
-			'to'       => $to,
+			'to'       => $to, // phone
+			'data'     => $data,
+		)));
+	}
+
+	function sendTelegram($tpl_name = '', $to = '', $data = array())
+	{
+		include_once __DIR__.'/../libraries/file.php';
+
+		$path = $this->_root.'files/notif_telegram/'.date('YmdHis').'-';
+
+		lib_file_write($path.mt_rand(1,999), json_encode(array(
+			'tpl_name' => $tpl_name,
+			'to'       => $to, // chat_id / telegram_id
 			'data'     => $data,
 		)));
 	}

@@ -28,7 +28,10 @@ $tpl->_notif_model->load(1);
 <div id="_menu" style="display: none;">
 	<div id="_user_info">
 		<img src="<?php echo $tpl->user['image']; ?>" style="background: white;">
-		<a href="<?php echo $tpl->_url.'admin/user/profile'; ?>" data-title="<i class='fa fa-fw fa-user-circle'></i>Profile" target="_iframe" class="ellipsis menu_close"><?php echo $tpl->user['name']; ?></a>
+		<a href="<?php echo $tpl->_url.'admin/user/profile'; ?>" data-title="<i class='fa fa-fw fa-user-circle'></i>Profile" target="_iframe" class="menu_close">
+			<p class="ellipsis" style="margin: 0;"><?php echo $tpl->user['name']; ?></p>
+			<p class="ellipsis" style="margin: 0;font-size: small;"><?php echo $tpl->user_ip().' - '.$tpl->user_device(); ?></p>
+		</a>
 		<a href="<?php echo $tpl->_url.'admin/user/logout'; ?>" onclick="return confirm('Logout ?')"><i class="fa fa-sign-out fa-fw"></i></a>
 	</div>
 	<?php 

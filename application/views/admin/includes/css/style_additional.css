@@ -89,7 +89,7 @@
 	border-radius: 50%;
 	display: inline-block;
 	position: relative;
-	top: -11px;
+	top: -19px;
 }
 #_user_info > a:nth-child(2) {
 	color: white;
@@ -108,10 +108,10 @@
 }
 
 #_menu_list {
-	padding: 10px 0;
-	height: 430px;
+	padding-bottom: 10px;
+	height: 420px;
 	overflow: auto;
-	max-height: calc(80vh - 70px);
+	max-height: calc(80vh - 80px);
 }
 #_menu_list a {
 	color: white;

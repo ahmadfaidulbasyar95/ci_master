@@ -480,14 +480,31 @@ class _tpl_model extends CI_Model {
 				$this->load->model('_encrypt_model');
 				$pwd_current = $this->_encrypt_model->decode($data['password']);
 				if ($pwd == $pwd_current) {
-					$_SESSION['user_login'][$type] = $data;
-					if ($remember) {
-						$exp = intval($this->config('user', 'login_remember'))*60;
-						setcookie('ULBWQPHGF'.$type.'VCN', $this->_encrypt_model->encodeToken($usr.'||'.$pwd, $exp), time() + $exp * 60, '/');
+					$log = array(
+						'user_id' => $data['id'],
+						'device'  => $this->user_device(),
+						'ip'      => $this->user_ip(),
+					);
+					$data['log_id'] = $this->_db_model->insert('user_log', $log);
+					if ($data['log_id']) {
+						$this->load->model('_notif_model');
+						$this->_notif_model->sendEmail('login_alert', $data['email'], $log);
+						$this->_notif_model->sendWA('login_alert_wa', $data['phone'], $log);
+						if ($data['telegram_id']) {
+							$this->_notif_model->sendTelegram('login_alert_telegram', $data['telegram_id'], $log);
+						}
+						$_SESSION['user_login'][$type] = $data;
+						if ($remember) {
+							$exp = intval($this->config('user', 'login_remember'))*60;
+							setcookie('ULBWQPHGF'.$type.'VCN', $this->_encrypt_model->encodeToken($usr.'||'.$pwd, $exp), time() + $exp * 60, '/');
+						}else{
+							setcookie('ULBWQPHGF'.$type.'VCN', '', time() - 3600, '/');
+						}
+						return true;
 					}else{
-						setcookie('ULBWQPHGF'.$type.'VCN', '', time() - 3600, '/');
+						$this->user_msg('Failed Create New Session');
+						return false;		
 					}
-					return true;
 				}
 			}
 		}
@@ -708,18 +725,34 @@ class _tpl_model extends CI_Model {
 	public function user_device()
 	{
 		$this->load->library('user_agent');
-
-		if ($this->agent->is_browser()) {
+		if ($this->agent->is_browser()) 
 			$agent = $this->agent->browser().' '.$this->agent->version();
-		}elseif ($this->agent->is_robot()) {
+		elseif ($this->agent->is_robot()) 
 			$agent = $this->agent->robot();
-		}elseif ($this->agent->is_mobile()) {
+		elseif ($this->agent->is_mobile()) 
 			$agent = $this->agent->mobile();
-		}else{
+		else
 			$agent = 'Unidentified User Agent';
-		}
-
 		return $this->agent->platform().' '.$agent;
+	}
+	public function user_ip()
+	{
+		$ipaddress = '';
+		if (isset($_SERVER['HTTP_CLIENT_IP']))
+			$ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+		else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		else if(isset($_SERVER['HTTP_X_FORWARDED']))
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+		else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+			$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+		else if(isset($_SERVER['HTTP_FORWARDED']))
+			$ipaddress = $_SERVER['HTTP_FORWARDED'];
+		else if(isset($_SERVER['REMOTE_ADDR']))
+			$ipaddress = $_SERVER['REMOTE_ADDR'];
+		else
+			$ipaddress = 'UNKNOWN';
+		return $ipaddress;
 	}
 
 	public function button($link = '', $text = '', $icon = 'fa fa-send', $cls = '', $attr = '', $use_modal = 0)
