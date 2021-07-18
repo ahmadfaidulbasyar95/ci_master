@@ -484,6 +484,7 @@ class _tpl_model extends CI_Model {
 						'user_id' => $data['id'],
 						'device'  => $this->user_device(),
 						'ip'      => $this->user_ip(),
+						'type'    => $type,
 					);
 					$data['log_id'] = $this->_db_model->insert('user_log', $log);
 					if ($data['log_id']) {
@@ -544,6 +545,12 @@ class _tpl_model extends CI_Model {
 	}
 	public function user_login_validate($type = 0)
 	{
+		if (!empty($_SESSION['user_login'][$type]['log_id'])) {
+			$log_id = intval($_SESSION['user_login'][$type]['log_id']);
+			if (!$this->_db_model->getOne('SELECT 1 FROM `user_log` WHERE `id`='.$log_id.' AND `logout` = "0000-00-00 00:00:00"')) {
+				$this->user_logout($type);
+			}
+		}
 		if (empty($_SESSION['user_login'][$type])) {
 			if ($type == 1) {
 				if (isset($_COOKIE['ULBWQPHGF'.$type.'VCN'])) {

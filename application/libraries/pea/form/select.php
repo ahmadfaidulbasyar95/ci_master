@@ -51,7 +51,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 		$options = '';
 		$value   = $this->getValue($index);
 		foreach ($this->options as $key => $val) {
-			$options .= ($value == $val) ? '<option value="'.$val.'" selected>'.$key.'</option>' : '<option value="'.$val.'">'.$key.'</option>'; 
+			$options .= ((string)$value == (string)$val) ? '<option value="'.$val.'" selected>'.$key.'</option>' : '<option value="'.$val.'">'.$key.'</option>'; 
 		}
 		return $options;
 	}
@@ -59,7 +59,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 	public function getReportOutput($value = '')
 	{
 		foreach ($this->options as $key => $val) {
-			if ($value == $val) return $key;
+			if ((string)$value == (string)$val) return $key;
 		}
 	}
 

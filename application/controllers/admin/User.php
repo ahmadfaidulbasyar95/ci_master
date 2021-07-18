@@ -102,22 +102,36 @@ class User extends CI_Controller
 		$form->roll->input->gender->addOption('Male', 1);
 		$form->roll->input->gender->addOption('Female', 2);
 		$form->roll->input->gender->setPlainText();
-		$form->roll->input->gender->setDisplayColumn();
+		$form->roll->input->gender->setDisplayColumn(false);
 
 		$form->roll->addInput('birth_place', 'sqlplaintext');
 		$form->roll->input->birth_place->setTitle('Birthplace');
-		$form->roll->input->birth_place->setDisplayColumn();
+		$form->roll->input->birth_place->setDisplayColumn(false);
 
 		$form->roll->addInput('birth_date', 'date');
 		$form->roll->input->birth_date->setTitle('Birthdate');
 		$form->roll->input->birth_date->setDateFormat('d M Y');
 		$form->roll->input->birth_date->setPlainText();
-		$form->roll->input->birth_date->setDisplayColumn();
+		$form->roll->input->birth_date->setDisplayColumn(false);
 
 		$form->roll->addInput('location_detail', 'sqlplaintext');
 		$form->roll->input->location_detail->setTitle('Address');
 		$form->roll->input->location_detail->setFieldName('CONCAT(`address`," ",`village_title`,", ",`district_title`,", ",`city_title`,", ",`province_title`,", ",`zip_code`)');
 		$form->roll->input->location_detail->setDisplayColumn();
+
+		$form->roll->addInput('login_wrap', 'multiinput');
+		$form->roll->input->login_wrap->setTitle('Login');
+		$form->roll->input->login_wrap->setDisplayColumn();
+		$form->roll->input->login_wrap->setDelimiter('&nbsp;&nbsp;&nbsp;');
+
+		$form->roll->input->login_wrap->addInput('login_act', 'editlinks');
+		$form->roll->input->login_wrap->element->login_act->setTitle('<i class="fa fa-sign-in"></i>');
+		$form->roll->input->login_wrap->element->login_act->setLinks('admin/user/login_auto');
+		$form->roll->input->login_wrap->element->login_act->addAttr('target="_BLANK"');
+
+		$form->roll->input->login_wrap->addInput('login_log', 'editlinks');
+		$form->roll->input->login_wrap->element->login_log->setTitle('<i class="fa fa-clock"></i>');
+		$form->roll->input->login_wrap->element->login_log->setLinks('admin/user/log');
 
 		$form->roll->addInput('active', 'checkbox');
 		$form->roll->input->active->setTitle('Active');
@@ -973,6 +987,101 @@ class User extends CI_Controller
 		});
 		$form->edit->action();
 		echo $form->edit->getForm();
+		$this->_tpl_model->show();
+	}
+
+	function log()
+	{
+		$id   = @intval($_GET['id']);
+		$form = $this->_pea_model->newForm('user_log');
+
+		if ($id) {
+			$user = $this->_tpl_model->_db_model->getRow('SELECT `name`,`username` FROM `user` WHERE `id`='.$id);
+			if ($user) {
+				$this->_tpl_model->nav_add($user['name'].' ['.$user['username'].']');
+				if ($id == $this->_tpl_model->user['id']) {
+					$logout_set = @intval($_POST['logout_set']);
+					if ($logout_set) {
+						$this->_tpl_model->_db_model->update('user_log', array(
+							'logout' => date('Y-m-d H:i:s'),
+						), '`id`='.$logout_set.' AND `user_id`='.$id);
+						echo $this->_tpl_model->msg('Session Ended', 'success');
+					}
+				}
+			}
+		}
+
+		$form->initSearch();
+
+		$form->search->addInput('type', 'select');
+		$form->search->input->type->setTitle('Type');
+		$form->search->input->type->addOption('-- Select Type --', '');
+		$form->search->input->type->addOptions($this->_tpl_model->user_group_type);
+		
+		$form->search->addInput('keyword','keyword');
+		$form->search->input->keyword->setTitle('Device');
+		$form->search->input->keyword->addSearchField('device');
+		
+		$form->search->addInput('keyword2','keyword');
+		$form->search->input->keyword2->setTitle('IP Address');
+		$form->search->input->keyword2->addSearchField('ip');
+
+		$form->search->addInput('login', 'dateinterval');
+		$form->search->input->login->setTitle('Login Date');
+
+		$form->search->addInput('logout', 'dateinterval');
+		$form->search->input->logout->setTitle('Logout Date');
+		
+		$form->search->addExtraField('user_id', $id);
+
+		$add_sql = $form->search->action();
+		$keyword = $form->search->keyword();
+
+		echo $form->search->getForm();
+
+		$form->initRoll($add_sql.' ORDER BY `id` DESC');
+
+		$form->roll->addInput('type', 'select');
+		$form->roll->input->type->setTitle('Type');
+		$form->roll->input->type->addOptions($this->_tpl_model->user_group_type);
+		$form->roll->input->type->setPlainText();
+		
+		$form->roll->addInput('device','sqlplaintext');
+		$form->roll->input->device->setTitle('Device');
+		$form->roll->input->device->setDisplayColumn();
+
+		$form->roll->addInput('ip','sqlplaintext');
+		$form->roll->input->ip->setTitle('IP Address');
+		$form->roll->input->ip->setDisplayColumn();
+
+		$form->roll->addInput('login', 'datetime');
+		$form->roll->input->login->setTitle('Login Date');
+		$form->roll->input->login->setPlainText();
+		$form->roll->input->login->setDisplayColumn();
+
+		$form->roll->addInput('logout', 'datetime');
+		$form->roll->input->logout->setTitle('Logout Date');
+		$form->roll->input->logout->setPlainText();
+		$form->roll->input->logout->setDisplayColumn();
+		if ($id == $this->_tpl_model->user['id']) {
+			$form->roll->input->logout->setDisplayFunction(function($value='', $id=0, $index='', $values=array())
+			{
+				if ($values[$index]['logout'] == '0000-00-00 00:00:00') {
+					if ($this->_tpl_model->user['log_id'] == $values[$index]['roll_id']) {
+						$value = 'This Device';
+					}else{
+						$value = '<button class="btn btn-danger btn-xs" type="submit" name="logout_set" value="'.$values[$index]['roll_id'].'" onclick="return confirm(\'End Session ?\')">End Session</button>';
+					}
+				}
+				return $value;
+			});
+		}
+		
+		$form->roll->setSaveTool(false);
+		$form->roll->setDeleteTool(false);
+		$form->roll->addReportAll();
+		$form->roll->action();
+		echo $form->roll->getForm();
 		$this->_tpl_model->show();
 	}
 }
