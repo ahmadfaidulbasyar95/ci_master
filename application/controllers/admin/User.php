@@ -360,9 +360,6 @@ class User extends CI_Controller
 		$form->edit->input->address->setTitle('Address');
 		$form->edit->input->address->setRequire();
 		$form->edit->input->address->addTip('Jln. Jendral Sudirman No.123 RT.05 RW.06');
-		if ($this->_tpl_model->method == 'profile') {
-			$form->edit->input->address->addTip('<br>'.$this->_tpl_model->button('admin/user/address', 'Manage Address List', 'far fa-address-book', 'modal_reload modal_large', '', 1));
-		}
 
 		$form->edit->addInput('active', 'checkbox');
 		$form->edit->input->active->setTitle('Active');
@@ -394,6 +391,11 @@ class User extends CI_Controller
 		}
 		if ($this->_tpl_model->user['id'] != 1) {
 			$form->edit->input->group_ids->setTip('');
+		}
+
+		if ($this->_tpl_model->method == 'profile') {
+			$form->edit->input->address->addTip('<br>'.$this->_tpl_model->button('admin/user/address', 'Manage Address List', 'far fa-address-book', 'modal_reload modal_large', '', 1));
+			$form->edit->input->active->addTip($this->_tpl_model->button('admin/user/log?id='.$this->_tpl_model->user['id'].'&return='.urlencode($this->_tpl_model->_url_current), 'Manage Active Sessions', 'far fa-user-shield', '', '', 0));
 		}
 		
 		$form->edit->onSave(function($id, $f)
@@ -1045,6 +1047,7 @@ class User extends CI_Controller
 		$form->roll->input->type->setTitle('Type');
 		$form->roll->input->type->addOptions($this->_tpl_model->user_group_type);
 		$form->roll->input->type->setPlainText();
+		$form->roll->input->type->setDisplayColumn();
 		
 		$form->roll->addInput('device','sqlplaintext');
 		$form->roll->input->device->setTitle('Device');

@@ -488,6 +488,9 @@ class _tpl_model extends CI_Model {
 					);
 					$data['log_id'] = $this->_db_model->insert('user_log', $log);
 					if ($data['log_id']) {
+						$this->_db_model->update('user_log', array(
+							'logout' => date('Y-m-d H:i:s'),
+						), '`user_id`='.$log['user_id'].' AND `id` != '.$data['log_id'].' AND `logout` = "0000-00-00 00:00:00" AND `type`='.$log['type'].' AND `ip`="'.addslashes($log['ip']).'" AND `device`="'.addslashes($log['device']).'"');
 						$this->load->model('_notif_model');
 						$this->_notif_model->sendEmail('login_alert', $data['email'], $log);
 						$this->_notif_model->sendWA('login_alert_wa', $data['phone'], $log);
@@ -515,17 +518,13 @@ class _tpl_model extends CI_Model {
 	public function user_login_remember($type = 0)
 	{
 		if (isset($_COOKIE['ULBWQPHGF'.$type.'VCN'])) {
-			if (isset($_SESSION['user_login_remember_false-'.$type])) {
-				unset($_SESSION['user_login_remember_false-'.$type]);
-			}else{
-				$this->load->model('_encrypt_model');
-				$dt = $this->_encrypt_model->decodeToken($_COOKIE['ULBWQPHGF'.$type.'VCN']);
-				if ($dt) {
-					$dt  = explode('||', $dt);
-					$ret = $this->user_login($dt[0], $dt[1], $type, 1);
-					if ($ret) {
-						return $ret;
-					}
+			$this->load->model('_encrypt_model');
+			$dt = $this->_encrypt_model->decodeToken($_COOKIE['ULBWQPHGF'.$type.'VCN']);
+			if ($dt) {
+				$dt  = explode('||', $dt);
+				$ret = $this->user_login($dt[0], $dt[1], $type, 1);
+				if ($ret) {
+					return $ret;
 				}
 			}
 			setcookie('ULBWQPHGF'.$type.'VCN', '', time() - 3600, '/');
@@ -723,9 +722,12 @@ class _tpl_model extends CI_Model {
 	public function user_logout($type = 0)
 	{
 		if (isset($_SESSION['user_login'][$type])) {
+			$this->_db_model->update('user_log', array(
+				'logout' => date('Y-m-d H:i:s'),
+			), $_SESSION['user_login'][$type]['log_id']);
 			unset($_SESSION['user_login'][$type]);
 			if (isset($_COOKIE['ULBWQPHGF'.$type.'VCN'])) {
-				$_SESSION['user_login_remember_false-'.$type] = 1;
+				setcookie('ULBWQPHGF'.$type.'VCN', '', time() - 3600, '/');
 			}
 		}
 	}

@@ -8,3 +8,6 @@ if (is_file($c_site)) {
 		$config['base_url'] = $_SERVER['REQUEST_SCHEME'].'://'.$c_site['domain'].str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
 	}
 }
+if (!empty($config['encryption_key'])) {
+	define('_SALT', $config['encryption_key']);
+}

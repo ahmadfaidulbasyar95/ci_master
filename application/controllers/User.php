@@ -782,4 +782,80 @@ class User extends CI_Controller
 		echo $form->edit->getForm();
 		$this->_tpl_model->show();
 	}
+
+	function log()
+	{
+		$id   = $this->_tpl_model->user['id'];
+		$form = $this->_pea_model->newForm('user_log');
+
+		$logout_set = @intval($_POST['logout_set']);
+		if ($logout_set) {
+			$this->_tpl_model->_db_model->update('user_log', array(
+				'logout' => date('Y-m-d H:i:s'),
+			), '`id`='.$logout_set.' AND `user_id`='.$id.' AND `type`=0');
+			echo $this->_tpl_model->msg('Session Ended', 'success');
+		}
+
+		$form->initSearch();
+
+		$form->search->addInput('keyword','keyword');
+		$form->search->input->keyword->setTitle('Device');
+		$form->search->input->keyword->addSearchField('device');
+		
+		$form->search->addInput('keyword2','keyword');
+		$form->search->input->keyword2->setTitle('IP Address');
+		$form->search->input->keyword2->addSearchField('ip');
+
+		$form->search->addInput('login', 'dateinterval');
+		$form->search->input->login->setTitle('Login Date');
+
+		$form->search->addInput('logout', 'dateinterval');
+		$form->search->input->logout->setTitle('Logout Date');
+		
+		$form->search->addExtraField('user_id', $id);
+		$form->search->addExtraField('type', '0');
+
+		$add_sql = $form->search->action();
+		$keyword = $form->search->keyword();
+
+		echo $form->search->getForm();
+
+		$form->initRoll($add_sql.' ORDER BY `id` DESC');
+
+		$form->roll->addInput('device','sqlplaintext');
+		$form->roll->input->device->setTitle('Device');
+		$form->roll->input->device->setDisplayColumn();
+
+		$form->roll->addInput('ip','sqlplaintext');
+		$form->roll->input->ip->setTitle('IP Address');
+		$form->roll->input->ip->setDisplayColumn();
+
+		$form->roll->addInput('login', 'datetime');
+		$form->roll->input->login->setTitle('Login Date');
+		$form->roll->input->login->setPlainText();
+		$form->roll->input->login->setDisplayColumn();
+
+		$form->roll->addInput('logout', 'datetime');
+		$form->roll->input->logout->setTitle('Logout Date');
+		$form->roll->input->logout->setPlainText();
+		$form->roll->input->logout->setDisplayColumn();
+		$form->roll->input->logout->setDisplayFunction(function($value='', $id=0, $index='', $values=array())
+		{
+			if ($values[$index]['logout'] == '0000-00-00 00:00:00') {
+				if ($this->_tpl_model->user['log_id'] == $values[$index]['roll_id']) {
+					$value = 'This Device';
+				}else{
+					$value = '<button class="btn btn-danger btn-xs" type="submit" name="logout_set" value="'.$values[$index]['roll_id'].'" onclick="return confirm(\'End Session ?\')">End Session</button>';
+				}
+			}
+			return $value;
+		});
+		
+		$form->roll->setSaveTool(false);
+		$form->roll->setDeleteTool(false);
+		$form->roll->addReportAll();
+		$form->roll->action();
+		echo $form->roll->getForm();
+		$this->_tpl_model->show();
+	}
 }
