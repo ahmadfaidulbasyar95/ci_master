@@ -66,7 +66,7 @@ class Location extends CI_Controller
 		$form->roll->addInput('source_id', 'sqlplaintext');
 		$form->roll->input->source_id->setTitle('Source ID');
 		
-		$form->roll->setRollDeleteCondition('"{source_id}" != ""');
+		$form->roll->setDeleteCondition('"{source_id}" != ""');
 
 		$form->roll->onDelete(function($id, $f)
 		{

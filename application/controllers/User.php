@@ -32,8 +32,14 @@ class User extends CI_Controller
 			if (!$group_id) {
 				$group_id = intval($this->_tpl_model->config('user', 'group_id'));
 			}
-			$group_title = $this->_tpl_model->_db_model->getOne('SELECT `title` FROM `user_group` WHERE `id`='.$group_id);
-			$form->edit->setData('group_id', $group_id);
+			$group_data = $this->_tpl_model->_db_model->getRow('SELECT `title`,`approval` FROM `user_group` WHERE `id`='.$group_id);
+			if ($group_data) {
+				$group_title = $group_data['title'];
+				$form->edit->setData('group_id', $group_id);
+				$form->edit->addExtraField('active', ($group_data['approval']) ? 0 : 1);
+			}else{
+				show_error('Invalid Group');
+			}
 		}
 		
 		$form->edit->setHeader(!empty($id) ? 'Profil' : 'Pendaftaran '.$group_title);
@@ -652,7 +658,7 @@ class User extends CI_Controller
 		$form->roll->input->updated->setPlainText();
 		$form->roll->input->updated->setDisplayColumn(false);
 		
-		$form->roll->setRollDeleteCondition('{main} == 1');
+		$form->roll->setDeleteCondition('{main} == 1');
 
 		$form->roll->setSaveTool(false);
 		$form->roll->addReportAll();

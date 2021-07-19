@@ -26,13 +26,13 @@ class lib_pea_roll extends lib_pea_edit
 		'html'  => '<i class="fa fa-file-text-o"></i>',
 		'json'  => '<i class="fa fa-file-code-o"></i>',
 	);
-	public $dataEmptyMsg        = '<td colspan="{rollColumn}" style="text-align:center;">No Data Available</td>';
-	public $rollValues          = array();
-	public $rollDeleteInput     = array();
-	public $rollDeleteCondition = array();
-	public $rollColumn          = 0;
-	public $rollFoundRows       = 0;
-	public $sortConfig          = array(
+	public $dataEmptyMsg    = '<td colspan="{columnSpan}" style="text-align:center;">No Data Available</td>';
+	public $rollValues      = array();
+	public $deleteInput     = array();
+	public $deleteCondition = array();
+	public $columnSpan      = 0;
+	public $foundRows       = 0;
+	public $sortConfig      = array(
 		'get_name' => 'sort',
 		'base_url' => '',
 	);
@@ -98,7 +98,7 @@ class lib_pea_roll extends lib_pea_edit
 
 	public function getPagination()
 	{
-		return lib_pagination($this->rollFoundRows, intval($this->paginationConfig['per_page']), @intval($_GET[$this->paginationConfig['get_name']]), $this->paginationConfig['get_name'], $this->paginationConfig['base_url'], $this->paginationConfig['num_links'], 0 , $this->paginationConfig);
+		return lib_pagination($this->foundRows, intval($this->paginationConfig['per_page']), @intval($_GET[$this->paginationConfig['get_name']]), $this->paginationConfig['get_name'], $this->paginationConfig['base_url'], $this->paginationConfig['num_links'], 0 , $this->paginationConfig);
 	}
 
 	public function setSortConfig($name = '', $value = '')
@@ -194,9 +194,9 @@ class lib_pea_roll extends lib_pea_edit
 		if ($class) $this->displayColumnButtonClass = $class;
 	}
 
-	public function getRollDeleteInput($index = 0)
+	public function getDeleteInput($index = 0)
 	{
-		if (in_array($index, $this->rollDeleteInput)) {
+		if (in_array($index, $this->deleteInput)) {
 			return '
 <div class="'.lib_bsv('checkbox', 'form-check').'">
 	<label>
@@ -207,7 +207,7 @@ class lib_pea_roll extends lib_pea_edit
 		}else return '';
 	}
 
-	public function getRollDeleteTitle()
+	public function getDeleteTitle()
 	{
 		return '
 <div class="'.lib_bsv('checkbox', 'form-check').' checkall" style="float: left;margin: 0;">
@@ -217,9 +217,9 @@ class lib_pea_roll extends lib_pea_edit
 </div>';
 	}
 
-	public function setRollDeleteCondition($condition = '') // if ({$condition}) -> use {} to get value of field
+	public function setDeleteCondition($condition = '') // if ({$condition}) -> use {} to get value of field
 	{
-		if ($condition) $this->rollDeleteCondition[] = $condition;
+		if ($condition) $this->deleteCondition[] = $condition;
 	}
 
 	public function action()
@@ -256,16 +256,16 @@ class lib_pea_roll extends lib_pea_edit
 						$value->setPlainText();
 					}
 				}
-				if ($value->getInputPosition() == 'main') $this->rollColumn += 1;
+				if ($value->getInputPosition() == 'main') $this->columnSpan += 1;
 				if ($value->getFieldName()) {
 					$select[$key] = $value->getFieldName();
 					if ($key != $select[$key]) $select[$key] .= ' AS `'.$key.'`';
 				}
 			}
 			if ($select) {
-				$select['roll_id']   = $this->table_id.' AS `roll_id`';
-				$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
-				$this->rollFoundRows = intval($this->db->getOne('SELECT FOUND_ROWS()'));
+				$select['roll_id'] = $this->table_id.' AS `roll_id`';
+				$this->rollValues  = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
+				$this->foundRows   = intval($this->db->getOne('SELECT FOUND_ROWS()'));
 				foreach ($this->rollValues as $key => $value) {
 					foreach ($this->input as $key1 => $value1) {
 						if (isset($value[$key1])) {
@@ -361,8 +361,8 @@ class lib_pea_roll extends lib_pea_edit
 						}
 					}
 				}
-				$this->rollValues    = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
-				$this->rollFoundRows = intval($this->db->getOne('SELECT FOUND_ROWS()'));
+				$this->rollValues = $this->db->getAll('SELECT SQL_CALC_FOUND_ROWS '.implode(' , ', $select).' FROM '.$this->table.' '.$this->getSort().' LIMIT '.@intval($_GET[$this->paginationConfig['get_name']])*intval($this->paginationConfig['per_page']).','.intval($this->paginationConfig['per_page']));
+				$this->foundRows  = intval($this->db->getOne('SELECT FOUND_ROWS()'));
 				foreach ($this->rollValues as $key => $value) {
 					foreach ($this->input as $key1 => $value1) {
 						if (isset($value[$key1])) {
@@ -375,13 +375,13 @@ class lib_pea_roll extends lib_pea_edit
 					$this->setIncludes(['js' => ['checkall.min']]);
 					foreach ($this->rollValues as $key => $value) {
 						$value_delete = 1;
-						foreach ($this->rollDeleteCondition as $value1) {
+						foreach ($this->deleteCondition as $value1) {
 							foreach ($value as $key2 => $value2) {
 								$value1 = str_replace('{'.$key2.'}', $value2, $value1);
 							}
 							eval('if ('.$value1.') $value_delete = 0;');
 						}
-						if ($value_delete) $this->rollDeleteInput[] = $key;
+						if ($value_delete) $this->deleteInput[] = $key;
 					}
 				}
 			}
@@ -405,7 +405,7 @@ class lib_pea_roll extends lib_pea_edit
 								foreach ($this->input as $key1 => $value1) {
 									if ($value1->getInputPosition() == 'main') $this->form .= '<th>'.$value1->getRollTitle($this->sortConfig, @$_GET[$this->sortConfig['get_name']] , @$_GET[$this->sortConfig['get_name'].'_desc']).'</th>';
 								}
-								if ($this->deleteTool) $this->form .= '<th>'.$this->getRollDeleteTitle().'</th>'; 
+								if ($this->deleteTool) $this->form .= '<th>'.$this->getDeleteTitle().'</th>'; 
 							$this->form .= $this->formTableItemHeaderBefore;
 						$this->form .= $this->formTableHeaderAfter;
 						$this->form .= $this->formTableBodyBefore;
@@ -416,18 +416,18 @@ class lib_pea_roll extends lib_pea_edit
 									foreach ($this->input as $value1) {
 										if ($value1->getInputPosition() == 'main') $this->form .= $value1->getForm($key, $this->rollValues);
 									}
-									if ($this->deleteTool) $this->form .= '<td>'.$this->getRollDeleteInput($key).'</td>'; 
+									if ($this->deleteTool) $this->form .= '<td>'.$this->getDeleteInput($key).'</td>'; 
 									$this->form .= $this->formTableItemBodyAfter;
 								}
 							}else{
 								$this->form .= $this->formTableItemBodyBefore;
-								$this->form .= str_replace('{rollColumn}', ($this->deleteTool) ? $this->rollColumn+1 : $this->rollColumn, $this->dataEmptyMsg);
+								$this->form .= str_replace('{columnSpan}', ($this->deleteTool) ? $this->columnSpan+1 : $this->columnSpan, $this->dataEmptyMsg);
 								$this->form .= $this->formTableItemBodyAfter;
 							}
 						$this->form .= $this->formTableBodyAfter;
 						$this->form .= $this->formTableFooterBefore;
 							$this->form .= $this->formTableItemFooterBefore;
-								$this->form .= '<td colspan="'.$this->rollColumn.'" '.lib_bsv('', 'style="padding: 0;"').'><table style="width: 100%;"><tbody><tr style="background-color: inherit;">';
+								$this->form .= '<td colspan="'.$this->columnSpan.'" '.lib_bsv('', 'style="padding: 0;"').'><table style="width: 100%;"><tbody><tr style="background-color: inherit;">';
 									$this->form .= '<td>';
 										if ($this->returnUrl and $this->returnTool) $this->form .= '<a href="'.$this->returnUrl.'" class="'.$this->returnButtonClass.'">'.$this->returnButtonText.'</a>&nbsp;';
 										if ($this->saveTool) $this->form .= '<button type="submit" name="'.$this->table.'_'.$this->init.'_'.$this->saveButtonName.'" value="'.$this->init.'" class="'.$this->saveButtonClass.'">'.$this->saveButtonText.'</button>&nbsp;';

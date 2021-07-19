@@ -148,8 +148,8 @@ class User extends CI_Controller
 		$form->roll->input->updated->setPlainText();
 		$form->roll->input->updated->setDisplayColumn(false);
 		
-		$form->roll->setRollDeleteCondition('{roll_id} == '.$this->_tpl_model->user['id']);
-		$form->roll->setRollDeleteCondition('{roll_id} == 1');
+		$form->roll->setDeleteCondition('{roll_id} == '.$this->_tpl_model->user['id']);
+		$form->roll->setDeleteCondition('{roll_id} == 1');
 
 		$form->roll->onSave(function($id, $f)
 		{
@@ -630,6 +630,13 @@ class User extends CI_Controller
 		$form->roll->input->menu_ids->setPlainText();
 		$form->roll->input->menu_ids->setDisplayColumn();
 
+		$form->roll->addInput('approval', 'select');
+		$form->roll->input->approval->setTitle('Approval');
+		$form->roll->input->approval->addOption('None', '0');
+		$form->roll->input->approval->addOption('Manual', '1');
+		$form->roll->input->approval->setPlainText();
+		$form->roll->input->approval->setDisplayColumn();
+
 		$form->roll->addInput('created', 'datetime');
 		$form->roll->input->created->setTitle('Created');
 		$form->roll->input->created->setPlainText();
@@ -640,7 +647,7 @@ class User extends CI_Controller
 		$form->roll->input->updated->setPlainText();
 		$form->roll->input->updated->setDisplayColumn(false);
 		
-		$form->roll->setRollDeleteCondition('{roll_id}==1');
+		$form->roll->setDeleteCondition('{roll_id}==1');
 		$form->roll->setSaveTool(false);
 		$form->roll->addReportAll();
 		$form->roll->action();
@@ -679,10 +686,17 @@ class User extends CI_Controller
 		$form->edit->input->menu_ids->addAttr('size="10"');
 		$form->edit->input->menu_ids->addOption('All Menu', 'all');
 
+		$form->edit->addInput('approval', 'select');
+		$form->edit->input->approval->setTitle('Approval');
+		$form->edit->input->approval->addOption('-- Select Approval --');
+		$form->edit->input->approval->addOption('None', '0');
+		$form->edit->input->approval->addOption('Manual', '1');
+
 		if ($id == 1) {
 			$form->edit->input->type->setPlainText();
 			$form->edit->input->menu_ids->setDelimiter('<br>');
 			$form->edit->input->menu_ids->setPlainText();
+			$form->edit->input->approval->setPlainText();
 		}
 		
 		$form->edit->action();
@@ -861,7 +875,7 @@ class User extends CI_Controller
 		$form->roll->input->updated->setPlainText();
 		$form->roll->input->updated->setDisplayColumn(false);
 		
-		$form->roll->setRollDeleteCondition('{main} == 1');
+		$form->roll->setDeleteCondition('{main} == 1');
 
 		$form->roll->setSaveTool(false);
 		$form->roll->addReportAll();
