@@ -361,6 +361,16 @@ class lib_pea_edit
 								}
 							} 
 						}
+						if (isset($this->input->captcha)) {
+							if ($this->input->captcha->type == 'captcha') {
+								$this->input->captcha->getPostValue();
+								$failMsg = $this->input->captcha->getFailMsg();
+								if ($failMsg) {
+									$isValid    = 0;
+									$this->msg .= $failMsg;
+								}
+							}
+						}
 						if ($isValid) {
 							if ($this->where) {
 								$this->db->update($this->table, $values, preg_replace('~^.*?[W|w][H|h][E|e][R|r][E|e]~', '', $this->where));

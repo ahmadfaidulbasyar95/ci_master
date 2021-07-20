@@ -37,6 +37,7 @@ class User extends CI_Controller
 				$group_title = $group_data['title'];
 				$form->edit->setData('group_id', $group_id);
 				$form->edit->addExtraField('active', ($group_data['approval']) ? 0 : 1);
+				$form->edit->setSuccessMsg('Pendaftaran '.$group_title.' Berhasil');
 			}else{
 				show_error('Invalid Group');
 			}
@@ -187,6 +188,12 @@ class User extends CI_Controller
 		$form->edit->input->address->setTitle('Alamat');
 		$form->edit->input->address->setRequire();
 		$form->edit->input->address->addTip('Jln. Jendral Sudirman No.123 RT.05 RW.06');
+
+		if ($this->_tpl_model->method == 'register') {
+			$form->edit->addInput('captcha', 'captcha');
+			$form->edit->input->captcha->setOpt('word_length', 5);
+			$form->edit->input->captcha->setOpt('img_height', 50);
+		}
 		
 		$form->edit->onSave(function($id, $f)
 		{
