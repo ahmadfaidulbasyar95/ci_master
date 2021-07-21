@@ -453,7 +453,7 @@ class _tpl_model extends CI_Model {
 			$data = $this->_db_model->getRow('SELECT * FROM `user` WHERE `username`="'.addslashes($usr).'"');
 			if ($data) {
 				if (!$data['active']) {
-					$this->user_msg('Your account has been blocked');
+					$this->user_msg('Your account is being deactivated');
 					return false;
 				}
 				$data['group_ids']  = @(array)json_decode($data['group_ids']);

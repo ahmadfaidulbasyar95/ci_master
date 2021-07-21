@@ -149,6 +149,7 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->province_id->setReferenceTable('location');
 		$form->edit->input->location_input->element->province_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_input->element->province_id->setReferenceCondition( '`type_id`=1' );
+		$form->edit->input->location_input->element->province_id->setReferenceOrderBy( 'title' );
 		$form->edit->input->location_input->element->province_id->addOption( '-- Pilih Provinsi --', '' );
 		$form->edit->input->location_input->element->province_id->setRequire();
 
@@ -157,6 +158,7 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->city_id->setReferenceTable('location');
 		$form->edit->input->location_input->element->city_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_input->element->city_id->setReferenceCondition( '`type_id`=2' );
+		$form->edit->input->location_input->element->city_id->setReferenceOrderBy( 'title' );
 		$form->edit->input->location_input->element->city_id->setDependent( $form->edit->input->location_input->element->province_id->getName(), 'par_id' );
 		$form->edit->input->location_input->element->city_id->addOption( '-- Pilih Kabupaten --', '' );
 		$form->edit->input->location_input->element->city_id->setRequire();
@@ -166,6 +168,7 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->district_id->setReferenceTable('location');
 		$form->edit->input->location_input->element->district_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_input->element->district_id->setReferenceCondition( '`type_id`=3' );
+		$form->edit->input->location_input->element->district_id->setReferenceOrderBy( 'title' );
 		$form->edit->input->location_input->element->district_id->setDependent( $form->edit->input->location_input->element->city_id->getName(), 'par_id' );
 		$form->edit->input->location_input->element->district_id->addOption( '-- Pilih Kecamatan --', '' );
 		$form->edit->input->location_input->element->district_id->setRequire();
@@ -175,6 +178,7 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->village_id->setReferenceTable('location');
 		$form->edit->input->location_input->element->village_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_input->element->village_id->setReferenceCondition( '`type_id`=4' );
+		$form->edit->input->location_input->element->village_id->setReferenceOrderBy( 'title' );
 		$form->edit->input->location_input->element->village_id->setDependent( $form->edit->input->location_input->element->district_id->getName(), 'par_id' );
 		$form->edit->input->location_input->element->village_id->addOption( '-- Pilih Desa --', '' );
 		$form->edit->input->location_input->element->village_id->setRequire();
@@ -712,6 +716,7 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->province_id->setReferenceTable('location');
 		$form->edit->input->location_input->element->province_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_input->element->province_id->setReferenceCondition( '`type_id`=1' );
+		$form->edit->input->location_input->element->province_id->setReferenceOrderBy( 'title' );
 		$form->edit->input->location_input->element->province_id->addOption( '-- Pilih Provinsi --', '' );
 		$form->edit->input->location_input->element->province_id->setRequire();
 
@@ -720,6 +725,7 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->city_id->setReferenceTable('location');
 		$form->edit->input->location_input->element->city_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_input->element->city_id->setReferenceCondition( '`type_id`=2' );
+		$form->edit->input->location_input->element->city_id->setReferenceOrderBy( 'title' );
 		$form->edit->input->location_input->element->city_id->setDependent( $form->edit->input->location_input->element->province_id->getName(), 'par_id' );
 		$form->edit->input->location_input->element->city_id->addOption( '-- Pilih Kabupaten --', '' );
 		$form->edit->input->location_input->element->city_id->setRequire();
@@ -729,6 +735,7 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->district_id->setReferenceTable('location');
 		$form->edit->input->location_input->element->district_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_input->element->district_id->setReferenceCondition( '`type_id`=3' );
+		$form->edit->input->location_input->element->district_id->setReferenceOrderBy( 'title' );
 		$form->edit->input->location_input->element->district_id->setDependent( $form->edit->input->location_input->element->city_id->getName(), 'par_id' );
 		$form->edit->input->location_input->element->district_id->addOption( '-- Pilih Kecamatan --', '' );
 		$form->edit->input->location_input->element->district_id->setRequire();
@@ -738,6 +745,7 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->village_id->setReferenceTable('location');
 		$form->edit->input->location_input->element->village_id->setReferenceField( 'title', 'id' );
 		$form->edit->input->location_input->element->village_id->setReferenceCondition( '`type_id`=4' );
+		$form->edit->input->location_input->element->village_id->setReferenceOrderBy( 'title' );
 		$form->edit->input->location_input->element->village_id->setDependent( $form->edit->input->location_input->element->district_id->getName(), 'par_id' );
 		$form->edit->input->location_input->element->village_id->addOption( '-- Pilih Desa --', '' );
 		$form->edit->input->location_input->element->village_id->setRequire();

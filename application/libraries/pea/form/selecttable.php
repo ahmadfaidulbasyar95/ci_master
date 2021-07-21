@@ -12,6 +12,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	public $referenceOrderBy    = '';
 	public $referenceGroupBy    = '';
 	public $options_load        = 0;
+	public $autoComplete        = 0;
 	public $dependent           = array();
 
 	function __construct($opt, $name)
@@ -58,6 +59,11 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	public function setReferenceOrderBy($referenceOrderBy = '')
 	{
 		if ($referenceOrderBy) $this->referenceOrderBy = ' ORDER BY '.$referenceOrderBy;
+	}
+
+	public function setAutoComplete($autoComplete = 1)
+	{
+		$this->autoComplete = ($autoComplete) ? 1 : 0;
 	}
 
 	public function setDependent($name = '', $field = '')

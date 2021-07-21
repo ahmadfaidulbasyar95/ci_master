@@ -47,19 +47,18 @@ class lib_pea_frm_captcha extends lib_pea_frm_text
 
 	public function getForm($index = '', $values = array())
 	{
-		if (is_file($this->_root.'system/helpers/captcha_helper.php')) {
-			include_once $this->_root.'system/helpers/captcha_helper.php';
-			$cap = array(
-				'img_path' => $this->_root.'files/cache/captcha/',
-				'img_url'  => $this->_url.'files/cache/captcha/',
-			);
-			lib_path_create($cap['img_path']);
-			$this->captcha_data = create_captcha(array_merge($this->captcha_opt,$cap));
-		}
+		$this->db->load->helper('captcha');
+		$cap = array(
+			'img_path' => $this->_root.'files/cache/captcha/',
+			'img_url'  => $this->_url.'files/cache/captcha/',
+		);
+		lib_path_create($cap['img_path']);
+		$this->captcha_data = create_captcha(array_merge($this->captcha_opt,$cap));
+
 		if (empty($this->captcha_data)) {
 			die('PEA::FORM "captcha" Create Captcha Failed');
 		}else{
-			$this->addTip($this->captcha_data['image'].'<input type="text" name="'.$this->name.'" class="form-control" value="" required="required" style="width: 150px;">');
+			$this->addTip($this->captcha_data['image'].'<input type="text" name="'.$this->name.'" class="form-control" value="" required="required" style="width: 150px;" placeholder="Type a text !">');
 			$_SESSION['pea_captcha'][$this->name] = $this->captcha_data;
 		}
 
