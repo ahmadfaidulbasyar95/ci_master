@@ -18,7 +18,7 @@
 		}	
 		$('.selecttable_dependent').each(function(index, el) {
 			var elem = $(this);
-			if (!elem.data('selecttable_dependent_load')) {
+			if (!elem.data('selecttable_dependent_load') && !elem.hasClass('selecttable_autocomplete')) {
 				elem.data('selecttable_dependent_load', 1);
 				var value      = elem.data('value');
 				var token      = elem.data('token');
@@ -26,7 +26,6 @@
 				var nested     = elem.data('nested');
 				var option_def = elem.html();
 				var multiple   = (elem.attr('multiple') != undefined) ? 1 : 0;
-				elem.html(option_def);
 				$('[name="'+dependent+'"]').on('change', function(event) {
 					var v = $(this).val(); 
 					if (v) {

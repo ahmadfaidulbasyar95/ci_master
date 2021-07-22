@@ -63,7 +63,12 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 
 	public function setAutoComplete($autoComplete = 1)
 	{
-		$this->autoComplete = ($autoComplete) ? 1 : 0;
+		if ($autoComplete) {
+			$this->autoComplete = 1;
+			$this->setIncludes('selecttable_autocomplete', 'js');
+		}else{
+			$this->autoComplete = 0;
+		}
 	}
 
 	public function setDependent($name = '', $field = '')
@@ -74,6 +79,8 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 				'field' => $field,
 			);
 			$this->setIncludes('selecttable_dependent', 'js');
+		}else{
+			$this->dependent = array();
 		}
 	}
 
@@ -81,19 +88,29 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	{
 		if (!$this->options_load) {
 			$nested = ($this->referenceNested) ? ', '.$this->referenceNested.' AS `nested`' : '';
-			if ($this->dependent and !$this->isPlainText) {
-				if ($this->referenceCondition) {
-					$this->referenceCondition .= ' AND '.$this->dependent['field'].'="[v]"';
-				}else{
-					$this->referenceCondition .= ' WHERE '.$this->dependent['field'].'="[v]"';
+			if (($this->dependent or $this->autoComplete) and !$this->isPlainText) {
+				if ($this->dependent) {
+					if ($this->referenceCondition) {
+						$this->referenceCondition .= ' AND '.$this->dependent['field'].'="[v]"';
+					}else{
+						$this->referenceCondition .= ' WHERE '.$this->dependent['field'].'="[v]"';
+					}
+					$this->addAttr('data-dependent="'.$this->dependent['name'].'"');
+					$this->addClass('selecttable_dependent');
+				}
+				if ($this->autoComplete) {
+					if ($this->referenceCondition) {
+						$this->referenceCondition .= ' AND '.$this->referenceFieldKey.' LIKE "%[s]%"';
+					}else{
+						$this->referenceCondition .= ' WHERE '.$this->referenceFieldKey.' LIKE "%[s]%"';
+					}
+					$this->addClass('selecttable_autocomplete');
 				}
 				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceGroupBy.$this->referenceOrderBy;
 				$this->db->load->model('_encrypt_model');
 				$token = $this->db->_encrypt_model->encodeToken($token, 60);
 				$this->addAttr('data-token="'.$token.'"');
-				$this->addAttr('data-dependent="'.$this->dependent['name'].'"');
 				$this->addAttr('data-nested="'.$this->referenceNested.'"');
-				$this->addClass('selecttable_dependent');
 			}else{
 				if ($this->isPlainText) {
 					$ids = [];
