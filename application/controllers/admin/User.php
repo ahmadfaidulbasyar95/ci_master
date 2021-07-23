@@ -128,6 +128,7 @@ class User extends CI_Controller
 		$form->roll->input->login_wrap->element->login_act->setTitle('<i class="fa fa-sign-in"></i>');
 		$form->roll->input->login_wrap->element->login_act->setLinks('admin/user/login_auto');
 		$form->roll->input->login_wrap->element->login_act->addAttr('target="_BLANK"');
+		$form->roll->input->login_wrap->element->login_act->addAttr('onclick="return confirm(\'Login now ?\')"');
 
 		$form->roll->input->login_wrap->addInput('login_log', 'editlinks');
 		$form->roll->input->login_wrap->element->login_log->setTitle('<i class="fa fa-clock"></i>');
@@ -753,6 +754,23 @@ class User extends CI_Controller
 
 		$this->_tpl_model->setLayout('blank');
 		$this->_tpl_model->view('User/login', ['input' => $input]);
+		$this->_tpl_model->show();
+	}
+	function login_auto()
+	{
+		$id = @intval($_GET['id']);
+		if ($id) {
+			$user = $this->_tpl_model->_db_model->getRow('SELECT `username`,`password` FROM `user` WHERE `id`='.$id);
+			if ($user) {
+				$this->load->model('_encrypt_model');
+				$user['password'] = $this->_encrypt_model->decode($user['password']);
+				if ($this->_tpl_model->user_login($user['username'], $user['password'])) {
+					redirect($this->_tpl_model->_url.$this->_tpl_model->config('user','home_uri'));
+				}else{
+					echo $this->_tpl_model->msg($this->_tpl_model->user_msg(), 'danger');
+				}
+			}
+		}
 		$this->_tpl_model->show();
 	}
 	function logout()
