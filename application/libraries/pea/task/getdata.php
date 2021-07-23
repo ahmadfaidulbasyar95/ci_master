@@ -7,7 +7,15 @@ if (!empty($_POST['token'])) {
 	if ($token) {
 		unset($_POST['token']);
 		foreach ($_POST as $key => $value) {
-			$token = str_replace('['.$key.']', addslashes($value), $token);
+			if (is_array($value)) {
+				foreach ($value as $key1 => $value1) {
+					$value[$key1] = addslashes($value1);
+				}
+				$value = '"'.implode('","', $value).'"';
+			}else{
+				$value = addslashes($value);
+			}
+			$token = str_replace('['.$key.']', $value, $token);
 		}
 		$this->load->model('_db_model');
 		$data = $this->_db_model->getAll($token);

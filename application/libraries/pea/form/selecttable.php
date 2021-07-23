@@ -11,6 +11,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	public $referenceNested     = '';
 	public $referenceOrderBy    = '';
 	public $referenceGroupBy    = '';
+	public $referenceLimit      = '';
 	public $options_load        = 0;
 	public $autoComplete        = 0;
 	public $dependent           = array();
@@ -61,6 +62,11 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 		if ($referenceOrderBy) $this->referenceOrderBy = ' ORDER BY '.$referenceOrderBy;
 	}
 
+	public function setReferenceLimit($referenceLimit = '')
+	{
+		if ($referenceLimit) $this->referenceLimit = ' LIMIT '.$referenceLimit;
+	}
+
 	public function setAutoComplete($autoComplete = 1)
 	{
 		if ($autoComplete) {
@@ -106,8 +112,16 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 					}
 					$this->addClass('selecttable_autocomplete');
 				}
-				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceGroupBy.$this->referenceOrderBy;
+				$token = 'SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceGroupBy.$this->referenceOrderBy.$this->referenceLimit;
 				$this->db->load->model('_encrypt_model');
+				if ($this->autoComplete) {
+					if ($this->isMultiselect) {
+						$token2 = $this->db->_encrypt_model->encodeToken(str_replace($this->referenceFieldKey.' LIKE "%[s]%"', $this->referenceFieldValue.' IN ([s])', $token), 60);
+					}else{
+						$token2 = $this->db->_encrypt_model->encodeToken(str_replace($this->referenceFieldKey.' LIKE "%[s]%"', $this->referenceFieldValue.' = "[s]"', $token), 60);
+					}
+					$this->addAttr('data-token2="'.$token2.'"');
+				}
 				$token = $this->db->_encrypt_model->encodeToken($token, 60);
 				$this->addAttr('data-token="'.$token.'"');
 				$this->addAttr('data-nested="'.$this->referenceNested.'"');
@@ -151,7 +165,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 						}
 					}
 				}
-				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceGroupBy.$this->referenceOrderBy);
+				$option = $this->db->getAll('SELECT '.$this->referenceFieldKey.' AS `key`, '.$this->referenceFieldValue.' AS `value`'.$nested.' FROM '.$this->referenceTable.' '.$this->referenceCondition.$this->referenceGroupBy.$this->referenceOrderBy.$this->referenceLimit);
 				if ($this->referenceNested) {
 					$option = $this->getOptionNested($option);
 				}
