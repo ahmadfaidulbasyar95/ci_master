@@ -132,8 +132,13 @@ class User extends CI_Controller
 		$form->edit->input->gender->addOption('Perempuan', 2);
 		$form->edit->input->gender->setRequire();
 
-		$form->edit->addInput('birth_place', 'text');
+		$form->edit->addInput('birth_place', 'selecttable');
 		$form->edit->input->birth_place->setTitle('Tempat Lahir');
+		$form->edit->input->birth_place->setReferenceTable('location');
+		$form->edit->input->birth_place->setReferenceField( 'title', 'title' );
+		$form->edit->input->birth_place->setReferenceCondition( '`type_id`=3' );
+		$form->edit->input->birth_place->setReferenceOrderBy( 'title' );
+		$form->edit->input->birth_place->setAutoComplete();
 		$form->edit->input->birth_place->setRequire();
 
 		$form->edit->addInput('birth_date', 'date');
@@ -539,10 +544,9 @@ class User extends CI_Controller
 			$form->edit->input->gender->addOption('Female', 2);
 			$form->edit->input->gender->setPlainText();
 
-			$form->edit->addInput('birth_date', 'date');
-			$form->edit->input->birth_date->setTitle('Birthdate');
-			$form->edit->input->birth_date->setDateFormat('d M Y');
-			$form->edit->input->birth_date->setPlainText();
+			$form->edit->addInput('birth_date', 'sqlplaintext');
+			$form->edit->input->birth_date->setTitle('Place and Date of Birth');
+			$form->edit->input->birth_date->setFieldName('CONCAT(`birth_place`,", ",DATE_FORMAT(`birth_date`, "%d %M %Y"))');
 
 			$form->edit->addInput('location_detail', 'sqlplaintext');
 			$form->edit->input->location_detail->setTitle('Address');

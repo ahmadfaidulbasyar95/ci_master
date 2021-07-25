@@ -305,8 +305,13 @@ class User extends CI_Controller
 		$form->edit->input->gender->addOption('Female', 2);
 		$form->edit->input->gender->setRequire();
 
-		$form->edit->addInput('birth_place', 'text');
+		$form->edit->addInput('birth_place', 'selecttable');
 		$form->edit->input->birth_place->setTitle('Birthplace');
+		$form->edit->input->birth_place->setReferenceTable('location');
+		$form->edit->input->birth_place->setReferenceField( 'title', 'title' );
+		$form->edit->input->birth_place->setReferenceCondition( '`type_id`=3' );
+		$form->edit->input->birth_place->setReferenceOrderBy( 'title' );
+		$form->edit->input->birth_place->setAutoComplete();
 		$form->edit->input->birth_place->setRequire();
 
 		$form->edit->addInput('birth_date', 'date');
@@ -642,6 +647,12 @@ class User extends CI_Controller
 		$form->roll->input->approval->setPlainText();
 		$form->roll->input->approval->setDisplayColumn();
 
+		$form->roll->addInput('field', 'editlinks');
+		$form->roll->input->field->setTitle('Custom Field');
+		$form->roll->input->field->setCaption('Manage');
+		$form->roll->input->field->setLinks('admin/user/group_field');
+		$form->roll->input->field->setDisplayColumn();
+
 		$form->roll->addInput('created', 'datetime');
 		$form->roll->input->created->setTitle('Created');
 		$form->roll->input->created->setPlainText();
@@ -704,6 +715,199 @@ class User extends CI_Controller
 			$form->edit->input->approval->setPlainText();
 		}
 		
+		$form->edit->action();
+		echo $form->edit->getForm();
+		$this->_tpl_model->show();
+	}
+
+	function group_field()
+	{
+		$id = @intval($_GET['id']);
+		if ($id) {
+			$group_title = $this->_tpl_model->_db_model->getOne('SELECT `title` FROM `user_group` WHERE `id`='.$id);
+			if ($group_title) {
+				$this->_tpl_model->nav_add($group_title);
+			}
+		}
+		echo $this->_tpl_model->button('admin/user/group_field_form?group_id='.$id, 'Add Field', 'fa fa-plus', 'modal_reload modal_large', 'style="margin-bottom: 15px;"', 1);
+
+		$form = $this->_pea_model->newForm('user_field');
+	
+		$form->initRoll('WHERE `group_id`='.$id.' ORDER BY `orderby` ASC');
+
+		$form->roll->addInput('name', 'sqllinks');
+		$form->roll->input->name->setTitle('Name');
+		$form->roll->input->name->setLinks('admin/user/group_field_form');
+		$form->roll->input->name->setModal();
+		$form->roll->input->name->setModalReload();
+		$form->roll->input->name->setModalLarge();
+		$form->roll->input->name->setDisplayColumn();
+
+		$form->roll->addInput('form', 'sqlplaintext');
+		$form->roll->input->form->setTitle('Form Type');
+		$form->roll->input->form->setDisplayColumn();
+
+		$form->roll->addInput('title', 'sqlplaintext');
+		$form->roll->input->title->setTitle('Title');
+		$form->roll->input->title->setDisplayColumn();
+
+		$form->roll->addInput('caption', 'sqlplaintext');
+		$form->roll->input->caption->setTitle('Caption');
+		$form->roll->input->caption->setDisplayColumn();
+
+		$form->roll->addInput('format', 'sqlplaintext');
+		$form->roll->input->format->setTitle('Format');
+		$form->roll->input->format->setDisplayColumn();
+
+		$form->roll->addInput('tip', 'sqlplaintext');
+		$form->roll->input->tip->setTitle('Tip');
+		$form->roll->input->tip->setDisplayColumn();
+
+		$form->roll->addInput('class', 'sqlplaintext');
+		$form->roll->input->class->setTitle('Class');
+		$form->roll->input->class->setDisplayColumn();
+
+		$form->roll->addInput('attr', 'sqlplaintext');
+		$form->roll->input->attr->setTitle('Attribute');
+		$form->roll->input->attr->setDisplayColumn();
+
+		$form->roll->addInput('default_value', 'sqlplaintext');
+		$form->roll->input->default_value->setTitle('Default Value');
+		$form->roll->input->default_value->setDisplayColumn();
+
+		$form->roll->addInput('required', 'checkbox');
+		$form->roll->input->required->setTitle('Required');
+		$form->roll->input->required->setCaption('yes');
+		$form->roll->input->required->setPlaintext();
+		$form->roll->input->required->setDisplayColumn();
+
+		$form->roll->addInput('orderby', 'orderby');
+		$form->roll->input->orderby->setTitle('Ordered');
+		$form->roll->input->orderby->setDisplayColumn();
+		if (isset($_GET[$form->roll->sortConfig['get_name']])) {
+			$form->roll->input->orderby->setPlaintext();
+		}
+
+		$form->roll->addInput('created', 'datetime');
+		$form->roll->input->created->setTitle('Created');
+		$form->roll->input->created->setPlainText();
+		$form->roll->input->created->setDisplayColumn();
+
+		$form->roll->addInput('updated', 'datetime');
+		$form->roll->input->updated->setTitle('Updated');
+		$form->roll->input->updated->setPlainText();
+		$form->roll->input->updated->setDisplayColumn(false);
+		
+		$form->roll->addReportAll();
+		$form->roll->action();
+		echo $form->roll->getForm();
+		$this->_tpl_model->show();
+	}
+	function group_field_form()
+	{
+		$id       = @intval($_GET['id']);
+		$group_id = @intval($_GET['group_id']);
+		$form     = $this->_pea_model->newForm('user_field');
+
+		$_GET['return'] = '';
+		$this->_tpl_model->setLayout('blank');
+		
+		$form->initEdit(!empty($id) ? 'WHERE `id`='.$id : '');
+
+		if (!$id) {
+			$group_title = $this->_tpl_model->_db_model->getOne('SELECT `title` FROM `user_group` WHERE `id`='.$group_id);
+			if ($group_title) {
+				$form->edit->addExtraField('group_id', $group_id);
+			}else{
+				show_error('Invalid Group ID');
+			}
+		}
+
+		$form->edit->setHeader(!empty($id) ? 'Edit Field' : 'Add Field');
+		$form->edit->setModalResponsive();
+		$form->edit->bodyWrap($form->edit->formBodyBefore.'<div class="row">','</div>'.$form->edit->formBodyAfter);
+
+		$form->edit->addInput('name', 'text');
+		$form->edit->input->name->setTitle('Name');
+		$form->edit->input->name->setRequire();
+		$form->edit->input->name->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+		$name = $form->edit->input->name->getName();
+		if (!empty($_POST[$name])) {
+			$_POST[$name] = preg_replace('~[^a-z0-9]~', '_', strtolower($_POST[$name]));
+		}
+
+		$form_type = ['text','checkbox','date','datetime','file','multiselect','select','textarea'];
+		$form->edit->addInput('form', 'select');
+		$form->edit->input->form->setTitle('Form Type');
+		$form->edit->input->form->setRequire();
+		$form->edit->input->form->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+		foreach ($form_type as $value) {
+			$form->edit->input->form->addOption($value, $value);
+		}
+
+		$form->edit->addInput('title', 'text');
+		$form->edit->input->title->setTitle('Title');
+		$form->edit->input->title->setRequire();
+		$form->edit->input->title->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+
+		$form->edit->addInput('caption', 'text');
+		$form->edit->input->caption->setTitle('Caption');
+		$form->edit->input->caption->setRequire();
+		$form->edit->input->caption->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+
+		$form->edit->addInput('required', 'checkbox');
+		$form->edit->input->required->setTitle('Required');
+		$form->edit->input->required->setCaption('yes');
+		$form->edit->input->required->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+
+		$format = ['any','email','url','phone','number'];
+		$form->edit->addInput('format', 'select');
+		$form->edit->input->format->setTitle('Format');
+		$form->edit->input->format->setRequire();
+		$form->edit->input->format->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+		foreach ($format as $value) {
+			$form->edit->input->format->addOption($value, $value);
+		}
+
+		$form->edit->addInput('tip', 'textarea');
+		$form->edit->input->tip->setTitle('Tip');
+		$form->edit->input->tip->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+
+		$form->edit->addInput('class', 'textarea');
+		$form->edit->input->class->setTitle('Class');
+		$form->edit->input->class->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+
+		$form->edit->addInput('attr', 'textarea');
+		$form->edit->input->attr->setTitle('Attribute');
+		$form->edit->input->attr->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+
+		$form->edit->addInput('default_value', 'textarea');
+		$form->edit->input->default_value->setTitle('Default Value');
+		$form->edit->input->default_value->formWrap('<div class="col-xs-12 col-sm-6">','</div>');		
+
+		$form->edit->addInput('params', 'textarea');
+		$form->edit->input->params->setTitle('Parameter');
+		$form->edit->input->params->addAttr('id="s_params"');		
+		$form->edit->input->params->addTip('<div id="s_params_result">
+			<div class="form-inline">
+				<div class="form-group">
+					<select name="params[{index}][method]" class="form-control">
+						<option value="">-- Select Method --</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<input type="text" name="params[{index}][args][]" class="form-control" value="">
+				</div>
+				<div class="form-group">
+					<a href="#" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+				</div>
+			</div>
+		</div>
+		<a id="s_params_add" href="#" class="btn btn-default"><i class="fa fa-plus"></i></a>');		
+		$form->edit->input->params->formWrap('<div class="col-xs-12 col-sm-12">','</div>');		
+
+		$this->_tpl_model->js('controllers/admin/user_group_field_form.js');
+
 		$form->edit->action();
 		echo $form->edit->getForm();
 		$this->_tpl_model->show();
