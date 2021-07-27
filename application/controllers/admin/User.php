@@ -743,37 +743,13 @@ class User extends CI_Controller
 		$form->roll->input->name->setModalLarge();
 		$form->roll->input->name->setDisplayColumn();
 
-		$form->roll->addInput('form', 'sqlplaintext');
-		$form->roll->input->form->setTitle('Form Type');
-		$form->roll->input->form->setDisplayColumn();
-
 		$form->roll->addInput('title', 'sqlplaintext');
 		$form->roll->input->title->setTitle('Title');
 		$form->roll->input->title->setDisplayColumn();
 
-		$form->roll->addInput('caption', 'sqlplaintext');
-		$form->roll->input->caption->setTitle('Caption');
-		$form->roll->input->caption->setDisplayColumn();
-
-		$form->roll->addInput('format', 'sqlplaintext');
-		$form->roll->input->format->setTitle('Format');
-		$form->roll->input->format->setDisplayColumn();
-
-		$form->roll->addInput('tip', 'sqlplaintext');
-		$form->roll->input->tip->setTitle('Tip');
-		$form->roll->input->tip->setDisplayColumn();
-
-		$form->roll->addInput('class', 'sqlplaintext');
-		$form->roll->input->class->setTitle('Class');
-		$form->roll->input->class->setDisplayColumn();
-
-		$form->roll->addInput('attr', 'sqlplaintext');
-		$form->roll->input->attr->setTitle('Attribute');
-		$form->roll->input->attr->setDisplayColumn();
-
-		$form->roll->addInput('default_value', 'sqlplaintext');
-		$form->roll->input->default_value->setTitle('Default Value');
-		$form->roll->input->default_value->setDisplayColumn();
+		$form->roll->addInput('form', 'sqlplaintext');
+		$form->roll->input->form->setTitle('Form Type');
+		$form->roll->input->form->setDisplayColumn();
 
 		$form->roll->addInput('required', 'checkbox');
 		$form->roll->input->required->setTitle('Required');
@@ -836,54 +812,25 @@ class User extends CI_Controller
 			$_POST[$name] = preg_replace('~[^a-z0-9]~', '_', strtolower($_POST[$name]));
 		}
 
-		$form_type = ['text','checkbox','date','datetime','file','multiselect','select','textarea'];
-		$form->edit->addInput('form', 'select');
-		$form->edit->input->form->setTitle('Form Type');
-		$form->edit->input->form->setRequire();
-		$form->edit->input->form->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
-		foreach ($form_type as $value) {
-			$form->edit->input->form->addOption($value, $value);
-		}
-
 		$form->edit->addInput('title', 'text');
 		$form->edit->input->title->setTitle('Title');
 		$form->edit->input->title->setRequire();
 		$form->edit->input->title->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
 
-		$form->edit->addInput('caption', 'text');
-		$form->edit->input->caption->setTitle('Caption');
-		$form->edit->input->caption->setRequire();
-		$form->edit->input->caption->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+		$form_type = ['text','checkbox','date','datetime','file','select','multiselect','textarea'];
+		$form->edit->addInput('form', 'select');
+		$form->edit->input->form->setTitle('Form Type');
+		$form->edit->input->form->setRequire();
+		$form->edit->input->form->addAttr('id="s_form"');
+		$form->edit->input->form->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
+		foreach ($form_type as $value) {
+			$form->edit->input->form->addOption($value, $value);
+		}
 
 		$form->edit->addInput('required', 'checkbox');
 		$form->edit->input->required->setTitle('Required');
 		$form->edit->input->required->setCaption('yes');
 		$form->edit->input->required->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
-
-		$format = ['any','email','url','phone','number'];
-		$form->edit->addInput('format', 'select');
-		$form->edit->input->format->setTitle('Format');
-		$form->edit->input->format->setRequire();
-		$form->edit->input->format->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
-		foreach ($format as $value) {
-			$form->edit->input->format->addOption($value, $value);
-		}
-
-		$form->edit->addInput('tip', 'textarea');
-		$form->edit->input->tip->setTitle('Tip');
-		$form->edit->input->tip->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
-
-		$form->edit->addInput('class', 'textarea');
-		$form->edit->input->class->setTitle('Class');
-		$form->edit->input->class->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
-
-		$form->edit->addInput('attr', 'textarea');
-		$form->edit->input->attr->setTitle('Attribute');
-		$form->edit->input->attr->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
-
-		$form->edit->addInput('default_value', 'textarea');
-		$form->edit->input->default_value->setTitle('Default Value');
-		$form->edit->input->default_value->formWrap('<div class="col-xs-12 col-sm-6">','</div>');		
 
 		$form->edit->addInput('params', 'textarea');
 		$form->edit->input->params->setTitle('Parameter');
@@ -891,12 +838,16 @@ class User extends CI_Controller
 		$form->edit->input->params->addTip('<div id="s_params_result">
 			<div class="form-inline">
 				<div class="form-group">
-					<select name="params[{index}][method]" class="form-control">
+					<select name="params[{index}][method]" class="form-control s_method">
 						<option value="">-- Select Method --</option>
 					</select>
 				</div>
 				<div class="form-group">
-					<input type="text" name="params[{index}][args][]" class="form-control" value="">
+					<input type="text" name="params[{index}][args][]" class="form-control i_text" title="{data}" placeholder="{data}">
+					<input type="number" name="params[{index}][args][]" class="form-control i_number" title="{data}" placeholder="{data}">
+					<select name="params[{index}][args][]" class="form-control i_select">
+						{data}
+					</select>
 				</div>
 				<div class="form-group">
 					<a href="#" class="btn btn-danger"><i class="fa fa-trash"></i></a>
