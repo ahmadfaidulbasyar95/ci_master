@@ -130,6 +130,7 @@ class User extends CI_Controller
 		$form->edit->input->gender->addOption('-- Pilih Jenis Kelamin --', '');
 		$form->edit->input->gender->addOption('Laki-laki', 1);
 		$form->edit->input->gender->addOption('Perempuan', 2);
+		$form->edit->input->gender->addOption('Lainnya', 3);
 		$form->edit->input->gender->setRequire();
 
 		$form->edit->addInput('birth_place', 'selecttable');

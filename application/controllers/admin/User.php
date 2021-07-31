@@ -101,6 +101,7 @@ class User extends CI_Controller
 		$form->roll->input->gender->setTitle('Gender');
 		$form->roll->input->gender->addOption('Male', 1);
 		$form->roll->input->gender->addOption('Female', 2);
+		$form->roll->input->gender->addOption('Other', 3);
 		$form->roll->input->gender->setPlainText();
 		$form->roll->input->gender->setDisplayColumn(false);
 
@@ -303,6 +304,7 @@ class User extends CI_Controller
 		$form->edit->input->gender->addOption('-- Select Gender --', '');
 		$form->edit->input->gender->addOption('Male', 1);
 		$form->edit->input->gender->addOption('Female', 2);
+		$form->edit->input->gender->addOption('Other', 3);
 		$form->edit->input->gender->setRequire();
 
 		$form->edit->addInput('birth_place', 'selecttable');
@@ -836,15 +838,15 @@ class User extends CI_Controller
 		$form->edit->input->params->setTitle('Parameter');
 		$form->edit->input->params->addAttr('id="s_params"');		
 		$form->edit->input->params->addTip('<div id="s_params_result">
-			<div class="form-inline">
+			<div class="form-inline" style="margin-bottom: 10px;">
 				<div class="form-group">
 					<select name="params[{index}][method]" class="form-control s_method">
 						<option value="">-- Select Method --</option>
 					</select>
 				</div>
-				<div class="form-group">
-					<input type="text" name="params[{index}][args][]" class="form-control i_text" title="{data}" placeholder="{data}">
-					<input type="number" name="params[{index}][args][]" class="form-control i_number" title="{data}" placeholder="{data}">
+				<div class="form-group s_args" data-index="{index}">
+					<input type="text" name="params[{index}][args][]" class="form-control i_text" title="{data}" placeholder="{data}" value="{value}" size="40">
+					<input type="number" name="params[{index}][args][]" class="form-control i_number" title="{data}" placeholder="{data}" value="{value}">
 					<select name="params[{index}][args][]" class="form-control i_select">
 						{data}
 					</select>
@@ -856,6 +858,21 @@ class User extends CI_Controller
 		</div>
 		<a id="s_params_add" href="#" class="btn btn-default"><i class="fa fa-plus"></i></a>');		
 		$form->edit->input->params->formWrap('<div class="col-xs-12 col-sm-12">','</div>');		
+		$params = $form->edit->input->params->getName();
+		if (isset($_POST[$params])) {
+			$params_allow   = array('setCaption','setType','addTip','addClass','addAttr','setFormat','setDefaultValue','setDateFormat','setDateFormatInput','setMinDate','setMaxDate','setFolder','setAllowedExtension','setResize','setThumbnail','setImageClick','setDocumentViewer','addOption','setHtmlEditor');
+			$_POST[$params] = (isset($_POST['params'])) ? (array)$_POST['params'] : array();
+			foreach ($_POST[$params] as $key => $value) {
+				if (empty($value['method'])) {
+					unset($_POST[$params][$key]);
+				}elseif (!in_array($value['method'], $params_allow)) {
+					unset($_POST[$params][$key]);
+				}elseif (empty($value['args'])) {
+					$_POST[$params][$key]['args'] = array();
+				}
+			}
+			$_POST[$params] = json_encode(array_values($_POST[$params]));
+		}
 
 		$this->_tpl_model->js('controllers/admin/user_group_field_form.js');
 
