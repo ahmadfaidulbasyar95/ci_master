@@ -379,7 +379,7 @@ class lib_pea_edit
 							}
 							$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
 							foreach ($select as $key => $value) {
-								$this->input->$key->onSaveSuccess();
+								$this->input->$key->onSaveSuccess('', @$this->editValues['edit_id']);
 							}
 							if ($this->onSaveFunction and @$this->editValues['edit_id']) call_user_func($this->onSaveFunction, @$this->editValues['edit_id'], $this);
 						}else{

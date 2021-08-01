@@ -610,6 +610,7 @@ class User extends CI_Controller
 	function group()
 	{
 		echo $this->_tpl_model->button('admin/user/group_form', 'Add Group', 'fa fa-plus', 'modal_reload', 'style="margin-bottom: 15px;"', 1);
+		echo $this->_tpl_model->button('admin/user/group_field?return='.urlencode($this->_tpl_model->_url_current), 'Global Field', 'fa fa-pencil', '', 'style="margin-bottom: 15px;margin-left: 15px;"', 0);
 
 		$form = $this->_pea_model->newForm('user_group');
 	
@@ -649,6 +650,12 @@ class User extends CI_Controller
 		$form->roll->input->approval->setPlainText();
 		$form->roll->input->approval->setDisplayColumn();
 
+		$form->roll->addInput('global_field', 'checkbox');
+		$form->roll->input->global_field->setTitle('Global Field');
+		$form->roll->input->global_field->setCaption('Yes');
+		$form->roll->input->global_field->setPlainText();
+		$form->roll->input->global_field->setDisplayColumn();
+
 		$form->roll->addInput('field', 'editlinks');
 		$form->roll->input->field->setTitle('Custom Field');
 		$form->roll->input->field->setCaption('Manage');
@@ -664,6 +671,11 @@ class User extends CI_Controller
 		$form->roll->input->updated->setTitle('Updated');
 		$form->roll->input->updated->setPlainText();
 		$form->roll->input->updated->setDisplayColumn(false);
+
+		$form->roll->onDelete(function($id, $f)
+		{
+			$f->db->delete('user_field', '`group_id`='.$id);
+		});
 		
 		$form->roll->setDeleteCondition('{roll_id}==1');
 		$form->roll->setSaveTool(false);
@@ -710,6 +722,10 @@ class User extends CI_Controller
 		$form->edit->input->approval->addOption('None', '0');
 		$form->edit->input->approval->addOption('Manual', '1');
 
+		$form->edit->addInput('global_field', 'checkbox');
+		$form->edit->input->global_field->setTitle('Include Global Field');
+		$form->edit->input->global_field->setCaption('Yes');
+
 		if ($id == 1) {
 			$form->edit->input->type->setPlainText();
 			$form->edit->input->menu_ids->setDelimiter('<br>');
@@ -728,8 +744,11 @@ class User extends CI_Controller
 		if ($id) {
 			$group_title = $this->_tpl_model->_db_model->getOne('SELECT `title` FROM `user_group` WHERE `id`='.$id);
 			if ($group_title) {
+				$this->_tpl_model->nav_add('admin/user/group_field?id='.$id, 'Custom Field');
 				$this->_tpl_model->nav_add($group_title);
 			}
+		}else{
+			$this->_tpl_model->nav_add('Global Field');
 		}
 		echo $this->_tpl_model->button('admin/user/group_field_form?group_id='.$id, 'Add Field', 'fa fa-plus', 'modal_reload modal_large', 'style="margin-bottom: 15px;"', 1);
 
@@ -796,8 +815,6 @@ class User extends CI_Controller
 			$group_title = $this->_tpl_model->_db_model->getOne('SELECT `title` FROM `user_group` WHERE `id`='.$group_id);
 			if ($group_title) {
 				$form->edit->addExtraField('group_id', $group_id);
-			}else{
-				show_error('Invalid Group ID');
 			}
 		}
 
@@ -1212,6 +1229,7 @@ class User extends CI_Controller
 		if ($id) {
 			$user = $this->_tpl_model->_db_model->getRow('SELECT `name`,`username` FROM `user` WHERE `id`='.$id);
 			if ($user) {
+				$this->_tpl_model->nav_add('admin/user/log?id='.$id, 'Login History');
 				$this->_tpl_model->nav_add($user['name'].' ['.$user['username'].']');
 				if ($id == $this->_tpl_model->user['id']) {
 					$logout_set = @intval($_POST['logout_set']);

@@ -38,10 +38,10 @@ class lib_pea_frm_params extends lib_pea_frm_text
 		);
 	}
 
-	public function onSaveSuccess($index = '')
+	public function onSaveSuccess($index = '', $id = 0)
 	{
 		foreach ($this->element as $value) {
-			$value->onSaveSuccess();
+			$value->onSaveSuccess($index, $id);
 		}		
 	}
 

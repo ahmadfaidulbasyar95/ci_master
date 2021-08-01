@@ -48,7 +48,7 @@ class lib_pea_import extends lib_pea_edit
 						if ($_POST['act'] == $this->table.'_'.$this->init.'_'.$this->saveButtonName) {
 							$this->editValues['edit_id'] = $this->db->insert($this->table, $values);
 							foreach ($select as $key => $value) {
-								$this->input->$key->onSaveSuccess();
+								$this->input->$key->onSaveSuccess('', @$this->editValues['edit_id']);
 							}
 							if ($this->onSaveFunction and @$this->editValues['edit_id']) call_user_func($this->onSaveFunction, @$this->editValues['edit_id'], $this);
 						}

@@ -316,7 +316,7 @@ class lib_pea_roll extends lib_pea_edit
 						$this->msg = str_replace('{msg}', $this->successMsg, $this->successMsgTpl).$this->onSaveReloadParentScript;
 						foreach (@(array)$_POST[$this->table.'_'.$this->init.'_ids'] as $key => $value) {
 							foreach ($select as $key1 => $value1) {
-								$this->input->$key1->onSaveSuccess($key);
+								$this->input->$key1->onSaveSuccess($key, $value);
 							}
 						}
 						if ($this->onSaveFunction) {

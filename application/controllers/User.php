@@ -199,6 +199,55 @@ class User extends CI_Controller
 		$form->edit->input->address->setRequire();
 		$form->edit->input->address->addTip('Jln. Jendral Sudirman No.123 RT.05 RW.06');
 
+		if ($id) {
+			$group_ids = @(array)json_decode($this->_db_model->getOne('SELECT `group_ids` FROM `user` WHERE `id`='.$id), 1);
+		}else{
+			$group_ids = [$group_id];
+		}
+		if ($group_ids) {
+			$global_field = $this->_db_model->getOne('SELECT 1 FROM `user_group` WHERE `id` IN('.implode(',',$group_ids).') AND `global_field`=1 LIMIT 1');
+			if ($global_field) {
+				$group_ids[] = 0;
+			}
+			
+			$form->edit->addInput('params', 'params');
+			$form->edit->input->params->setTitle('');
+
+			$fields = $this->_db_model->getAll('SELECT `name`,`form`,`title`,`required`,`params` FROM `user_field` WHERE `group_id` IN('.implode(',',$group_ids).') ORDER BY `group_id`,`orderby`');
+
+			foreach ($fields as $key => $value) {
+				$v_name = $value['name'];
+				$form->edit->input->params->addInput($v_name, $value['form']);
+				$form->edit->input->params->element->$v_name->setTitle($value['title']);
+				if ($value['required']) {
+					$form->edit->input->params->element->$v_name->setRequire();
+				}
+				$v_params = @(array)json_decode($value['params'], 1);
+				if ($value['form'] == 'file') {
+					$v_params_folder = 0;
+					foreach ($v_params as $key1 => $value1) {
+						if ($value1['method'] == 'setFolder') {
+							$v_params_folder            = 1;
+							$v_params[$key1]['args'][0] = 'files/user_field/'.$id.'/'.$v_params[$key1]['args'][0];
+						}
+					}
+					if (!$v_params_folder) {
+						$v_params[] = array(
+							'method' => 'setFolder',
+							'args'   => ['files/user_field/'.$id.'/'],
+						);
+					}
+					$fields[$key]['params'] = json_encode($v_params);
+				}
+				foreach ($v_params as $key1 => $value1) {
+					call_user_func_array(array($form->edit->input->params->element->$v_name, $value1['method']), $value1['args']);
+				}
+			}
+
+			$form->edit->input->params->addInput('forms', 'extrafield');
+			$form->edit->input->params->element->forms->setDefaultValue(json_encode($fields));
+		}
+
 		if ($this->_tpl_model->method == 'register') {
 			$form->edit->addInput('captcha', 'captcha');
 			$form->edit->input->captcha->setOpt('word_length', 5);

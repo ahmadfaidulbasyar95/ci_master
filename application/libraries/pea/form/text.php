@@ -334,7 +334,7 @@ class lib_pea_frm_text
 		);
 	}
 
-	public function onSaveSuccess($index = '')
+	public function onSaveSuccess($index = '', $id = 0)
 	{
 		
 	}

@@ -7,18 +7,18 @@ include_once __DIR__.'/../../path.php';
 include_once __DIR__.'/text.php';
 class lib_pea_frm_file extends lib_pea_frm_text
 {	
-	public $fileFolder          = '';
-	public $fileExtAllowed      = array('jpg', 'jpeg', 'gif', 'png', 'bmp');
-	public $fileImgSize         = 0;
-	public $fileImgSizeThumb    = 0;
-	public $fileImgSizeThumbPre = 0;
-	public $imageClick          = 0;
-	public $documentViewer      = 0;
-	public $newValue            = '';
-	public $newValue_roll       = array();
-	public $oldValue            = '';
-	public $oldValue_roll       = array();
-	public $toolModal           = '';
+	public $fileFolder       = '';
+	public $fileExtAllowed   = array('jpg', 'jpeg', 'gif', 'png', 'bmp');
+	public $fileImgSize      = 0;
+	public $fileImgThumbSize = 0;
+	public $fileImgThumbPre  = 0;
+	public $imageClick       = 0;
+	public $documentViewer   = 0;
+	public $newValue         = '';
+	public $newValue_roll    = array();
+	public $oldValue         = '';
+	public $oldValue_roll    = array();
+	public $toolModal        = '';
 
 	function __construct($opt, $name)
 	{
@@ -61,6 +61,9 @@ class lib_pea_frm_file extends lib_pea_frm_text
 	public function setFolder($fileFolder='')
 	{
 		$fileFolder = $this->_root.str_replace($this->_root, '', $fileFolder);  
+		if (!preg_match('~\/$~', $fileFolder)) {
+			$fileFolder .= '/';
+		}
 		if (lib_path_create($fileFolder)) {
 			$this->fileFolder = $fileFolder;
 		}
@@ -76,10 +79,13 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		$this->fileImgSize = intval($fileImgSize);
 	}
 
-	public function setThumbnail($fileImgSizeThumb = 0, $fileImgSizeThumbPre = 'thumb')
+	public function setThumbnail($fileImgThumbSize = 0, $fileImgThumbPre = 'thumb')
 	{
-		$this->fileImgSizeThumb    = intval($fileImgSizeThumb);
-		$this->fileImgSizeThumbPre = $fileImgSizeThumbPre;
+		$this->fileImgThumbSize = intval($fileImgThumbSize);
+		$this->fileImgThumbPre  = $fileImgThumbPre;
+		if ($this->fileImgThumbSize and !$this->fileImgThumbPre) {
+			$this->fileImgThumbPre = 'thumb';
+		}
 	}
 
 	public function setImageClick()
@@ -123,7 +129,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		return $value;
 	}
 
-	public function onSaveSuccess($index = '')
+	public function onSaveSuccess($index = '', $id = 0)
 	{
 		$newValue = $this->getNewValue($index);
 		if ($newValue) {
@@ -135,22 +141,33 @@ class lib_pea_frm_file extends lib_pea_frm_text
 				$config['maintain_ratio'] = TRUE;
 				$this->image_lib->initialize($config);
 				$this->image_lib->resize();
-				if ($this->fileImgSizeThumb) {
-					if (preg_match('~\/$~', $this->fileImgSizeThumbPre)) {
-						lib_path_create($this->fileFolder.$this->fileImgSizeThumbPre);
+				if ($this->fileImgThumbSize) {
+					if (preg_match('~\/$~', $this->fileImgThumbPre)) {
+						lib_path_create($this->fileFolder.$this->fileImgThumbPre);
 					}
-					copy($this->fileFolder.$newValue, $this->fileFolder.$this->fileImgSizeThumbPre.$newValue);
-					$config['source_image']   = $this->fileFolder.$this->fileImgSizeThumbPre.$newValue;
-					$config['width']          = $this->fileImgSizeThumb;
-					$config['height']         = $this->fileImgSizeThumb;
+					copy($this->fileFolder.$newValue, $this->fileFolder.$this->fileImgThumbPre.$newValue);
+					$config['source_image']   = $this->fileFolder.$this->fileImgThumbPre.$newValue;
+					$config['width']          = $this->fileImgThumbSize;
+					$config['height']         = $this->fileImgThumbSize;
 					$this->image_lib->initialize($config);
 					$this->image_lib->resize();
 				}
 			}
 			$oldValue = $this->getOldValue($index);
 			if (is_file($this->fileFolder.$oldValue)) unlink($this->fileFolder.$oldValue);
-			if ($this->fileImgSizeThumb) {
-				if (is_file($this->fileFolder.$this->fileImgSizeThumbPre.$oldValue)) unlink($this->fileFolder.$this->fileImgSizeThumbPre.$oldValue);
+			if ($this->fileImgThumbSize) {
+				if (is_file($this->fileFolder.$this->fileImgThumbPre.$oldValue)) unlink($this->fileFolder.$this->fileImgThumbPre.$oldValue);
+			}
+			if (strpos($this->fileFolder, '/0/') !== false) {
+				$fileFolderNew = str_replace('/0/', '/'.$id.'/', $this->fileFolder);
+				lib_path_create($fileFolderNew);
+				rename($this->fileFolder.$newValue, $fileFolderNew.$newValue);
+				if ($this->fileImgSize and $this->fileImgThumbSize) {
+					if (preg_match('~\/$~', $this->fileImgThumbPre)) {
+						lib_path_create($fileFolderNew.$this->fileImgThumbPre);
+					}
+					rename($this->fileFolder.$this->fileImgThumbPre.$newValue, $fileFolderNew.$this->fileImgThumbPre.$newValue);
+				}
 			}
 		}
 	}
@@ -165,8 +182,8 @@ class lib_pea_frm_file extends lib_pea_frm_text
 	{
 		$value = $this->getValue($index);
 		if (is_file($this->fileFolder.$value)) unlink($this->fileFolder.$value);
-		if ($this->fileImgSizeThumb) {
-			if (is_file($this->fileFolder.$this->fileImgSizeThumbPre.$value)) unlink($this->fileFolder.$this->fileImgSizeThumbPre.$value);
+		if ($this->fileImgThumbSize) {
+			if (is_file($this->fileFolder.$this->fileImgThumbPre.$value)) unlink($this->fileFolder.$this->fileImgThumbPre.$value);
 		}
 	}
 
