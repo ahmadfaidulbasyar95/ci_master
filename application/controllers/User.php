@@ -214,38 +214,7 @@ class User extends CI_Controller
 			$form->edit->input->params->setTitle('');
 
 			$fields = $this->_db_model->getAll('SELECT `name`,`form`,`title`,`required`,`params` FROM `user_field` WHERE `group_id` IN('.implode(',',$group_ids).') ORDER BY `group_id`,`orderby`');
-
-			foreach ($fields as $key => $value) {
-				$v_name = $value['name'];
-				$form->edit->input->params->addInput($v_name, $value['form']);
-				$form->edit->input->params->element->$v_name->setTitle($value['title']);
-				if ($value['required']) {
-					$form->edit->input->params->element->$v_name->setRequire();
-				}
-				$v_params = @(array)json_decode($value['params'], 1);
-				if ($value['form'] == 'file') {
-					$v_params_folder = 0;
-					foreach ($v_params as $key1 => $value1) {
-						if ($value1['method'] == 'setFolder') {
-							$v_params_folder            = 1;
-							$v_params[$key1]['args'][0] = 'files/user_field/'.$id.'/'.$v_params[$key1]['args'][0];
-						}
-					}
-					if (!$v_params_folder) {
-						$v_params[] = array(
-							'method' => 'setFolder',
-							'args'   => ['files/user_field/'.$id.'/'],
-						);
-					}
-					$fields[$key]['params'] = json_encode($v_params);
-				}
-				foreach ($v_params as $key1 => $value1) {
-					call_user_func_array(array($form->edit->input->params->element->$v_name, $value1['method']), $value1['args']);
-				}
-			}
-
-			$form->edit->input->params->addInput('forms', 'extrafield');
-			$form->edit->input->params->element->forms->setDefaultValue(json_encode($fields));
+			$form->edit->input->params->setParams($fields);
 		}
 
 		if ($this->_tpl_model->method == 'register') {
@@ -601,6 +570,10 @@ class User extends CI_Controller
 			$form->edit->addInput('location_detail', 'sqlplaintext');
 			$form->edit->input->location_detail->setTitle('Address');
 			$form->edit->input->location_detail->setFieldName('CONCAT(`address`," ",`village_title`,", ",`district_title`,", ",`city_title`,", ",`province_title`,", ",`zip_code`)');
+
+			$form->edit->addInput('params', 'params');
+			$form->edit->input->params->setTitle('');
+			$form->edit->input->params->showParams();
 			
 			$form->edit->setSaveTool(false);
 			$form->edit->action();

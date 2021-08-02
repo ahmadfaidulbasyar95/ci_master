@@ -74,8 +74,6 @@ class lib_pea_edit
 		
 		$this->setSaveButton(($this->where) ? '<i class="fa fa-save"></i> Save' : '<i class="fa fa-plus"></i> Add'); 
 		$this->setSuccessMsg(($this->where) ? 'Success Save Data' : 'Success Insert New Data'); 
-
-		if (isset($_GET['return'])) $this->returnUrl = $_GET['return'];
 		
 		$this->returnTool        = 1;
 		$this->returnButtonText  = '<i class="fa fa-chevron-left"></i>&nbsp;';
@@ -307,6 +305,7 @@ class lib_pea_edit
 	{
 		if (!$this->do_action) {
 			$this->do_action = 1;
+			if (isset($_GET['return'])) $this->returnUrl = $_GET['return'];
 			if ($this->init == 'add') $this->setDeleteTool(0);
 			foreach ($this->input as $key => $value) {
 				if ($value->type == 'multiinput') {

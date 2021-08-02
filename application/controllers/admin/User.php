@@ -53,7 +53,7 @@ class User extends CI_Controller
 		
 		echo $form->search->getForm();
 
-		echo $this->_tpl_model->button('admin/user/form', 'Add User', 'fa fa-plus', 'modal_reload', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"', 1);
+		echo $this->_tpl_model->button('admin/user/form_add', 'Add User', 'fa fa-plus', 'modal_reload', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"', 1);
 		
 		if ($this->_tpl_model->user['id'] == 1) {
 			echo $this->_tpl_model->button('admin/user/group?return='.urlencode($this->_tpl_model->_url_current), 'Group', 'fa fa-pencil', '', 'style="margin-right: 10px; margin-bottom: 15px;width: 100px;"');
@@ -153,6 +153,10 @@ class User extends CI_Controller
 		$form->roll->setDeleteCondition('{roll_id} == '.$this->_tpl_model->user['id']);
 		$form->roll->setDeleteCondition('{roll_id} == 1');
 
+		$form->roll->onDelete(function($id, $f)
+		{
+			lib_path_delete($f->_root.'files/user_field/'.$id);
+		});
 		$form->roll->onSave(function($id, $f)
 		{
 			if ($id == 1) {
@@ -172,6 +176,36 @@ class User extends CI_Controller
 		$_GET['id']    = $this->_tpl_model->user['id'];
 		$_GET['title'] = 'Profile';
 		$this->form();
+	}
+
+	function form_add()
+	{
+		$_GET['return'] = '';
+		$this->_tpl_model->setLayout('blank');
+
+		$form = $this->_pea_model->newForm('user');
+		$form->initEdit();
+
+		$form->edit->setHeader('Select Group');
+		$form->edit->setModalResponsive();
+		
+		$form->edit->addInput('group_id','selecttable');
+		$form->edit->input->group_id->setTitle('');
+		$form->edit->input->group_id->setReferenceTable('user_group');
+		$form->edit->input->group_id->setReferenceField('title', 'id');
+		$form->edit->input->group_id->setRequire();
+		if ($this->_tpl_model->user['id'] != 1) {
+			$form->edit->input->group_id->setReferenceCondition('id != 1');
+		}
+		$group_id = $form->edit->input->group_id->getName();
+		if (isset($_POST[$group_id])) {
+			redirect('admin/user/form?group_id='.$_POST[$group_id]);
+		}
+				
+		$form->edit->setSaveButton('<i class="fa fa-send"></i> Next');
+		$form->edit->action();
+		echo $form->edit->getForm();
+		$this->_tpl_model->show();
 	}
 
 	function form()
@@ -196,14 +230,18 @@ class User extends CI_Controller
 		$form->edit->input->name->setRequire();
 
 		if (!$id) {
-			$form->edit->addInput('group_ids','multiselect');
-			$form->edit->input->group_ids->setTitle('Group');
-			$form->edit->input->group_ids->setReferenceTable('user_group');
-			$form->edit->input->group_ids->setReferenceField('title', 'id');
-			$form->edit->input->group_ids->setRequire();
-			if ($this->_tpl_model->user['id'] != 1) {
-				$form->edit->input->group_ids->setReferenceCondition('id != 1');
+			$group_id    = @intval($_GET['group_id']);
+			$group_title = $this->_db_model->getOne('SELECT `title` FROM `user_group` WHERE `id`='.$group_id);
+			if (!$group_title) {
+				redirect('admin/user/form_add');
 			}
+			$_GET['return'] = $this->_tpl_model->_url.'admin/user/form_add';
+
+			$form->edit->addExtraField('group_ids', '["'.$group_id.'"]');
+
+			$form->edit->addInput('group_title', 'plaintext');
+			$form->edit->input->group_title->setTitle('Group');
+			$form->edit->input->group_title->setValue($group_title);
 					
 			$form->edit->addInput('username','text');
 			$form->edit->input->username->setTitle('Username');
@@ -372,6 +410,24 @@ class User extends CI_Controller
 		$form->edit->input->address->setTitle('Address');
 		$form->edit->input->address->setRequire();
 		$form->edit->input->address->addTip('Jln. Jendral Sudirman No.123 RT.05 RW.06');
+
+		if ($id) {
+			$group_ids = @(array)json_decode($this->_db_model->getOne('SELECT `group_ids` FROM `user` WHERE `id`='.$id), 1);
+		}else{
+			$group_ids = [$group_id];
+		}
+		if ($group_ids) {
+			$global_field = $this->_db_model->getOne('SELECT 1 FROM `user_group` WHERE `id` IN('.implode(',',$group_ids).') AND `global_field`=1 LIMIT 1');
+			if ($global_field) {
+				$group_ids[] = 0;
+			}
+			
+			$form->edit->addInput('params', 'params');
+			$form->edit->input->params->setTitle('');
+
+			$fields = $this->_db_model->getAll('SELECT `name`,`form`,`title`,`required`,`params` FROM `user_field` WHERE `group_id` IN('.implode(',',$group_ids).') ORDER BY `group_id`,`orderby`');
+			$form->edit->input->params->setParams($fields);
+		}
 
 		$form->edit->addInput('active', 'checkbox');
 		$form->edit->input->active->setTitle('Active');
@@ -644,9 +700,10 @@ class User extends CI_Controller
 		$form->roll->input->menu_ids->setDisplayColumn();
 
 		$form->roll->addInput('approval', 'select');
-		$form->roll->input->approval->setTitle('Approval');
-		$form->roll->input->approval->addOption('None', '0');
-		$form->roll->input->approval->addOption('Manual', '1');
+		$form->roll->input->approval->setTitle('Registration Approval');
+		$form->roll->input->approval->addOption('Registration Closed', '0');
+		$form->roll->input->approval->addOption('Direct Approve', '1');
+		$form->roll->input->approval->addOption('Manual Approve', '2');
 		$form->roll->input->approval->setPlainText();
 		$form->roll->input->approval->setDisplayColumn();
 
@@ -717,10 +774,10 @@ class User extends CI_Controller
 		$form->edit->input->menu_ids->addOption('All Menu', 'all');
 
 		$form->edit->addInput('approval', 'select');
-		$form->edit->input->approval->setTitle('Approval');
-		$form->edit->input->approval->addOption('-- Select Approval --');
-		$form->edit->input->approval->addOption('None', '0');
-		$form->edit->input->approval->addOption('Manual', '1');
+		$form->edit->input->approval->setTitle('Registration Approval');
+		$form->edit->input->approval->addOption('Registration Closed', '0');
+		$form->edit->input->approval->addOption('Direct Approve', '1');
+		$form->edit->input->approval->addOption('Manual Approve', '2');
 
 		$form->edit->addInput('global_field', 'checkbox');
 		$form->edit->input->global_field->setTitle('Include Global Field');
@@ -777,6 +834,26 @@ class User extends CI_Controller
 		$form->roll->input->required->setCaption('yes');
 		$form->roll->input->required->setPlaintext();
 		$form->roll->input->required->setDisplayColumn();
+
+		$form->roll->addInput('params', 'sqlplaintext');
+		$form->roll->input->params->setTitle('Parameter');
+		$form->roll->input->params->setDisplayColumn();
+		$form->roll->input->params->setDisplayFunction(function($value='')
+		{
+			$value = @(array)json_decode($value, 1);
+			$out   = array();
+			$out2  = array();
+			foreach ($value as $key1 => $value1) {
+				$out[$value1['method']] = @intval($out[$value1['method']]) + 1;
+			}
+			foreach ($out as $key1 => $value1) {
+				if ($value1 != 1) {
+					$key1 .= '('.$value1.')';
+				}
+				$out2[] = $key1;
+			}
+			return implode(', ', $out2);
+		});
 
 		$form->roll->addInput('orderby', 'orderby');
 		$form->roll->input->orderby->setTitle('Ordered');

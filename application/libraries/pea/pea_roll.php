@@ -226,6 +226,7 @@ class lib_pea_roll extends lib_pea_edit
 	{
 		if (!$this->do_action) {
 			$this->do_action = 1;
+			if (isset($_GET['return'])) $this->returnUrl = $_GET['return'];
 			foreach ($this->input as $key => $value) {
 				if ($value->type == 'multiinput') {
 					foreach ($value->element as $key1 => $value1) {

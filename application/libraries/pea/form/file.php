@@ -133,6 +133,13 @@ class lib_pea_frm_file extends lib_pea_frm_text
 	{
 		$newValue = $this->getNewValue($index);
 		if ($newValue) {
+			if (strpos($this->fileFolder, '/0/') !== false) {
+				$fileFolderOri = $this->fileFolder;
+				$fileFolderNew = str_replace('/0/', '/'.$id.'/', $this->fileFolder);
+				lib_path_create($fileFolderNew);
+				rename($this->fileFolder.$newValue, $fileFolderNew.$newValue);
+				$this->fileFolder = $fileFolderNew;
+			}
 			if ($this->fileImgSize) {
 				$config                   = array();
 				$config['source_image']   = $this->fileFolder.$newValue;
@@ -154,20 +161,14 @@ class lib_pea_frm_file extends lib_pea_frm_text
 				}
 			}
 			$oldValue = $this->getOldValue($index);
-			if (is_file($this->fileFolder.$oldValue)) unlink($this->fileFolder.$oldValue);
-			if ($this->fileImgThumbSize) {
-				if (is_file($this->fileFolder.$this->fileImgThumbPre.$oldValue)) unlink($this->fileFolder.$this->fileImgThumbPre.$oldValue);
-			}
-			if (strpos($this->fileFolder, '/0/') !== false) {
-				$fileFolderNew = str_replace('/0/', '/'.$id.'/', $this->fileFolder);
-				lib_path_create($fileFolderNew);
-				rename($this->fileFolder.$newValue, $fileFolderNew.$newValue);
-				if ($this->fileImgSize and $this->fileImgThumbSize) {
-					if (preg_match('~\/$~', $this->fileImgThumbPre)) {
-						lib_path_create($fileFolderNew.$this->fileImgThumbPre);
-					}
-					rename($this->fileFolder.$this->fileImgThumbPre.$newValue, $fileFolderNew.$this->fileImgThumbPre.$newValue);
+			if ($oldValue != $newValue) {
+				if (is_file($this->fileFolder.$oldValue)) unlink($this->fileFolder.$oldValue);
+				if ($this->fileImgThumbSize) {
+					if (is_file($this->fileFolder.$this->fileImgThumbPre.$oldValue)) unlink($this->fileFolder.$this->fileImgThumbPre.$oldValue);
 				}
+			}
+			if (isset($fileFolderOri)) {
+				$this->fileFolder = $fileFolderOri;
 			}
 		}
 	}
@@ -197,6 +198,11 @@ class lib_pea_frm_file extends lib_pea_frm_text
 
 	public function getForm($index = '', $values = array())
 	{
+		$id = $this->getValueID($index);
+		if (strpos($this->fileFolder, '/0/') !== false) {
+			$fileFolderOri    = $this->fileFolder;
+			$this->fileFolder = str_replace('/0/', '/'.$id.'/', $this->fileFolder);
+		}
 		$form = '';
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '<td>';
 		$form .= $this->formBefore;
@@ -204,7 +210,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if (!$this->isMultiform and !$this->isMultiinput and in_array($this->init, ['edit','add'])) $form .= '<label>'.$this->title.'</label>';
 		$value = $this->getValue($index);
 		if ($value) $this->isRequire = '';
-		$value_text = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $this->getValueID($index), $index, $values) : $this->getValue($index);
+		$value_text = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $id, $index, $values) : $this->getValue($index);
 		if ($value and is_file($this->fileFolder.$value)) {
 			$link = str_replace($this->_root, $this->_url, $this->fileFolder).$value;
 			if ($this->imageClick) {
@@ -236,6 +242,9 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if (!$this->isPlainText or $this->init != 'roll') $form .= '</div>';
 		$form .= $this->formAfter;
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '</td>';
+		if (isset($fileFolderOri)) {
+			$this->fileFolder = $fileFolderOri;
+		}
 		return $form;
 	}
 }
