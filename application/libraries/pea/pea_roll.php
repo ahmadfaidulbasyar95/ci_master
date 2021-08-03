@@ -444,7 +444,7 @@ class lib_pea_roll extends lib_pea_edit
 															$this->form .= '
 															<div class="col-xs-6" style="padding: 2px 0 2px 10px;">
 																<div class="'.lib_bsv('checkbox', 'form-check').'">
-																	<label style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 100%;"><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1" title="'.$value->title.'"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
+																	<label style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;width: 100%;" title="'.$value->title.'"><input type="checkbox" name="'.$this->table.'_display['.$key.']" value="1"'.(($value->displayColumn) ? ' checked="checked"' : '').'>'.$value->title.'</label>
 																</div>
 															</div>';
 														}

@@ -36,8 +36,22 @@ class User extends CI_Controller
 			if ($group_data) {
 				$group_title = $group_data['title'];
 				$form->edit->setData('group_id', $group_id);
-				$form->edit->addExtraField('active', ($group_data['approval']) ? 0 : 1);
-				$form->edit->setSuccessMsg('Pendaftaran '.$group_title.' Berhasil');
+				switch ($group_data['approval']) {
+					case '1':
+						$form->edit->addExtraField('active', 1);
+						break;
+
+					case '2':
+						$form->edit->addExtraField('active', 0);
+						$form->edit->setSuccessMsg('Pendaftaran '.$group_title.' Berhasil');
+						break;
+					
+					default:
+						echo $this->_tpl_model->msg('Pendaftaran '.$group_title.' Ditutup', 'danger');
+						$this->_tpl_model->show();
+						return false;
+						break;
+				}
 			}else{
 				show_error('Invalid Group');
 			}

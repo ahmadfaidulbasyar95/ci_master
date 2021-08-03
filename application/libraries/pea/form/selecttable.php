@@ -71,6 +71,7 @@ class lib_pea_frm_selecttable extends lib_pea_frm_select
 	{
 		if ($autoComplete) {
 			$this->autoComplete = 1;
+			$this->setIncludes('delay', 'js');
 			$this->setIncludes('selecttable_autocomplete', 'js');
 		}else{
 			$this->autoComplete = 0;

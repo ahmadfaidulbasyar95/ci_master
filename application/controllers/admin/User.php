@@ -126,13 +126,13 @@ class User extends CI_Controller
 		$form->roll->input->login_wrap->setDelimiter('&nbsp;&nbsp;&nbsp;');
 
 		$form->roll->input->login_wrap->addInput('login_act', 'editlinks');
-		$form->roll->input->login_wrap->element->login_act->setTitle('<i class="fa fa-sign-in"></i>');
+		$form->roll->input->login_wrap->element->login_act->setTitle('<i class="fa fa-sign-in" title="Login with this account"></i>');
 		$form->roll->input->login_wrap->element->login_act->setLinks('admin/user/login_auto');
 		$form->roll->input->login_wrap->element->login_act->addAttr('target="_BLANK"');
 		$form->roll->input->login_wrap->element->login_act->addAttr('onclick="return confirm(\'Login now ?\')"');
 
 		$form->roll->input->login_wrap->addInput('login_log', 'editlinks');
-		$form->roll->input->login_wrap->element->login_log->setTitle('<i class="fa fa-clock"></i>');
+		$form->roll->input->login_wrap->element->login_log->setTitle('<i class="fa fa-clock" title="Login History"></i>');
 		$form->roll->input->login_wrap->element->login_log->setLinks('admin/user/log');
 
 		$form->roll->addInput('active', 'checkbox');
@@ -706,6 +706,13 @@ class User extends CI_Controller
 		$form->roll->input->approval->addOption('Manual Approve', '2');
 		$form->roll->input->approval->setPlainText();
 		$form->roll->input->approval->setDisplayColumn();
+		$form->roll->input->approval->setDisplayFunction(function($value='', $id=0, $index='', $values=array())
+		{
+			if ($values[$index]['approval']) {
+				$value .= ' - <a href="'.$this->_tpl_model->_url.'user/register?id='.$id.'" target="_BLANK" title="Goto register form"><i class="far fa-share-square"></i></a>';
+			}
+			return $value;
+		});
 
 		$form->roll->addInput('global_field', 'checkbox');
 		$form->roll->input->global_field->setTitle('Global Field');

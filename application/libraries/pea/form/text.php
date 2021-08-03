@@ -42,6 +42,7 @@ class lib_pea_frm_text
 	public $failMsgTpl            = '';
 	public $inputPosition         = 'main';
 	public $isUniq                = 0;
+	public $isUniq_load           = 0;
 	public $attr                  = '';
 	public $attr_class            = '';
 	public $searchFunction        = '';
@@ -234,12 +235,41 @@ class lib_pea_frm_text
 
 	public function setUniq($isUniq = 1)
 	{
-		$this->isUniq = ($isUniq) ? $isUniq : 0;
+		if ($isUniq) {
+			$this->isUniq = $isUniq;
+			$this->setIncludes('delay', 'js');
+			$this->setIncludes('uniq.min', 'js');
+		}else{
+			$this->isUniq = 0;
+		}
 	}
 
 	public function getUniq()
 	{
 		return $this->isUniq;
+	}
+	public function getUniqJS($index = '')
+	{
+		if ($this->isUniq) {
+			if (!$this->isUniq_load) {
+				$this->db->load->model('_encrypt_model');
+				$this->addClass('uniq_value');
+				$this->isUniq_load = 'SELECT 1 FROM '.$this->table.' WHERE `'.$this->fieldNameDb.'` = "[v]"';
+				if (!is_numeric($this->isUniq)) {
+					$this->isUniq_load .= ' AND '.$this->isUniq;
+				}
+				$this->addTip('<p class="uniq_error text-danger" style="display:none;"><i class="far fa-fw fa-exclamation-circle"></i> '.str_replace('{title}', $this->title, @$this->failMsg['uniq']).'</p>');
+				$this->addTip('<p class="uniq_success text-success" style="display:none;"><i class="far fa-fw fa-check-circle"></i> OK !</p>');
+				$this->addAttr('data-uniq_type="'.$this->format.'"');
+			}
+			$vId = $this->getValueID($index);
+			$q   = $this->isUniq_load;
+			if ($vId) {
+				$q .= ' AND `'.$this->table_id.'` != "'.addslashes($vId).'"';
+			}
+			$token = $this->db->_encrypt_model->encodeToken($q, 60);
+			$this->addAttr('data-uniq_token="'.$token.'"');
+		}
 	}
 
 	public function setInputPosition($inputPosition = '')
@@ -341,7 +371,12 @@ class lib_pea_frm_text
 
 	public function onSaveFailed($index = '')
 	{
-		
+		if ($this->init == 'add') {
+			$i_name = $this->getName();
+			if (!$this->defaultValue and isset($_POST[$i_name]) and $this->type != 'password') {
+				$this->setDefaultValue((is_array($_POST[$i_name])) ? json_encode($_POST[$i_name]) : $_POST[$i_name]);
+			}
+		}
 	}
 
 	public function onDeleteSuccess($index = '')
@@ -395,6 +430,7 @@ class lib_pea_frm_text
 
 	public function getForm($index = '', $values = array())
 	{
+		$this->getUniqJS($index);
 		$form = '';
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '<td>';
 		$form .= $this->formBefore;

@@ -65,6 +65,7 @@ class lib_pea_frm_select extends lib_pea_frm_text
 
 	public function getForm($index = '', $values = array())
 	{
+		$this->getUniqJS($index);
 		$form = '';
 		if ($this->init == 'roll' and !$this->isMultiinput) $form .= '<td>';
 		$form .= $this->formBefore;
