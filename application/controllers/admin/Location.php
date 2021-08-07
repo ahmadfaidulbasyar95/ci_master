@@ -65,6 +65,9 @@ class Location extends CI_Controller
 
 		$form->roll->addInput('source_id', 'sqlplaintext');
 		$form->roll->input->source_id->setTitle('Source ID');
+
+		$form->roll->addInput('zip_code', 'sqlplaintext');
+		$form->roll->input->zip_code->setTitle('Zip Code');
 		
 		$form->roll->setDeleteCondition('"{source_id}" != ""');
 
