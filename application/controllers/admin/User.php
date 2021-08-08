@@ -401,10 +401,12 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->village_id->addOption( '-- Select Village --', '' );
 		$form->edit->input->location_input->element->village_id->setRequire();
 			
-		$form->edit->addInput('zip_code','text');
-		$form->edit->input->zip_code->setTitle('Zip Code');
-		$form->edit->input->zip_code->setType('number');
-		$form->edit->input->zip_code->setRequire();
+		$form->edit->input->location_input->addInput('zip_code','zipcode');
+		$form->edit->input->location_input->element->zip_code->setTitle('Zip Code');
+		$form->edit->input->location_input->element->zip_code->setReferenceTable('location');
+		$form->edit->input->location_input->element->zip_code->setReferenceField( 'zip_code' );
+		$form->edit->input->location_input->element->zip_code->setDependent($form->edit->input->location_input->element->village_id->getName(), 'id');
+		$form->edit->input->location_input->element->zip_code->setRequire();
 
 		$form->edit->addInput('address', 'text');
 		$form->edit->input->address->setTitle('Address');
@@ -1251,10 +1253,12 @@ class User extends CI_Controller
 		$form->edit->input->location_input->element->village_id->addOption( '-- Select Village --', '' );
 		$form->edit->input->location_input->element->village_id->setRequire();
 			
-		$form->edit->addInput('zip_code','text');
-		$form->edit->input->zip_code->setTitle('Zip Code');
-		$form->edit->input->zip_code->setType('number');
-		$form->edit->input->zip_code->setRequire();
+		$form->edit->input->location_input->addInput('zip_code','zipcode');
+		$form->edit->input->location_input->element->zip_code->setTitle('Zip Code');
+		$form->edit->input->location_input->element->zip_code->setReferenceTable('location');
+		$form->edit->input->location_input->element->zip_code->setReferenceField( 'zip_code' );
+		$form->edit->input->location_input->element->zip_code->setDependent($form->edit->input->location_input->element->village_id->getName(), 'id');
+		$form->edit->input->location_input->element->zip_code->setRequire();
 
 		$form->edit->addInput('address', 'text');
 		$form->edit->input->address->setTitle('Address');

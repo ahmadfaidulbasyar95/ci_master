@@ -103,10 +103,9 @@ class Location extends CI_Controller
 					$parent['par_ids']   = (array)json_decode($parent['par_ids'], 1);
 					$parent['par_ids'][] = (string)$par_id;
 
-					$ret      = '&return='.urlencode($this->_tpl_model->_url_current);
 					$par_data = $form->db->getAll('SELECT `id`,`title` FROM `location` WHERE `id` IN ('.implode(',', $parent['par_ids']).') ORDER BY `type_id`');
 					foreach ($par_data as $value) {
-						$this->_tpl_model->nav_add('admin/location?id='.$value['id'].$ret, $value['title']);
+						$this->_tpl_model->nav_add('admin/location?id='.$value['id'], $value['title']);
 					}
 
 					$form->edit->addExtraField('par_id', $par_id);
