@@ -138,6 +138,7 @@ class User extends CI_Controller
 		$form->edit->input->image->setResize(1080);
 		$form->edit->input->image->setImageClick();
 		$form->edit->input->image->setThumbnail(120, 'thumb/');
+		$form->edit->input->image->setNameEncode();
 
 		$form->edit->addInput('gender', 'select');
 		$form->edit->input->gender->setTitle('Jenis Kelamin');

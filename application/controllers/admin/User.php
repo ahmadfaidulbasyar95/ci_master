@@ -336,6 +336,7 @@ class User extends CI_Controller
 		$form->edit->input->image->setResize(1080);
 		$form->edit->input->image->setImageClick();
 		$form->edit->input->image->setThumbnail(120, 'thumb/');
+		$form->edit->input->image->setNameEncode();
 
 		$form->edit->addInput('gender', 'select');
 		$form->edit->input->gender->setTitle('Gender');
@@ -963,7 +964,7 @@ class User extends CI_Controller
 		$form->edit->input->params->formWrap('<div class="col-xs-12 col-sm-12">','</div>');		
 		$params = $form->edit->input->params->getName();
 		if (isset($_POST[$params])) {
-			$params_allow   = array('setCaption','setType','addTip','addClass','addAttr','setFormat','setDefaultValue','setDateFormat','setDateFormatInput','setMinDate','setMaxDate','setFolder','setAllowedExtension','setResize','setThumbnail','setImageClick','setDocumentViewer','addOption','setHtmlEditor');
+			$params_allow   = array('setCaption','setType','addTip','addClass','addAttr','setFormat','setDefaultValue','setDateFormat','setDateFormatInput','setMinDate','setMaxDate','setFolder','setAllowedExtension','setResize','setThumbnail','setImageClick','setDocumentViewer','addOption','setHtmlEditor','setNameEncode','setUrlExpire');
 			$_POST[$params] = (isset($_POST['params'])) ? (array)$_POST['params'] : array();
 			foreach ($_POST[$params] as $key => $value) {
 				if (empty($value['method'])) {

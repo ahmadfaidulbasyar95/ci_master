@@ -19,6 +19,8 @@ class lib_pea_frm_file extends lib_pea_frm_text
 	public $oldValue         = '';
 	public $oldValue_roll    = array();
 	public $toolModal        = '';
+	public $nameEncode       = 0;
+	public $urlExpire        = 0; // minutes
 
 	function __construct($opt, $name)
 	{
@@ -26,6 +28,16 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		$this->upload    = new CI_Upload();
 		$this->image_lib = new CI_Image_lib();
 		$this->setFolder('files/uploads/');
+	}
+
+	public function setNameEncode($nameEncode = 1)
+	{
+		$this->nameEncode = ($nameEncode) ? 1 : 0;
+	}
+
+	public function setUrlExpire($urlExpire = 0)
+	{
+		$this->urlExpire = intval($urlExpire);
 	}
 
 	public function setNewValue($newValue = '', $index = '')
@@ -111,6 +123,7 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		if (@$_FILES[$upload_name]['name']) {
 			if ($this->fileFolder) $config['upload_path']       = $this->fileFolder;
 			if ($this->fileExtAllowed) $config['allowed_types'] = implode('|', $this->fileExtAllowed);
+			if ($this->nameEncode) $config['file_name']         = md5(time()).md5(rand(100,999));
 			$this->upload->initialize($config);
 			if ($this->upload->do_upload($upload_name)) {
 				$this->setNewValue($this->upload->data()['file_name'], $index);
@@ -213,6 +226,12 @@ class lib_pea_frm_file extends lib_pea_frm_text
 		$value_text = ($this->displayFunction) ? call_user_func($this->displayFunction, $this->getValue($index), $id, $index, $values) : $this->getValue($index);
 		if ($value and is_file($this->fileFolder.$value)) {
 			$link = str_replace($this->_root, $this->_url, $this->fileFolder).$value;
+			if ($this->urlExpire) {
+				if (!isset($this->db->_encrypt_model)) {
+					$this->db->load->model('_encrypt_model');
+				}
+				$link = $this->_url.'_T/getFile?v='.urlencode($this->db->_encrypt_model->encodeToken(str_replace($this->_url, '', $link), $this->urlExpire));
+			}
 			if ($this->imageClick) {
 				if ($this->init != 'roll') {
 					$value_text = '<img class="img-thumbnail" style="height: 25px;" src="'.$link.'">'.$value_text;
@@ -222,9 +241,9 @@ class lib_pea_frm_file extends lib_pea_frm_text
 			}
 			if ($this->documentViewer) {
 				if ($this->init != 'roll') {
-					$value_text = '<i class="fa fa-file-'.lib_file_icon($link).'"></i> '.$value_text;
+					$value_text = '<i class="fa fa-file-'.lib_file_icon($value).'"></i> '.$value_text;
 				}else{
-					$value_text = '<i class="fa fa-file-'.lib_file_icon($link).'"></i>';
+					$value_text = '<i class="fa fa-file-'.lib_file_icon($value).'"></i>';
 				}
 				$link = 'https://docs.google.com/viewer?url='.urlencode($link).'&embedded=true';
 			}

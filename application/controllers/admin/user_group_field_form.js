@@ -53,6 +53,8 @@
 				},
 				'setImageClick'     : {},
 				'setDocumentViewer' : {},
+				'setNameEncode' 		: {},
+				'setUrlExpire'			: {'number' : 'Minutes'},
 			},
 			'select' : {
 				'addOption' : {'text' : 'Option'}
