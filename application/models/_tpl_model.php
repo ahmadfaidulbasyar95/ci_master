@@ -497,6 +497,7 @@ class _tpl_model extends CI_Model {
 						if ($data['telegram_id']) {
 							$this->_notif_model->sendTelegram('login_alert_telegram', $data['telegram_id'], $log);
 						}
+						$data['params'] = (array)json_decode($data['params'], 1);
 						$_SESSION['user_login'][$type] = $data;
 						if ($remember) {
 							$exp = intval($this->config('user', 'login_remember'))*60;

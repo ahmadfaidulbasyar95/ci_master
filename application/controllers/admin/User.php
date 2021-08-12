@@ -441,11 +441,13 @@ class User extends CI_Controller
 				$form->edit->input->name->setPlainText();
 				$form->edit->input->image->setPlainText();
 				$form->edit->input->gender->setPlainText();
+				$form->edit->input->birth_place->setPlainText();
 				$form->edit->input->birth_date->setPlainText();
 				$form->edit->input->location_input->element->province_id->setPlainText();
 				$form->edit->input->location_input->element->city_id->setPlainText();
 				$form->edit->input->location_input->element->district_id->setPlainText();
 				$form->edit->input->location_input->element->village_id->setPlainText();
+				$form->edit->input->location_input->element->zip_code->setPlainText();
 				$form->edit->input->address->setPlainText();
 				$form->edit->input->address->setTip('');
 
@@ -460,11 +462,10 @@ class User extends CI_Controller
 				$form->edit->setSaveTool(false);
 			}
 		}
-		if ($this->_tpl_model->user['id'] != 1) {
-			$form->edit->input->group_ids->setTip('');
-		}
 
 		if ($this->_tpl_model->method == 'profile') {
+			$form->edit->input->active->setPlainText();
+			$form->edit->input->group_ids->setTip('');
 			$form->edit->input->address->addTip('<br>'.$this->_tpl_model->button('admin/user/address', 'Manage Address List', 'far fa-address-book', 'modal_reload modal_large', '', 1));
 			$form->edit->input->active->addTip($this->_tpl_model->button('admin/user/log?id='.$this->_tpl_model->user['id'].'&return='.urlencode($this->_tpl_model->_url_current), 'Manage Active Sessions', 'far fa-user-shield', '', '', 0));
 		}
@@ -525,7 +526,7 @@ class User extends CI_Controller
 			$form->edit->addInput('username', 'sqlplaintext');
 			$form->edit->input->username->setTitle('Username');
 
-			if ($id == 1 and $id != $this->_tpl_model->user['id']) {
+			if ($id == 1 and $this->_tpl_model->user['id'] != 1) {
 				echo $this->_tpl_model->msg('Not Allowed', 'danger');
 				$form->edit->setSaveTool(false);
 			}else{
@@ -579,7 +580,7 @@ class User extends CI_Controller
 					$form->edit->input->group_ids->setReferenceField('title', 'id');
 					$form->edit->input->group_ids->setRequire();
 
-					if ($id == 1 or $this->_tpl_model->user['id'] != 1) {
+					if ($id == 1 or $this->_tpl_model->user['id'] == $id) {
 						$form->edit->input->group_ids->setPlainText();
 						$form->edit->setSaveTool(false);
 					}
@@ -593,7 +594,7 @@ class User extends CI_Controller
 					$form->edit->input->email->setRequire();
 					$form->edit->input->email->setUniq();
 
-					if ($id == 1 and $id != $this->_tpl_model->user['id']) {
+					if ($id == 1 and $this->_tpl_model->user['id'] != 1) {
 						$form->edit->input->email->setPlainText();
 						$form->edit->setSaveTool(false);
 					}
@@ -608,7 +609,7 @@ class User extends CI_Controller
 					$form->edit->input->phone->setRequire();
 					$form->edit->input->phone->setUniq();
 
-					if ($id == 1 and $id != $this->_tpl_model->user['id']) {
+					if ($id == 1 and $this->_tpl_model->user['id'] != 1) {
 						$form->edit->input->phone->setPlainText();
 						$form->edit->setSaveTool(false);
 					}
@@ -653,7 +654,7 @@ class User extends CI_Controller
 					$form->edit->input->username->setRequire();
 					$form->edit->input->username->setUniq();
 
-					if ($id == 1 and $id != $this->_tpl_model->user['id']) {
+					if ($id == 1 and $this->_tpl_model->user['id'] != 1) {
 						$form->edit->input->username->setPlainText();
 						$form->edit->setSaveTool(false);
 					}
@@ -923,7 +924,7 @@ class User extends CI_Controller
 		$form->edit->input->title->setRequire();
 		$form->edit->input->title->formWrap('<div class="col-xs-12 col-sm-6">','</div>');
 
-		$form_type = ['text','checkbox','date','datetime','file','select','multiselect','textarea'];
+		$form_type = ['text','checkbox','date','datetime','file','select','multiselect','textarea','hidden'];
 		$form->edit->addInput('form', 'select');
 		$form->edit->input->form->setTitle('Form Type');
 		$form->edit->input->form->setRequire();
